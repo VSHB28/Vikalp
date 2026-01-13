@@ -1,0 +1,205 @@
+﻿
+@{
+    ViewData["Title"] = "entryform";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<link href="~/css/main.css" rel="stylesheet" />
+
+
+<div class="content-body">
+    <div class="form-card">
+        <form>
+
+            <h4 class="section-title">1. Personal Profile</h4>
+            <div class="row g-4 mb-4">
+                <div class="col-md-2">
+                    <label class="form-label">Serial No.</label>
+                    <input type="number" class="form-control" placeholder="001">
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Name of the Woman</label>
+                    <input type="text" class="form-control" placeholder="Enter full name">
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Husband's Name</label>
+                    <input type="text" class="form-control" placeholder="Enter husband's name">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Working Mobile Number</label>
+                    <input type="number" class="form-control" placeholder="9876543210">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Client’s Parity</label>
+                    <select class="form-select">
+                        <option selected disabled>Select Parity</option>
+                        <option value="0">0 (No Children)</option>
+                        <option value="1">1 Child</option>
+                        <option value="2">2 Children</option>
+                        <option value="3">3+ Children</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label d-block">Is she currently pregnant?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="pregnant" id="pregYes" value="yes">
+                        <label class="form-check-label" for="pregYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="pregnant" id="pregNo" value="no">
+                        <label class="form-check-label" for="pregNo">No</label>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="section-title mt-4">2. Awareness & Materials Given</h4>
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <div class="text-center p-1" style="border:1px solid #e0e0e0; border-radius: 5px;">
+                        <label class="form-check-label mb-2 d-block" style="font-size:0.8rem;">Social Benefit?</label>
+                        <div class="d-flex justify-content-center gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="social" value="yes">
+                                <label class="form-check-label" style="font-size:0.8rem;">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="social" value="no">
+                                <label class="form-check-label" style="font-size:0.8rem;">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="text-center p-1" style="border:1px solid #e0e0e0; border-radius: 5px;">
+                        <label class="form-check-label mb-2 d-block" style="font-size:0.8rem;">NPK Leaflet?</label>
+                        <div class="d-flex justify-content-center gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="npk" value="yes">
+                                <label class="form-check-label" style="font-size:0.8rem;">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="npk" value="no">
+                                <label class="form-check-label" style="font-size:0.65rem;">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="text-center p-1" style="border:1px solid rgba(255,255,255,0.05); border-radius: 5px;">
+                        <label class="form-check-label mb-2 d-block" style="font-size:0.7rem;">Antara Leaflet?</label>
+                        <div class="d-flex justify-content-center gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="antara" value="yes">
+                                <label class="form-check-label" style="font-size:0.65rem;">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="antara" value="no">
+                                <label class="form-check-label" style="font-size:0.65rem;">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="text-center p-1" style="border:1px solid rgba(255,255,255,0.05); border-radius: 5px;">
+                        <label class="form-check-label mb-2 d-block" style="font-size:0.7rem;">Male Message Card?</label>
+                        <div class="d-flex justify-content-center gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="maleCard" value="yes">
+                                <label class="form-check-label" style="font-size:0.65rem;">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="maleCard" value="no">
+                                <label class="form-check-label" style="font-size:0.65rem;">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="text-center p-1" style="border:1px solid rgba(255,255,255,0.05); border-radius: 5px;">
+                        <label class="form-check-label mb-2 d-block" style="font-size:0.7rem;">Khushiyon Ki Potli?</label>
+                        <div class="d-flex justify-content-center gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="potli" value="yes">
+                                <label class="form-check-label" style="font-size:0.65rem;">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="potli" value="no">
+                                <label class="form-check-label" style="font-size:0.65rem;">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="section-title mt-4">3. Contraceptive Details</h4>
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <label class="form-label d-block">Using contraceptive?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="usingMethod" id="useYes" value="yes">
+                        <label class="form-check-label" for="useYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="usingMethod" id="useNo" value="no">
+                        <label class="form-check-label" for="useNo">No</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <label class="form-label">Method:</label>
+                    <select class="form-select">
+                        <option selected value="">N/A</option>
+                        <option value="Antara">Antara</option>
+                        <option value="Chhaya">Chhaya</option>
+                        <option value="Mala-N">Mala-N</option>
+                        <option value="Condom">Condom</option>
+                        <option value="IUCD">IUCD</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label class="form-label d-block">Counselling done?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="counselling" id="counYes" value="yes">
+                        <label class="form-check-label" for="counYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="counselling" id="counNo" value="no">
+                        <label class="form-check-label" for="counNo">No</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <label class="form-label">Method after counseling:</label>
+                    <input type="text" class="form-control" placeholder="e.g. Agreed to Antara">
+                </div>
+                <div class="col">
+                    <label class="form-label">Entry Date</label>
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+
+            <h4 class="section-title mt-4">4. Referral & Record</h4>
+            <div class="row g-2 mb-3">
+                <div class="col">
+                    <label class="form-label d-block">Referred to facility?</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="referral" id="refYes" value="yes">
+                        <label class="form-check-label" for="refYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="referral" id="refNo" value="no">
+                        <label class="form-check-label" for="refNo">No</label>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <label class="form-label">Name of health facility</label>
+                    <input type="text" class="form-control" placeholder="PHC / SC / Other">
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-light" style="padding: 6px 15px; font-size: 0.8rem;">Reset</button>
+                <button type="button" class="btn btn-neon">SAVE RECORD</button>
+            </div>
+
+        </form>
+    </div>
+</div>

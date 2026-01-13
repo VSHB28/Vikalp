@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Vikalp.Models.DTO.AshaOrientationDto>
+@{
+    ViewData["Title"] = "ASHA Orientation List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+<h2>ASHA Orientation List</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">Add New</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ANM Name</th>
+            <th>FacilityId</th>
+            <th>Facility NIN</th>
+            <th>Mobile</th>
+            <th>VCAT</th>
+            <th>Orientation</th>
+            <th>StateId</th>
+            <th>DistrictId</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ANMname</td>
+                <td>@item.FacilityId</td>
+                <td>@item.FacilityNIN</td>
+                <td>@item.Mobile</td>
+                <td>@item.VCAT</td>
+                <td>@(item.IsOrientation == true ? "Yes" : "No")</td>
+                <td>@item.StateId</td>
+                <td>@item.DistrictId</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,59 @@
+﻿css wwwroot/css/user-management.css
+/* User management styling - light, modern, Bootstrap-friendly */
+
+/* Card / container */
+.um-card {
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 24px rgba(12, 38, 63, 0.08);
+  border: 0;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.um-toolbar { gap: .5rem; display: flex; align-items: center; flex-wrap: wrap; }
+.um-search { max-width: 360px; }
+
+/* Table */
+.um-table thead th {
+  background: linear-gradient(90deg,#0d6efd, #6610f2);
+  color: #fff;
+  border: 0;
+  vertical-align: middle;
+}
+.um-table tbody tr:hover { background: rgba(13,110,253,0.03); }
+.um-table tbody td { vertical-align: middle; }
+
+/* Badges / role */
+.um-badge-role {
+  font-size: .82rem;
+  padding: .28rem .5rem;
+  border-radius: .35rem;
+  color: #fff;
+  background: linear-gradient(90deg,#0dcaf0,#6610f2);
+}
+
+/* Action column */
+.um-action { white-space: nowrap; }
+.um-action .btn { min-width: 44px; margin-left: .25rem; }
+.um-action svg { pointer-events: none; }
+
+/* Empty state */
+.um-empty { padding: 2rem; text-align: center; color: #6c757d; }
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .um-toolbar { width: 100%; justify-content: space-between; gap: .25rem; }
+  .um-search { max-width: 100%; flex: 1 1 auto; margin-right: .5rem; }
+  .um-action .btn { margin-left: .15rem; margin-right: .15rem; }
+}
+
+/* Small utilities */
+.um-muted-id { font-size: .78rem; color: rgba(0,0,0,0.45); }
+.um-small { font-size: .88rem; }
+
+/* Fixes for clickable area */
+.table-responsive { position: relative; z-index: 1; }
+.um-action a, .um-action button { position: relative; z-index: 10; pointer-events: auto; }
+
+/* Optional nicer focus */
+.btn:focus { box-shadow: 0 0 0 .15rem rgba(13,110,253,0.18); }

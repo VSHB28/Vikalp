@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Vikalp</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/user-management.css" />
+
+    @RenderSection("Head", required: false)
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Vikalp</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topbar" aria-controls="topbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="topbar">
+                <ul class="navbar-nav ms-auto">
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout (@User.Identity.Name)</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <aside class="bg-dark text-white p-3" style="width:260px; min-height:calc(100vh - 56px);">
+            <div class="mb-3">
+                <h5 class="mb-0">Vikalp</h5>
+                <div class="text-muted small">Admin</div>
+            </div>
+
+            @await Component.InvokeAsync("Menu")
+
+            @* Debug claims (uncomment while troubleshooting) *@
+            @*<div class="mt-4 text-muted small">
+                <strong>Claims</strong>
+                <ul class="ps-3">
+                    @foreach (var c in User?.Claims ?? Enumerable.Empty<System.Security.Claims.Claim>())
+                    {
+                        <li>@c.Type: @c.Value</li>
+                    }
+                </ul>
+            </div>*@
+        </aside>
+
+        <!-- Main content -->
+        <main class="flex-grow-1 p-4" role="main">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

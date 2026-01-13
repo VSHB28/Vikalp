@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="content-body">
+
+    <div class="mb-2">
+        <h3 class="fw-bold" style="font-size: 1.2rem; margin-bottom: 0.3rem; color: var(--ipas-text-dark);">Welcome back, Team Rajasthan</h3>
+        <p style="font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--ipas-text-muted);">Here is the latest data from the Vikalp initiative.</p>
+    </div>
+
+    <div class="row g-2 mb-2">
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Total Outreach</div>
+                        <div class="stat-value">12,450</div>
+                    </div>
+                    <i class="bi bi-people" style="color: var(--ipas-primary); font-size: 1.5rem;"></i>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="bi bi-arrow-up-short"></i> 12% vs last month
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Active Camps</div>
+                        <div class="stat-value">48</div>
+                    </div>
+                    <i class="bi bi-tent" style="color: var(--ipas-primary); font-size: 1.5rem;"></i>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="bi bi-arrow-up-short"></i> 3 New this week
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Counseling Sessions</div>
+                        <div class="stat-value">8,902</div>
+                    </div>
+                    <i class="bi bi-chat-heart" style="color: var(--ipas-primary); font-size: 1.5rem;"></i>
+                </div>
+                <div class="stat-trend" style="color: var(--ipas-text-muted);">
+                    <i class="bi bi-dash"></i> Stable
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-label">Districts Covered</div>
+                        <div class="stat-value">14</div>
+                    </div>
+                    <i class="bi bi-map" style="color: var(--ipas-primary); font-size: 1.5rem;"></i>
+                </div>
+                <div class="stat-trend trend-up">
+                    <i class="bi bi-arrow-up-short"></i> Target: 20
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-2">
+        <div class="col-lg-8">
+            <div class="glass-card">
+                <h5 class="mb-2" style="font-size: 1rem; color: var(--ipas-text-dark);">Recent Registrations (Rajasthan Zone)</h5>
+                <div class="table-responsive">
+                    <table class="table-glass">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>District</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#VK-902</td>
+                                <td>Sunita Devi</td>
+                                <td>Jaipur</td>
+                                <td><span class="badge rounded-pill bg-success">Completed</span></td>
+                                <td>Oct 24, 2024</td>
+                            </tr>
+                            <tr>
+                                <td>#VK-903</td>
+                                <td>Priya Singh</td>
+                                <td>Udaipur</td>
+                                <td><span class="badge rounded-pill bg-warning text-dark">Pending</span></td>
+                                <td>Oct 24, 2024</td>
+                            </tr>
+                            <tr>
+                                <td>#VK-904</td>
+                                <td>Anjali Meena</td>
+                                <td>Jodhpur</td>
+                                <td><span class="badge rounded-pill bg-primary">In Progress</span></td>
+                                <td>Oct 23, 2024</td>
+                            </tr>
+                            <tr>
+                                <td>#VK-905</td>
+                                <td>Rekha Kumari</td>
+                                <td>Kota</td>
+                                <td><span class="badge rounded-pill bg-success">Completed</span></td>
+                                <td>Oct 23, 2024</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-card">
+                <h5 class="mb-2" style="font-size: 1rem; color: var(--ipas-text-dark);">Upcoming Drives</h5>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div class="icon-btn me-2" style="background: var(--ipas-primary); border:none; width: 30px; height: 30px;">
+                        <span style="font-weight:700; color: var(--ipas-white); font-size: 0.7rem;">26</span>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size: 0.85rem; color: var(--ipas-text-dark);">Rural Awareness Camp</div>
+                        <div class="small" style="font-size: 0.7rem; color: var(--ipas-text-muted);">Barmer District • 09:00 AM</div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div class="icon-btn me-2" style="background: var(--ipas-primary); border:none; width: 30px; height: 30px;">
+                        <span style="font-weight:700; color: var(--ipas-white); font-size: 0.7rem;">28</span>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size: 0.85rem; color: var(--ipas-text-dark);">Training Session A</div>
+                        <div class="small" style="font-size: 0.7rem; color: var(--ipas-text-muted);">Jaipur HQ • 11:00 AM</div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div class="icon-btn me-2" style="background: var(--ipas-primary); border:none; width: 30px; height: 30px;">
+                        <span style="font-weight:700; color: var(--ipas-white); font-size: 0.7rem;">30</span>
+                    </div>
+                    <div>
+                        <div class="fw-bold" style="font-size: 0.85rem; color: var(--ipas-text-dark);">Monthly Review</div>
+                        <div class="small" style="font-size: 0.7rem; color: var(--ipas-text-muted);">Online Meeting • 02:00 PM</div>
+                    </div>
+                </div>
+
+                <button class="btn w-100 mt-2 rounded-pill" style="font-size: 0.8rem; padding: 6px; background: var(--ipas-primary); color: var(--ipas-white); border: none;">View Calendar</button>
+            </div>
+        </div>
+    </div>
+
+</div>

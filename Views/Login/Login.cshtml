@@ -1,0 +1,272 @@
+﻿@model Vikalp.Models.LoginRequest
+@{
+    Layout = null;
+}
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vikalp - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Ipas.org Color Palette Theme */
+        :root {
+            --ipas-flamingo: #F15A29; /* Primary Orange */
+            --ipas-brown: #853C33; /* Deep Sanguine Brown */
+            --ipas-santa-fe: #B67766; /* Muted Earth Tone */
+            --ipas-light: #fff5f2; /* Very light orange tint for background */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+            height: 100vh;
+            overflow: hidden; /* Prevents scroll on full screen split */
+        }
+
+        .login-container {
+            height: 100vh;
+        }
+
+        /* Left Side - Image Section */
+        .image-section {
+            /* PLACEHOLDER INSTRUCTION:
+                               Replace 'vikalp-login-bg.jpg' with the actual path to your Rajasthani image.
+                               You can also use a URL if the image is hosted online.
+                            */
+            /* background: url('vikalp-login-bg.jpg.png') no-repeat center center; */
+            /* background: url('assets\images\banner.jpeg') no-repeat center center; */
+            background-size: contain;
+            background-color: var(--ipas-light);
+            position: relative;
+            min-height: 100vh;
+            padding: 40px;
+            border-right: 4px solid var(--ipas-flamingo);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Logo container */
+        .logo-container {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--ipas-flamingo);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+            .logo-container img {
+                height: 40px;
+                width: auto;
+            }
+
+        .logo-text {
+            color: var(--ipas-flamingo);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        /* Overlay to ensure text legibility if you decide to put text over the image later */
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(133, 60, 51, 0.1); /* Lighter overlay */
+            border-radius: 0;
+            /* background: url('assets\images\banner.jpeg') no-repeat center center; */
+            background-image: url('/assets/images/banner.jpeg');
+        }
+
+        /* Bottom text overlay */
+        .bottom-text {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--ipas-flamingo);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+            .bottom-text h3 {
+                color: var(--ipas-flamingo);
+                font-weight: 700;
+                margin-bottom: 10px;
+                font-size: 1.5rem;
+            }
+
+            .bottom-text p {
+                color: var(--ipas-brown);
+                margin: 0;
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+        /* Right Side - Form Section */
+        .form-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            padding: 40px;
+            border-left: 1px solid #e0e0e0;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            background: white;
+        }
+
+        .brand-title {
+            color: var(--ipas-flamingo);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-subtitle {
+            color: var(--ipas-brown);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .form-label {
+            color: var(--ipas-brown);
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 12px;
+        }
+
+            .form-control:focus {
+                border-color: var(--ipas-flamingo);
+                box-shadow: 0 0 0 0.2rem rgba(241, 90, 41, 0.25);
+            }
+
+        .btn-custom {
+            background-color: var(--ipas-flamingo);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+            .btn-custom:hover {
+                background-color: #d14012; /* Darker shade of flamingo for hover */
+                color: white;
+            }
+
+        .forgot-link {
+            color: var(--ipas-santa-fe);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+            .forgot-link:hover {
+                color: var(--ipas-brown);
+                text-decoration: underline;
+            }
+
+        /* Mobile Responsiveness */
+        @@media (max-width: 768px) {
+            .image-section {
+                display: none; /* Hide image on small screens or change to min-height: 200px */
+            }
+
+            .form-section {
+                padding: 20px;
+                border-left: none;
+            }
+
+            .login-card {
+                padding: 20px;
+                border: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid login-container">
+        <div class="row h-100 g-0">
+            <div class="col-md-7 col-lg-8 d-none d-md-block image-section">
+                <div class="logo-container">
+                    <!-- IPAS Logo -->
+                    <img src="~/assets/images/logo.png" />
+                </div>
+                <div class="image-overlay">
+                </div>
+                <div class="bottom-text">
+                    <h3>Vikalp Project</h3>
+                    <p>Empowering communities through innovative solutions and sustainable development initiatives in Rajasthan.</p>
+                </div>
+            </div>
+
+            <div class="col-md-5 col-lg-4 form-section">
+                <div class="login-card">
+                    <div class="mb-4">
+                        <h1 class="brand-title">Vikalp</h1>
+                        <p class="brand-subtitle">Empowering Choices, Building Futures</p>
+                    </div>
+
+                    <form asp-action="Login" asp-controller="Auth" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input name="Username" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input name="Password" type="password" class="form-control" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <div class="text-center mt-5">
+                        <small class="text-muted">&copy; 2024 Vikalp Project. All rights reserved.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewData["Title"] = "beneficarylist";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link href="~/css/beneficarylist.css" rel="stylesheet" />
+
+
+<div class="content-body">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div class="filter-bar mb-0 flex-grow-1">
+            <input type="text" class="search-input" placeholder="Search by Name, Husband Name or Mobile...">
+            <select class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="pregnant">Pregnant</option>
+                <option value="contraception">Using Contraception</option>
+                <option value="counseled">Counseled Only</option>
+            </select>
+            <select class="filter-select">
+                <option value="">Sort By Date</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+        </div>
+
+        <a href="entry-form.html" class="btn-add-new">
+            <i class="bi bi-plus-lg"></i> Add Beneficiary
+        </a>
+    </div>
+
+    <div class="glass-card">
+        <div class="table-responsive">
+            <table class="table-glass">
+                <thead>
+                    <tr>
+                        <th>Serial #</th>
+                        <th>Beneficiary Details</th>
+                        <th>Parity</th>
+                        <th>Status (Pregnant)</th>
+                        <th>Method Used</th>
+                        <th>Referral</th>
+                        <th>Entry Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#1045</td>
+                        <td>
+                            <div class="fw-bold" style="color: var(--text-main);">Sunita Devi</div>
+                            <div class="small text-muted">H: Ramesh Kumar | <i class="bi bi-phone"></i> 9876543210</div>
+                        </td>
+                        <td>2</td>
+                        <td><span class="badge badge-neon badge-warning">No</span></td>
+                        <td><span style="color: var(--text-main);">Antara</span></td>
+                        <td>PHC - Jaipur</td>
+                        <td>Jan 05, 2026</td>
+                        <td class="text-end">
+                            <button class="btn-icon btn-view" title="View Details"><i class="bi bi-eye"></i></button>
+                            <button class="btn-icon btn-edit" title="Edit"><i class="bi bi-pencil"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>#1044</td>
+                        <td>
+                            <div class="fw-bold" style="color: var(--text-main);">Anjali Meena</div>
+                            <div class="small text-muted">H: Vikram Meena | <i class="bi bi-phone"></i> 9988776655</div>
+                        </td>
+                        <td>0</td>
+                        <td><span class="badge badge-neon badge-success">Yes</span></td>
+                        <td><span class="text-muted">--</span></td>
+                        <td><span class="text-muted">No</span></td>
+                        <td>Jan 04, 2026</td>
+                        <td class="text-end">
+                            <button class="btn-icon btn-view" title="View Details"><i class="bi bi-eye"></i></button>
+                            <button class="btn-icon btn-edit" title="Edit"><i class="bi bi-pencil"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>#1043</td>
+                        <td>
+                            <div class="fw-bold" style="color: var(--text-main);">Rekha Singh</div>
+                            <div class="small text-muted">H: Amit Singh | <i class="bi bi-phone"></i> 8877665544</div>
+                        </td>
+                        <td>3</td>
+                        <td><span class="badge badge-neon badge-warning">No</span></td>
+                        <td><span style="color: var(--text-main);">IUCD</span></td>
+                        <td>SC - Udaipur</td>
+                        <td>Jan 03, 2026</td>
+                        <td class="text-end">
+                            <button class="btn-icon btn-view" title="View Details"><i class="bi bi-eye"></i></button>
+                            <button class="btn-icon btn-edit" title="Edit"><i class="bi bi-pencil"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>#1042</td>
+                        <td>
+                            <div class="fw-bold" style="color: var(--text-main);">Pooja Sharma</div>
+                            <div class="small text-muted">H: Deepak Sharma | <i class="bi bi-phone"></i> 7766554433</div>
+                        </td>
+                        <td>1</td>
+                        <td><span class="badge badge-neon badge-warning">No</span></td>
+                        <td><span class="text-muted">None (Counseled)</span></td>
+                        <td><span class="text-muted">No</span></td>
+                        <td>Jan 02, 2026</td>
+                        <td class="text-end">
+                            <button class="btn-icon btn-view" title="View Details"><i class="bi bi-eye"></i></button>
+                            <button class="btn-icon btn-edit" title="Edit"><i class="bi bi-pencil"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>#1041</td>
+                        <td>
+                            <div class="fw-bold" style="color: var(--text-main);">Meera Bai</div>
+                            <div class="small text-muted">H: Kishan Lal | <i class="bi bi-phone"></i> 6655443322</div>
+                        </td>
+                        <td>4</td>
+                        <td><span class="badge badge-neon badge-warning">No</span></td>
+                        <td><span style="color: var(--text-main);">Chhaya</span></td>
+                        <td>PHC - Jodhpur</td>
+                        <td>Jan 01, 2026</td>
+                        <td class="text-end">
+                            <button class="btn-icon btn-view" title="View Details"><i class="bi bi-eye"></i></button>
+                            <button class="btn-icon btn-edit" title="Edit"><i class="bi bi-pencil"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav>
+            <ul class="pagination mb-0">
+                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+﻿@using Vikalp.Models
+@model List<MenuViewModel>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="text-muted small">No menu available</div>
+}
+else
+{
+    <ul class="sidebar-menu list-unstyled">
+        @foreach (var menu in Model)
+        {
+            <li class="menu-item mb-1">
+                <a class="d-flex align-items-center text-decoration-none text-white" href="@menu.Url">
+                    @if (!string.IsNullOrWhiteSpace(menu.MenuIcon))
+                    {
+                        <i class="@menu.MenuIcon me-2"></i>
+                    }
+                    <span>@menu.MenuName</span>
+                </a>
+
+                @if (menu.Children != null && menu.Children.Any())
+                {
+                    <ul class="submenu list-unstyled ms-3 mt-1">
+                        @foreach (var child in menu.Children)
+                        {
+                            <li class="submenu-item mb-1">
+                                <a class="text-decoration-none text-white-50" href="@child.Url">
+                                    @if (!string.IsNullOrWhiteSpace(child.MenuIcon))
+                                    {
+                                        <i class="@child.MenuIcon me-2"></i>
+                                    }
+                                    <span>@child.MenuName</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    </ul>
+}

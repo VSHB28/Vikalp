@@ -1,0 +1,133 @@
+﻿/* --- FORM STYLING --- */
+.content-body {
+    padding: 20px;
+    background: var(--ipas-light);
+    overflow:auto !important;
+}
+
+.form-card {
+    background: var(--ipas-white);
+    border: 2px solid #E8E4E0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+
+.section-title {
+    color: var(--ipas-flamingo);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-label {
+    color: var(--ipas-text-dark);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.form-control, .form-select {
+    background-color: var(--ipas-white);
+    border: 2px solid #E8E4E0;
+    border-radius: 8px;
+    color: var(--ipas-text-dark);
+    padding: 12px;
+    font-size: 0.9rem;
+    height: auto;
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: var(--ipas-white);
+        border-color: var(--ipas-primary);
+        box-shadow: 0 0 0 0.2rem rgba(241, 90, 41, 0.25);
+        color: var(--ipas-text-dark);
+    }
+
+/* Customizing placeholder color */
+::placeholder {
+    color: #999 !important;
+    opacity: 1;
+}
+
+/* Fix select dropdown arrow and background */
+.form-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232C2C2C' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+    .form-select option {
+        background-color: var(--ipas-white);
+        color: var(--ipas-text-dark);
+    }
+
+/* Radio Buttons Customization */
+.form-check-input {
+    background-color: var(--ipas-white);
+    border-color: #E8E4E0;
+}
+
+    .form-check-input:checked {
+        background-color: var(--ipas-primary);
+        border-color: var(--ipas-primary);
+    }
+
+.form-check-label {
+    color: var(--ipas-text-dark);
+    font-size: 0.9rem;
+}
+
+.form-check-input {
+    transform: scale(1);
+}
+
+/* Save Button */
+.btn-neon {
+    background: linear-gradient(45deg, var(--ipas-flamingo), #d14012);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 10px rgba(241, 90, 41, 0.4);
+    transition: all 0.3s;
+    font-size: 0.8rem;
+}
+
+    .btn-neon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(241, 90, 41, 0.6);
+        color: white;
+    }
+
+/* Responsive */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block !important;
+    }
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--ipas-brown);
+    font-size: 1.5rem;
+}

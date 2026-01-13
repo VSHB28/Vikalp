@@ -1,0 +1,164 @@
+﻿@model IEnumerable<Vikalp.Models.DTO.UserDto>
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .um-action {
+    white-space: nowrap;
+}
+    /* Small, focused styles for the user management page */
+    .um-card { border-radius: 0.5rem; box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08); }
+    .um-toolbar { gap: .5rem; display: flex; align-items: center; flex-wrap: wrap; }
+    .um-search { max-width: 320px; }
+    .um-table thead th { background: linear-gradient(90deg,#0d6efd, #6610f2); color: #fff; border: 0; }
+    .um-table tbody tr:hover { background: rgba(13,110,253,0.03); }
+    .um-action .btn { min-width: 44px; }
+    .um-badge-role { font-size: .8rem; padding: .25rem .45rem; border-radius: .25rem; }
+    .um-empty { padding: 2rem; text-align: center; color: #6c757d; }
+
+    /* Ensure buttons and links are clickable */
+    .um-action a,
+    .um-action button {
+        position: relative;
+        z-index: 10;
+        pointer-events: auto;
+    }
+
+    /* Prevent SVGs from blocking clicks */
+    .um-action svg {
+        pointer-events: none;
+    }
+
+    /* Fix table overlay issues */
+    .table-responsive {
+        position: relative;
+        z-index: 1;
+    }
+
+
+</style>
+
+<div class="container py-4">
+    <div class="card um-card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h3 class="mb-0">Users</h3>
+                    <div class="text-muted small">Manage application users and their roles</div>
+                </div>
+
+                <div class="um-toolbar">
+                    <form method="get" asp-action="Index" class="d-flex um-search">
+                        <input name="q" value="@Context.Request.Query["q"]" class="form-control form-control-sm" placeholder="Search by username or email" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-2" title="Search">
+                            <!-- magnifier SVG -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11 6a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"/>
+                                <path d="M12.9 11.3l3.4 3.4-1.6 1.6-3.4-3.4A7 7 0 1 1 12.9 11.3z"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <a class="btn btn-sm btn-primary ms-3" asp-action="Create">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg me-1" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5V7.5H11.5a.5.5 0 0 1 0 1H8.5V11.5a.5.5 0 0 1-1 0V8.5H4.5a.5.5 0 0 1 0-1H7.5V4.5A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                        Create
+                    </a>
+
+                    <a class="btn btn-sm btn-outline-secondary ms-2" asp-action="Index" title="Refresh">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 1v3h3"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            @if (!Model?.Any() ?? true)
+            {
+                <div class="um-empty">
+                    <p class="mb-1">No users found.</p>
+                    <a href="" class="btn btn-outline-primary" asp-action="Create">Add your first user</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover um-table align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width:1%;">#</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th class="text-center" style="width:8%;">Active</th>
+                                <th class="text-end" style="width:18%;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach(var u in Model.Select((value, index) => (value, index)))
+                        {
+                            var user = u.value;
+                            var idx = u.index + 1;
+                            <tr>
+                                <td>@idx</td>
+                                <td>
+                                    <div class="fw-semibold">@user.Username</div>
+                                    <div class="text-muted small">@user.UserId</div>
+                                </td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @if (user.RoleId != null)
+                                    {
+                                        <span class="badge bg-info um-badge-role" title="@(user.RoleId)">@("Role: " + (user.RoleId))</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">No</span>
+                                    }
+                                </td>
+                                <td class="text-end um-action">
+                                        <a href="" class="btn btn-sm btn-outline-primary me-1" asp-action="Edit" asp-route-id="@user.UserId" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-9.793 9.793a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168L12.146.854z"/>
+                                        </svg>
+                                    </a>
+
+                                        <a href="" class="btn btn-sm btn-outline-success me-1" asp-action="Details" asp-route-id="@user.UserId" title="Details">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8z"/>
+                                            <path d="M8 5.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/>
+                                        </svg>
+                                    </a>
+
+                                    <form asp-action="Delete" asp-route-id="@user.UserId" method="post" class="d-inline" onsubmit="return confirm('Delete user \"' + '@user.Username' + '\"?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 5h4a.5.5 0 0 1 .5.5V6H5v-.5z"/>
+                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1 0-2h3l1-1h4l1 1h3a1 1 0 0 1 1 1z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

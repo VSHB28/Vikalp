@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Vikalp.Models.DTO.AshaOrientationDto>
+@{
+    ViewData["Title"] = "ASHA Orientation Entry";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+<h2>ASHA Orientation Entry</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="form-group">
+        <label>ANM Name</label>
+        <input asp-for="ANMname" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Facility Id</label>
+        <input asp-for="FacilityId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Facility NIN</label>
+        <input asp-for="FacilityNIN" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Mobile</label>
+        <input asp-for="Mobile" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>VCAT</label>
+        <input asp-for="VCAT" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Is Orientation Completed?</label>
+        <input asp-for="IsOrientation" type="checkbox" />
+    </div>
+
+    <div class="form-group">
+        <label>State Id</label>
+        <input asp-for="StateId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>District Id</label>
+        <input asp-for="DistrictId" class="form-control" />
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+
+</form>
