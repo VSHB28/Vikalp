@@ -6,7 +6,10 @@ namespace Vikalp.Service.Interfaces
     {
         public bool Success { get; init; }
         public string? Message { get; init; }
-        public System.Guid UserId { get; init; }
+
+        // changed to int to match DB identity
+        public int UserId { get; init; }
+
         public int RoleId { get; init; }
         public string Username { get; init; } = string.Empty;
     }

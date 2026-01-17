@@ -9,7 +9,7 @@
 <form asp-action="Delete" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" name="id" value="@Model.UserId" />
-    <p>Are you sure you want to delete user "<strong>@Model.Username</strong>"?</p>
+    <p>Are you sure you want to delete user "<strong>@Model.MobileNumber</strong>"?</p>
     <button type="submit" class="btn btn-danger">Delete</button>
     <a class="btn btn-secondary" asp-action="Index">Cancel</a>
 </form>

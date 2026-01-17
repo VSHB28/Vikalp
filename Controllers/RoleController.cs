@@ -22,6 +22,7 @@ namespace Vikalp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            Console.WriteLine("RoleController.Create() GET was called");
             return View(new RoleDto());
         }
 
@@ -30,6 +31,7 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(RoleDto model)
         {
+            Console.WriteLine("RoleController.Create() POST was called");
             if (!ModelState.IsValid) return View(model);
 
             _roleService.Create(model);

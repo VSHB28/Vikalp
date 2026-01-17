@@ -73,6 +73,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IDropdownService, DropdownService>();
+
 
 // Register DbContext
 //builder.Services.AddScoped<ApplicationDbContext>();

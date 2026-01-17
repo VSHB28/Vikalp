@@ -1,10 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Vikalp.Data;
 using Vikalp.Service.Interfaces;
 using Vikalp.Helpers;
 using Vikalp.Models;
@@ -15,69 +9,35 @@ namespace Vikalp.Controllers
     [ApiController]
     public class AuthApiController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context;
+        private readonly IAuthService _authService;
+        private readonly JwtTokenHelper _jwtTokenHelper;
 
-        public AuthApiController(ApplicationDbContext context, IConfiguration configuration)
+        public AuthApiController(IAuthService authService, JwtTokenHelper jwtTokenHelper)
         {
-            _configuration = configuration;
-            _context = context;
+            _authService = authService;
+            _jwtTokenHelper = jwtTokenHelper;
         }
 
         [HttpPost("token")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (model == null || !ModelState.IsValid)
+                return BadRequest(new { message = "Mobile number and password required" });
 
-            var encryptedPassword = CommonController.EncryptSHAHash(model.Password);
+            // Authenticate using MobileNumber
+            var result = await _authService.AuthenticateAsync(model.MobileNumber ?? string.Empty, model.Password ?? string.Empty);
+            if (!result.Success)
+                return Unauthorized(new { message = result.Message ?? "Invalid mobile number or password" });
 
-            var user = await _context.ApiUsers
-                .FirstOrDefaultAsync(x =>
-                    x.UserName == model.UserName &&
-                    x.Password == model.Password && //encryptedPassword &&
-                    x.IsActive == true &&
-                    x.Deleted == false);
-
-            if (user == null)
-                return Unauthorized(new { message = "Invalid username or password" });
-
-            var token = GenerateJwtToken(user);
+            var token = _jwtTokenHelper.GenerateToken(result.UserId, result.Username, result.RoleId);
 
             return Ok(new
             {
                 token = token,
-                userId = user.UserId,
-                username = user.UserName,
-                name = user.Name,
-                roleId = user.RoleId
+                userId = result.UserId,
+                username = result.Username,
+                roleId = result.RoleId
             });
-        }
-
-        private string GenerateJwtToken(ApiUser user)
-        {
-            var claims = new[]
-            {
-        new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-        new Claim(ClaimTypes.Name, user.UserName),
-        new Claim(ClaimTypes.Role, user.RoleId.ToString())
-    };
-
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-            );
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddDays(7),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

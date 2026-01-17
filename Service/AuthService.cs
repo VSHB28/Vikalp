@@ -42,12 +42,11 @@ public class AuthService : IAuthService
 
         var row = dt.Rows[0];
 
-        // Try read UserId (guid) if available
-        Guid userId = Guid.Empty;
+        // Read UserId as int (identity)
+        int userId = 0;
         if (dt.Columns.Contains("UserId") && row["UserId"] != DBNull.Value)
         {
-            if (row["UserId"] is Guid g) userId = g;
-            else Guid.TryParse(Convert.ToString(row["UserId"]), out userId);
+            userId = Convert.ToInt32(row["UserId"]);
         }
 
         // RoleId may be int or string; parse to int (fallback 0)

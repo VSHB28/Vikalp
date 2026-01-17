@@ -29,7 +29,8 @@ namespace Vikalp.Helpers
             }
         }
 
-        public string GenerateToken(Guid userId, string username, int roleId)
+        // Accept int userId (identity int in DB)
+        public string GenerateToken(int userId, string username, int roleId)
         {
             var claims = new List<Claim>
             {

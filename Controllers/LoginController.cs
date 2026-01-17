@@ -38,10 +38,11 @@ namespace Vikalp.Controllers
             if (model == null)
                 return View();
 
-            var result = await _authService.AuthenticateAsync(model.UserName ?? string.Empty, model.Password ?? string.Empty);
+            // Authenticate by mobile number now
+            var result = await _authService.AuthenticateAsync(model.MobileNumber ?? string.Empty, model.Password ?? string.Empty);
             if (!result.Success)
             {
-                ModelState.AddModelError("", result.Message ?? "Invalid username or password");
+                ModelState.AddModelError("", result.Message ?? "Invalid mobile number or password");
                 return View(model);
             }
 
