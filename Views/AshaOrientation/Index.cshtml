@@ -1,40 +1,142 @@
 ﻿@model IEnumerable<Vikalp.Models.DTO.AshaOrientationDto>
+
 @{
-    ViewData["Title"] = "ASHA Orientation List";
+    ViewData["Title"] = "ASHA Orientation Records";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
+    var total = Model.Count();
+    var completed = Model.Count(x => x.IsOrientation == 1);
+    var pending = Model.Count(x => x.IsOrientation == 0);
 }
 
-<h2>ASHA Orientation List</h2>
+<div class="container-fluid">
 
-<a asp-action="Create" class="btn btn-success mb-3">Add New</a>
+    <!-- ===== SUMMARY CARDS ===== -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h3 class="text-danger">@total</h3>
+                <p class="mb-0">TOTAL ENTRIES</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h3 class="text-success">@completed</h3>
+                <p class="mb-0">COMPLETED ORIENTATION</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h3 class="text-warning">@pending</h3>
+                <p class="mb-0">PENDING ORIENTATION</p>
+            </div>
+        </div>
+    </div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ANM Name</th>
-            <th>FacilityId</th>
-            <th>Facility NIN</th>
-            <th>Mobile</th>
-            <th>VCAT</th>
-            <th>Orientation</th>
-            <th>StateId</th>
-            <th>DistrictId</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.ANMname</td>
-                <td>@item.FacilityId</td>
-                <td>@item.FacilityNIN</td>
-                <td>@item.Mobile</td>
-                <td>@item.VCAT</td>
-                <td>@(item.IsOrientation == true ? "Yes" : "No")</td>
-                <td>@item.StateId</td>
-                <td>@item.DistrictId</td>
-            </tr>
+    <!-- ===== HEADER BAR ===== -->
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center"
+             style="background: linear-gradient(90deg, #f04d23, #f36b3c); color: white;">
+            <h5 class="mb-0">ASHA Orientation Records</h5>
+            <a href="@Url.Action("Create", "AshaOrientation")" asp-action="Create" class="btn btn-light">
+                <i class="fa fa-plus"></i> Add New Entry
+            </a>
+        </div>
+
+        <!-- ===== FILTERS ===== -->
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <input type="text" id="searchBox" class="form-control"
+                           placeholder="Search by ANM name, mobile..." />
+                </div>
+
+                <div class="col-md-3">
+                    <select class="form-control" id="stateFilter">
+                        <option value="">All States</option>
+                        @* You can bind dynamically later *@
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select class="form-control" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="1">Completed</option>
+                        <option value="0">Pending</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 text-end">
+                    <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">
+                        <i class="fa fa-refresh"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- ===== TABLE ===== -->
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>S.No</th>
+                            <th>ASHA Name</th>
+                            <th>Mobile</th>
+                            <th>Facility</th>
+                            <th>State</th>
+                            <th>District</th>
+                            <th>Pre-Test</th>
+                            <th>Post-Test</th>
+                            <th>Orientation</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable">
+                        @{
+                            int i = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@item.AshaName</td>
+                                <td>@item.AshaMobile</td>
+                                <td>@item.FacilityName</td>
+                                <td>@item.StateName</td>
+                                <td>@item.DistrictName</td>
+                                <td>@item.VCAT_PreTest</td>
+                                <td>@item.VCAT_PostTest</td>
+                                <td>
+                                    @if (item.IsOrientation == 1)
+                                    {
+                                        <span class="badge bg-success">COMPLETED</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">PENDING</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-danger"><i class="fa fa-eye"></i></a>
+                                    <a href="#" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
+                                    <a href="#" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function resetFilters() {
+            document.getElementById("searchBox").value = "";
+            document.getElementById("stateFilter").value = "";
+            document.getElementById("statusFilter").value = "";
         }
-    </tbody>
-</table>
+    </script>
+}

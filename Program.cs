@@ -74,6 +74,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDropdownService, DropdownService>();
+builder.Services.AddScoped<IAshaOrientationService, AshaOrientationService>();
+builder.Services.AddScoped<ISyncDataService, SyncDataService>();
 
 
 // Register DbContext

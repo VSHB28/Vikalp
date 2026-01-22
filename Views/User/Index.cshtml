@@ -93,9 +93,9 @@
                                 </td>
                                 <td>@user.Email</td>
                                 <td>
-                                    @if (user.RoleId != null)
+                                    @if (user.RoleName != null)
                                     {
-                                        <span class="badge bg-info um-badge-role" title="@user.RoleId">Role: @user.RoleId</span>
+                                        <span class="badge bg-info um-badge-role" title="@user.RoleName">@user.RoleName</span>
                                     }
                                     else
                                     {

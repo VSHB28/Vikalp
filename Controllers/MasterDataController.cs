@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text.Json;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using Vikalp.Utilities;
 
 namespace Vikalp.Controllers.Api;
@@ -26,49 +27,78 @@ public class MasterDataController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IActionResult Download()
     {
-        if (!(User?.Identity?.IsAuthenticated ?? false))
+        try
         {
-            return Unauthorized(new { message = "Invalid or expired token" });
-        }
-
-        var userIdClaim = User.Claims.FirstOrDefault(c =>
-            c.Type == "uid" || c.Type == ClaimTypes.NameIdentifier || c.Type == "sub");
-
-        var roleClaim = User.Claims.FirstOrDefault(c =>
-            c.Type == ClaimTypes.Role || c.Type == "RoleId");
-
-        int? userIdInt = null;
-        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var parsedId))
-        {
-            userIdInt = parsedId;
-        }
-
-        int? roleIdInt = null;
-        if (roleClaim != null && int.TryParse(roleClaim.Value, out var parsedRole))
-        {
-            roleIdInt = parsedRole;
-        }
-
-        var connStr = _config.GetConnectionString("DefaultConnection");
-        string jsonResult;
-
-        using (var conn = new SqlConnection(connStr))
-        using (var cmd = new SqlCommand("dbo.sp_GetMasterData", conn))
-        {
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int)
+            if (!(User?.Identity?.IsAuthenticated ?? false))
             {
-                Value = userIdInt.HasValue ? (object)userIdInt.Value : DBNull.Value
-            });
-            cmd.Parameters.Add(new SqlParameter("@RoleId", SqlDbType.Int)
+                return Unauthorized(new { message = "Invalid or expired token" });
+            }
+
+            var userIdClaim = User.Claims.FirstOrDefault(c =>
+                c.Type == "uid" || c.Type == ClaimTypes.NameIdentifier || c.Type == "sub");
+
+            var roleClaim = User.Claims.FirstOrDefault(c =>
+                c.Type == ClaimTypes.Role || c.Type == "RoleId");
+
+            int? userIdInt = null;
+            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var parsedId))
             {
-                Value = roleIdInt.HasValue ? (object)roleIdInt.Value : DBNull.Value
-            });
+                userIdInt = parsedId;
+            }
 
-            conn.Open();
-            jsonResult = (string)cmd.ExecuteScalar(); // Stored proc returns JSON string
+            int? roleIdInt = null;
+            if (roleClaim != null && int.TryParse(roleClaim.Value, out var parsedRole))
+            {
+                roleIdInt = parsedRole;
+            }
+
+            var connStr = _config.GetConnectionString("DefaultConnection");
+            string jsonResult = "";
+
+            using (var conn = new SqlConnection(connStr))
+            using (var cmd = new SqlCommand("dbo.sp_GetMasterData", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int)
+                {
+                    Value = userIdInt.HasValue ? (object)userIdInt.Value : DBNull.Value
+                });
+
+                cmd.Parameters.Add(new SqlParameter("@RoleId", SqlDbType.Int)
+                {
+                    Value = roleIdInt.HasValue ? (object)roleIdInt.Value : DBNull.Value
+                });
+
+                conn.Open();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var sb = new StringBuilder();
+
+                    while (reader.Read())
+                    {
+                        sb.Append(reader.GetString(0));
+                    }
+
+                    jsonResult = sb.ToString();
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(jsonResult))
+            {
+                return Ok(new { message = "No data found", data = new object[] { } });
+            }
+
+            return Content(jsonResult, "application/json");
         }
-
-        return Content(jsonResult, "application/json");
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                message = "Internal server error",
+                error = ex.Message
+            });
+        }
     }
 }

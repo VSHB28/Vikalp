@@ -1,6 +1,6 @@
-﻿@model Vikalp.Models.DTO.RoleDto
+@model Vikalp.Models.DTO.RoleDto
 @{
-    ViewData["Title"] = "Create Role";
+    ViewData["Title"] = "Add Role";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -11,25 +11,31 @@
 
             <form asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                 <div class="mb-3">
-                    <label class="form-label">Role Name</label>
+                    <label asp-for="RoleName" class="form-label">Role Name</label>
                     <input asp-for="RoleName" class="form-control" />
                     <span asp-validation-for="RoleName" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Role Type</label>
+                    <label asp-for="RoleType" class="form-label">Role Type</label>
                     <input asp-for="RoleType" class="form-control" />
                     <span asp-validation-for="RoleType" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Description</label>
+                    <label asp-for="Description" class="form-label">Description</label>
                     <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
+
                 <div class="form-check mb-3">
                     <input asp-for="IsActive" class="form-check-input" />
-                    <label class="form-check-label">Is Active</label>
+                    <label asp-for="IsActive" class="form-check-label">Is Active</label>
                 </div>
+
                 <button class="btn btn-primary" type="submit">Create</button>
                 <a class="btn btn-secondary" asp-action="Index" asp-controller="Role">Cancel</a>
             </form>

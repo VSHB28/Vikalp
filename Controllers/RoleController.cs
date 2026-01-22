@@ -22,8 +22,7 @@ namespace Vikalp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            Console.WriteLine("RoleController.Create() GET was called");
-            return View(new RoleDto());
+            return View("AddRole", new RoleDto());
         }
 
         // POST: /Role/Create
@@ -31,8 +30,7 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(RoleDto model)
         {
-            Console.WriteLine("RoleController.Create() POST was called");
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid) return View("AddRole", model);
 
             _roleService.Create(model);
             return RedirectToAction(nameof(Index));
@@ -44,7 +42,7 @@ namespace Vikalp.Controllers
         {
             var role = _roleService.GetById(id);
             if (role == null) return NotFound();
-            return View(role);
+            return View("UpdateRole", role);
         }
 
         // POST: /Role/Edit
@@ -52,7 +50,7 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(RoleDto model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid) return View("UpdateRole", model);
 
             _roleService.Update(model);
             return RedirectToAction(nameof(Index));

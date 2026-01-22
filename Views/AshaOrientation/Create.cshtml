@@ -1,57 +1,543 @@
-﻿@model IEnumerable<Vikalp.Models.DTO.AshaOrientationDto>
+﻿@using Vikalp.Models.DTO
+@model Vikalp.Models.DTO.AshaOrientationCreateDto
 @{
     ViewData["Title"] = "ASHA Orientation Entry";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-
 }
 
-<h2>ASHA Orientation Entry</h2>
+<form asp-action="Create" method="post" id="orientationForm">
+    @Html.AntiForgeryToken()
 
-<form asp-action="Create" method="post">
+    <div class="form-card">
+        <div class="section-title">
+            <i class="bi bi-gear"></i>
+            Select Facility Type
+        </div>
 
-    <div class="form-group">
-        <label>ANM Name</label>
-        <input asp-for="ANMname" class="form-control" />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="facility-type-card" id="interventionCard">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="intervention"
+                           value="1"
+                           name="IsIntervention"
+                           onchange="handleFacilityTypeChange()"
+                           checked />
+
+                    <label class="form-check-label" for="intervention">Intervention</label>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="facility-type-card" id="nonInterventionCard">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="nonIntervention"
+                           value="0"
+                           name="IsIntervention"
+                           onchange="handleFacilityTypeChange()" />
+
+                    <label class="form-check-label" for="nonIntervention">Non-Intervention</label>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Facility Id</label>
-        <input asp-for="FacilityId" class="form-control" />
+    <h2>ASHA Orientation Entry</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <label>State</label>
+            <select name="StateId" class="form-control" id="StateId">
+                <option value="">-- Select State --</option>
+                @foreach (var s in ViewBag.States)
+                {
+                    <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>District</label>
+            <select name="DistrictId" class="form-control" id="DistrictId">
+                <option value="">-- Select District --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Block</label>
+            <select name="BlockId" class="form-control" id="BlockId">
+                <option value="">-- Select Block --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3" id="facilityDropdownDiv">
+            <label>Facility</label>
+            <select name="FacilityId" class="form-control" id="FacilityId">
+                <option value="">-- Select Facility --</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 d-none" id="manualFacilityDiv">
+            <label>Facility</label>
+            <input name="FacilityName" class="form-control" placeholder="Enter Facility name" />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Facility NIN</label>
-        <input asp-for="FacilityNIN" class="form-control" />
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label>Facility NIN</label>
+            <input name="NIN" id="NinNumber" class="form-control" placeholder="Enter NIN" />
+        </div>
+
+        <div class="col-md-3">
+            <label>Orientation Date</label>
+            <input name="DateofOrientation" type="date" class="form-control" />
+            <span asp-validation-for="DateofOrientation" class="text-danger"></span>
+
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Mobile</label>
-        <input asp-for="Mobile" class="form-control" />
+    <button type="button" class="btn btn-success mt-3" id="addRowBtn">
+        + Add ASHA
+    </button>
+
+    <hr />
+
+    <!-- ASHA ROWS WILL COME HERE (Part 2B) -->
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ASHA</th>
+                <th>Mobile</th>
+                <th>VCAT Pre</th>
+                <th>VCAT Post</th>
+                <th>Oriented</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="ashaRows">
+        </tbody>
+    </table>
+    <hr />
+
+    @* <button type="submit" class="btn btn-primary">Save</button> *@
+    <button type="button" class="btn btn-primary" onclick="saveOrientation()">Save</button>
+    <a href="@Url.Action("Index", "AshaOrientation")" class="btn btn-secondary">Back</a>
+
+
+    <div class="modal fade" id="ashaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add ASHA</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Facility Type <span class="text-danger">*</span></label>
+                        <select id="modalFacilityType" class="form-control">
+                            <option value="">-- Select --</option>
+                            <option value="intervention">Intervention</option>
+                            <option value="non-intervention">Non-Intervention</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="modalFacilityDiv">
+                        <label>Facility</label>
+                        <input type="text" id="facilitySearch" class="form-control" placeholder="Search facility..." />
+                        <input type="hidden" id="selectedFacilityId" />
+                        <div id="facilityResults" class="list-group"></div>
+                    </div>
+
+                    <div class="mb-3" id="modalAshaDropdownDiv">
+                        <label>ASHA</label>
+                        <select id="modalAsha" class="form-control">
+                            <option value="">-- Select ASHA --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 d-none" id="modalAshaTextDiv">
+                        <label>ASHA Name</label>
+                        <input type="text" id="modalAshaText" class="form-control" placeholder="Enter ASHA name" />
+                    </div>
+                    <div class="mb-3 d-none" id="modalAshaMobDiv">
+                        <label>Mobile Number</label>
+                        <input type="text" id="modelMobNumber" class="form-control" placeholder="Enter Mobile Number" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modalOkBtn">OK</button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>VCAT</label>
-        <input asp-for="VCAT" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label>Is Orientation Completed?</label>
-        <input asp-for="IsOrientation" type="checkbox" />
-    </div>
-
-    <div class="form-group">
-        <label>State Id</label>
-        <input asp-for="StateId" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label>District Id</label>
-        <input asp-for="DistrictId" class="form-control" />
-    </div>
-
-    <br />
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
 
 </form>
+<script type="text/template" id="ashaRowTemplate">
+    <tr>
+        <td class="rowIndex"></td>
+
+        <td>
+            <input type="hidden" name="Attendees[__index__].AshaId" class="ashaIdHidden" />
+
+    <input name="Attendees[__index__].AshaName" class="form-control ashaNameInput" readonly />
+        </td>
+
+        <td>
+            <input name="Attendees[__index__].AshaMobile" class="form-control mobileInput" readonly />
+        </td>
+
+        <td>
+            <input name="Attendees[__index__].VCAT_PreTest" type="number" class="form-control" />
+        </td>
+
+        <td>
+            <input name="Attendees[__index__].VCAT_PostTest" type="number" class="form-control" />
+        </td>
+
+        <td class="text-center">
+                <input type="hidden" name="Attendees[__index__].IsOrientation" value="false" />
+    <input name="Attendees[__index__].IsOrientation" type="checkbox" value="true" />
+
+        </td>
+
+        <td>
+            <button type="button" class="btn btn-danger btn-sm removeRow">Remove</button>
+        </td>
+    </tr>
+</script>
+@section Scripts {
+    <script>
+        let rowIndex = 0;
+
+        // ---------------- FACILITY TYPE TOGGLE ----------------
+        function handleFacilityTypeChange() {
+            let isIntervention = document.getElementById("intervention").checked;
+            let facilityDropdown = document.getElementById("facilityDropdownDiv");
+            let manualFacility = document.getElementById("manualFacilityDiv");
+
+            if (isIntervention) {
+                facilityDropdown.classList.remove("d-none");
+                manualFacility.classList.add("d-none");
+            } else {
+                facilityDropdown.classList.add("d-none");
+                manualFacility.classList.remove("d-none");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            handleFacilityTypeChange();
+        });
+
+        // ---------------- OPEN MODAL ----------------
+        document.getElementById("addRowBtn").addEventListener("click", function () {
+            let modal = new bootstrap.Modal(document.getElementById("ashaModal"));
+            modal.show();
+        });
+
+        // ---------------- ADD ROW ON OK ----------------
+                document.addEventListener("DOMContentLoaded", function () {
+
+                    document.getElementById("modalOkBtn").addEventListener("click", function () {
+            let type = document.getElementById("modalFacilityType").value;
+
+            if (!type) {
+                alert("Please select Facility Type");
+                return;
+            }
+
+            if (type === "intervention") {
+                let ashaSelect = document.getElementById("modalAsha");
+                let ashaId = ashaSelect.value;
+
+                if (!ashaId) {
+                    alert("Please select ASHA");
+                    return;
+                }
+
+                fetch(`/AshaOrientation/GetAshaDetailsSearch?ashaId=${ashaId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        addRowWithData(ashaId, data.ashaName, data.mobileNumber);
+
+                        let modal = bootstrap.Modal.getInstance(document.getElementById("ashaModal"));
+                        modal.hide();
+                    });
+            }
+            else if (type === "non-intervention") {
+                let ashaName = document.getElementById("modalAshaText").value;
+                let mobile = document.getElementById("modelMobNumber").value;
+                if (!ashaName) {
+                    alert("Please enter ASHA name");
+                    return;
+                }
+
+                addRowWithData(0, ashaName, mobile);
+
+                let modal = bootstrap.Modal.getInstance(document.getElementById("ashaModal"));
+                modal.hide();
+            }
+        });
+
+
+        });
+
+        function addRowWithData(ashaId, ashaName, mobile) {
+            let template = document.getElementById("ashaRowTemplate").innerHTML;
+            template = template.replaceAll("__index__", rowIndex);
+
+            let tbody = document.getElementById("ashaRows");
+            let tempDiv = document.createElement("tbody");
+            tempDiv.innerHTML = template;
+
+            let row = tempDiv.firstElementChild;
+                    row.querySelector(".ashaIdHidden").value = ashaId;
+        row.querySelector(".ashaNameInput").value = ashaName;
+        row.querySelector(".mobileInput").value = mobile;
+
+            tbody.appendChild(row);
+            updateRowNumbers();
+            rowIndex++;
+        }
+
+        // ---------------- REMOVE ROW ----------------
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeRow")) {
+                e.target.closest("tr").remove();
+                updateRowNumbers();
+            }
+        });
+
+        function updateRowNumbers() {
+            document.querySelectorAll("#ashaRows tr").forEach((row, i) => {
+                row.querySelector(".rowIndex").innerText = i + 1;
+            });
+        }
+
+        // ---------------- FACILITY SEARCH (DEBOUNCE) ----------------
+        let typingTimer;
+        let doneTypingInterval = 1200;
+
+        document.getElementById("facilitySearch").addEventListener("keyup", function () {
+            clearTimeout(typingTimer);
+            let term = this.value;
+
+            if (term.length < 1) return;
+
+            typingTimer = setTimeout(function () {
+                searchFacilities(term);
+            }, doneTypingInterval);
+        });
+
+        function searchFacilities(term) {
+            fetch(`/AshaOrientation/SearchFacilities?term=${term}`)
+                .then(res => res.json())
+                .then(data => {
+                    let list = document.getElementById("facilityResults");
+                    list.innerHTML = "";
+
+                    data.forEach(x => {
+                        let item = document.createElement("a");
+                        item.className = "list-group-item list-group-item-action";
+                        item.textContent = x.name;
+                        item.onclick = function () {
+                            selectFacility(x.id, x.name);
+                        };
+                        list.appendChild(item);
+                    });
+                });
+        }
+
+        function selectFacility(id, name) {
+            document.getElementById("facilitySearch").value = name;
+            document.getElementById("selectedFacilityId").value = id;
+            document.getElementById("facilityResults").innerHTML = "";
+            loadAshasByFacility(id);
+        }
+
+        function loadAshasByFacility(facilityId) {
+            fetch(`/AshaOrientation/GetAshasByFacility?facilityId=${facilityId}`)
+                .then(res => res.json())
+                .then(data => {
+                    let ddl = document.getElementById("modalAsha");
+                    ddl.innerHTML = '<option value="">-- Select ASHA --</option>';
+
+                    data.forEach(x => {
+                        let opt = document.createElement("option");
+                        opt.value = x.id;
+                        opt.textContent = x.name;
+                        ddl.appendChild(opt);
+                    });
+                });
+        }
+
+        // ---------------- CASCADING DROPDOWNS ----------------
+
+        document.getElementById("StateId").addEventListener("change", function () {
+            let stateId = this.value;
+            resetDropdown("DistrictId", "-- Select District --");
+            resetDropdown("BlockId", "-- Select Block --");
+            resetDropdown("FacilityId", "-- Select Facility --");
+
+            if (!stateId) return;
+
+            fetch(`/AshaOrientation/GetDistricts?stateId=${stateId}`)
+                .then(res => res.json())
+                .then(data => {
+                    fillDropdown("DistrictId", data, "id", "name");
+                });
+        });
+
+        document.getElementById("DistrictId").addEventListener("change", function () {
+            let districtId = this.value;
+            resetDropdown("BlockId", "-- Select Block --");
+            resetDropdown("FacilityId", "-- Select Facility --");
+
+            if (!districtId) return;
+
+            fetch(`/AshaOrientation/GetBlocks?districtId=${districtId}`)
+                .then(res => res.json())
+                .then(data => {
+                    fillDropdown("BlockId", data, "id", "name");
+                });
+        });
+
+        document.getElementById("BlockId").addEventListener("change", function () {
+            let blockId = this.value;
+            resetDropdown("FacilityId", "-- Select Facility --");
+
+            if (!blockId) return;
+
+            fetch(`/AshaOrientation/GetFacilities?blockId=${blockId}`)
+                .then(res => res.json())
+                .then(data => {
+                    fillDropdown("FacilityId", data, "id", "name");
+                });
+        });
+
+               document.getElementById("FacilityId").addEventListener("change", function () {
+            let facilityId = this.value;
+
+            if (!facilityId) {
+                document.getElementById("NinNumber").value = "";
+                return;
+            }
+
+            fetch(`/AshaOrientation/GetFacilityById?facilityId=${facilityId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById("NinNumber").value = data.ninNumber || "";
+                    }
+                });
+        });
+
+
+        function resetDropdown(id, placeholder) {
+            let ddl = document.getElementById(id);
+            ddl.innerHTML = `<option value="">${placeholder}</option>`;
+        }
+
+        function fillDropdown(id, data, valueField, textField) {
+            let ddl = document.getElementById(id);
+            data.forEach(x => {
+                let opt = document.createElement("option");
+                opt.value = x[valueField];
+                opt.text = x[textField];
+                ddl.appendChild(opt);
+            });
+        }
+
+                        document.getElementById("modalFacilityType").addEventListener("change", function () {
+            let type = this.value;
+
+            let facilityDiv = document.getElementById("modalFacilityDiv");
+            let ashaDropdownDiv = document.getElementById("modalAshaDropdownDiv");
+            let ashaTextDiv = document.getElementById("modalAshaTextDiv");
+            let ashaMobDiv = document.getElementById("modalAshaMobDiv");
+
+
+            if (type === "intervention") {
+                facilityDiv.classList.remove("d-none");
+                ashaDropdownDiv.classList.remove("d-none");
+                ashaTextDiv.classList.add("d-none");
+                ashaMobDiv.classList.add("d-none");
+            }
+            else if (type === "non-intervention") {
+                facilityDiv.classList.add("d-none");
+                ashaDropdownDiv.classList.add("d-none");
+                ashaTextDiv.classList.remove("d-none");
+                ashaMobDiv.classList.remove("d-none");
+            }
+            else {
+                facilityDiv.classList.add("d-none");
+                ashaDropdownDiv.classList.add("d-none");
+                ashaTextDiv.classList.add("d-none");
+                ashaMobDiv.classList.add("d-none");
+            }
+        });
+
+                function saveOrientation() {
+
+                        let facilitySelect = document.getElementById("FacilityId");
+        let selectedFacilityName =
+            facilitySelect.selectedIndex > 0
+                ? facilitySelect.options[facilitySelect.selectedIndex].text
+                : null;
+
+            let model = {
+                StateId: document.getElementById("StateId").value,
+                DistrictId: document.getElementById("DistrictId").value,
+                BlockId: document.getElementById("BlockId").value,
+                FacilityId: document.getElementById("FacilityId").value || null,
+                FacilityName: selectedFacilityName || document.querySelector('[name="FacilityName"]')?.value,
+                Venue: document.querySelector('[name="FacilityName"]')?.value || null,
+                IsIntervention: document.querySelector('input[name="IsIntervention"]:checked').value,
+                DateofOrientation: document.querySelector('[name="DateofOrientation"]').value,
+                NIN: document.getElementById("NinNumber").value || null,
+                Attendees: []
+            };
+
+            document.querySelectorAll("#ashaRows tr").forEach(row => {
+                let attendee = {
+                    AshaId: row.querySelector('.ashaIdHidden')?.value || null,
+                    AshaName: row.querySelector('.ashaNameInput')?.value || null,
+                    AshaMobile: row.querySelector('.mobileInput')?.value || null,
+                    VCAT_PreTest: row.querySelector('[name*="VCAT_PreTest"]')?.value || null,
+                    VCAT_PostTest: row.querySelector('[name*="VCAT_PostTest"]')?.value || null,
+                    IsOrientation: row.querySelector('[type="checkbox"]')?.checked || false
+                };
+
+                model.Attendees.push(attendee);
+            });
+
+            fetch('/AshaOrientation/CreateJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(model)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Saved successfully!");
+                    window.location.href = "/AshaOrientation/Index";
+                } else {
+                    alert("Save failed");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error occurred");
+            });
+        }
+
+    </script>
+}
+
+

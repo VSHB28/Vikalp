@@ -28,5 +28,7 @@ namespace Vikalp.Models.DTO
 
         public DateTime UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
+
+        public string? RoleName { get; set; }
     }
 }

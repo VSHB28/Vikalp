@@ -48,6 +48,7 @@ public class UserService : IUserService
             MobileNumber = r.Field<string>("MobileNumber"),
             Email = r.Field<string>("Email"),
             RoleId = r.Field<int?>("RoleId"),
+            RoleName = r.Field<string>("RoleName"),
             IsActive = r.Field<bool>("IsActive"),
             GenderId = r.Field<int?>("GenderId"),
             LanguageId = r.Field<string>("LanguageId")
@@ -67,6 +68,7 @@ public class UserService : IUserService
             Email = row.Field<string>("Email"),
             FullName = row.Field<string>("FullName"),
             RoleId = row.Field<int?>("RoleId"),
+            RoleName = row.Field<string>("RoleName"),
             IsActive = row.Field<bool>("IsActive"),
             GenderId = row.Field<int?>("GenderId"),
             LanguageId = row.Field<string>("LanguageId")

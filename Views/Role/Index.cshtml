@@ -7,72 +7,72 @@
 <div class="container py-4">
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3>Roles</h3>
-                <a href="@Url.Action("Create", "Role")" 
-                   class="btn btn-primary" 
-                   style="z-index: 1000; position: relative;"
-                   onclick="console.log('Create Role button clicked! URL: @Url.Action("Create", "Role")'); return true;">
-                    Create Role
+            <div class="d-flex justify-content-between mb-3">
+                <h3 class="mb-0">Roles</h3>
+                <a href="@Url.Action("Create", "Role")" class="btn btn-sm btn-primary ms-3" style="z-index: 1000; position: relative;">
+                    Add Role
                 </a>
             </div>
 
-            @* <div class="alert alert-info">
-                <strong>Debug Info:</strong> Create URL = @Url.Action("Create", "Role")
-            </div> *@
-
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Active</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @if (!Model?.Any() ?? true)
-                {
-                    <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
-                            No roles found. <a href="@Url.Action("Create", "Role")">Create your first role</a>
-                        </td>
-                    </tr>
-                }
-                else
-                {
-                    @foreach (var r in Model)
+            @if (!Model?.Any() ?? true)
+            {
+                <div class="text-muted">No roles found.</div>
+            }
+            else
+            {
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Role Name</th>
+                            <th>Type</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var role in Model.Select((r, idx) => (r, idx)))
                     {
                         <tr>
-                            <td>@r.RoleId</td>
-                            <td>@r.RoleName</td>
-                            <td>@r.RoleType</td>
-                            <td>@r.Description</td>
-                            <td>
-                                @if (r.IsActive)
-                                {
-                                    <span class="badge bg-success">Yes</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary">No</span>
-                                }
-                            </td>
-                            <td>
-                                <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Edit", "Role", new { id = r.RoleId })">Edit</a>
-                                <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Details", "Role", new { id = r.RoleId })">Details</a>
-                                <form method="post" asp-action="Delete" asp-controller="Role" asp-route-id="@r.RoleId" class="d-inline" onsubmit="return confirm('Are you sure you want to delete role @r.RoleName?');">
+                            <td>@(role.idx + 1)</td>
+                            <td>@role.r.RoleName</td>
+                            <td>@role.r.RoleType</td>
+                            <td class="text-center">@((role.r.IsActive) ? "Yes" : "No")</td>
+                            <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-primary me-1"
+                                       asp-controller="Role"
+                                       onclick="goToEdit(@role.r.RoleId)"
+                                       asp-route-id="@role.r.RoleId"
+                                       title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <input type="hidden" asp-for="UserId" />
+                                    <a class="btn btn-sm btn-outline-success me-1"
+                                       asp-controller="Role"
+                                       onclick="goToDetails(@role.r.RoleId)"
+                                       asp-route-id="@role.r.RoleId"
+                                       title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                <form asp-action="Delete" asp-controller="Role" asp-route-id="@role.r.RoleId" method="post" class="d-inline" onsubmit="return confirm('Delete role \"' + '@role.r.RoleName' + '\"?');">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                                 </form>
                             </td>
                         </tr>
                     }
-                }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            }
         </div>
     </div>
 </div>
+<script>
+    function goToEdit(id) {
+        window.location.href = '/Role/Edit/' + id;
+    }
+    function goToDetails(id) {
+        window.location.href = '/Role/Details/' + id;
+    }
+</script>

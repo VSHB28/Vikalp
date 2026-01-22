@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<ApiUser> ApiUsers { get; set; }
     public DbSet<TblAshaOrientation> TblAshaOrientations { get; set; }
+    public DbSet<OrientationVenueDetails> OrientationVenueDetails { get; set; }
     private string ConnectionString =>
         _config.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("DefaultConnection is not configured.");
