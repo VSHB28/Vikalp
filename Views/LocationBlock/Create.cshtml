@@ -1,0 +1,100 @@
+﻿@model LocationBlockDto
+@{
+    ViewData["Title"] = "Add Block";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card">
+        <div class="card-body">
+
+          
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Add Block</h3>
+                <a href="/LocationBlock/Index" class="btn btn-secondary">← Back to List</a>
+            </div>
+
+        
+            <form asp-action="Create" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="RegionId" id="RegionId" />
+                <input type="hidden" name="DistrictId" id="DistrictId" />
+
+
+                <div class="col-md-3">
+                    <label class="form-label">State</label>
+                    <select id="stateDropdown" class="form-select">
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">District</label>
+                    <select id="districtDropdown" class="form-select">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+
+
+                <div class="col-md-3">
+                    <label class="form-label">Block Name</label>
+                    <input name="BlockName" class="form-control" required />
+                </div>
+
+   
+                <div class="col-md-3">
+                    <label class="form-label">Block Code</label>
+                    <input name="BlockCode" class="form-control" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Is Active</label><br />
+                    <input type="checkbox" name="IsActive" value="true" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Aspirational</label><br />
+                    <input type="checkbox" name="IsAspirational" value="true" />
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="/LocationBlock/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $('#stateDropdown').change(function () {
+
+        const stateId = $(this).val();
+
+        $('#RegionId').val(stateId);
+        $('#districtDropdown').html('<option value="">Select District</option>');
+        $('#DistrictId').val('');
+
+        if (!stateId) return;
+
+        $.getJSON('/LocationBlock/GetDistricts', { stateId }, function (data) {
+            $.each(data, function (i, d) {
+                $('#districtDropdown').append(
+                    `<option value="${d.id}">${d.name}</option>`
+                );
+            });
+        });
+    });
+
+    $('#districtDropdown').change(function () {
+        $('#DistrictId').val($(this).val());
+    });
+</script>

@@ -32,7 +32,7 @@ namespace Vikalp.Models
 
         public int? RoleId { get; set; }
 
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

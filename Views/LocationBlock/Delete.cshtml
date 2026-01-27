@@ -1,0 +1,21 @@
+﻿@model LocationBlockDto
+@{
+    ViewData["Title"] = "Delete Block";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3>Delete Block</h3>
+
+<div class="alert alert-warning">
+    Are you sure you want to delete the block:
+    <strong>@Model.BlockName</strong>?
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@Model.BlockId" />
+
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -89,7 +89,7 @@ public class SyncDataService : ISyncDataService
                     NIN = model.NIN,
                     VCAT_PreTest = row.VCAT_PreTest,
                     VCAT_PostTest = row.VCAT_PostTest,
-                    IsOrientation = row.IsOrientation ? 1 : 0,
+                    IsOrientation = row.IsOrientation,
                     CreatedOn = DateTime.Now,
                     CreatedBy = userId
                 };

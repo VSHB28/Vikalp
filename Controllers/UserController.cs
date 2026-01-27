@@ -19,6 +19,7 @@ namespace Vikalp.Controllers
 
         public IActionResult Index()
         {
+            LoadMasters();
             var users = _service.GetAll();
             return View(users);
         }
@@ -33,12 +34,7 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(UserDto model)
         {
-            var selectedLanguages = Request.Form["LanguageId"].ToList();
-
-            if (selectedLanguages.Any())
-            {
-                model.LanguageId = string.Join(",", selectedLanguages);
-            }
+            model.LanguageId = Request.Form["LanguageId"].ToString();
 
             if (!ModelState.IsValid)
             {
@@ -49,6 +45,7 @@ namespace Vikalp.Controllers
             _service.Create(model);
             return RedirectToAction(nameof(Index));
         }
+
 
         public IActionResult Edit(int id)
         {
@@ -62,12 +59,7 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(UserDto model)
         {
-            var selectedLanguages = Request.Form["LanguageId"].ToList();
-
-            if (selectedLanguages.Any())
-            {
-                model.LanguageId = string.Join(",", selectedLanguages);
-            }
+            model.LanguageId = Request.Form["LanguageId"].ToString();
 
             foreach (var key in ModelState.Keys)
             {
@@ -103,12 +95,31 @@ namespace Vikalp.Controllers
             _service.Delete(id);
             return RedirectToAction(nameof(Index));
         }
+
+
+        public IActionResult GetDistricts(int stateId)
+        {
+            var data = _dropdownService.GetDistricts(stateId);
+            return Json(data);
+        }
+
+        public IActionResult GetBlocks(int districtId)
+        {
+            var data = _dropdownService.GetBlocks(districtId);
+            return Json(data);
+        }
+
+        public IActionResult GetFacilities(int blockId)
+        {
+            var data = _dropdownService.GetFacilities(blockId);
+            return Json(data);
+        }
         private void LoadMasters()
         {
+            ViewBag.States = _dropdownService.GetStates();
             ViewBag.Roles = _dropdownService.GetRoles();
             ViewBag.Languages = _dropdownService.GetLanguages();
             ViewBag.Genders = _dropdownService.GetGenders();
         }
-
     }
 }

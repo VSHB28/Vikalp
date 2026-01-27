@@ -131,3 +131,9 @@
     color: var(--ipas-brown);
     font-size: 1.5rem;
 }
+.form-control-sm {
+    border-color: #ffbfab !important;
+}
+.form-control {
+    border-color: #ffbfab !important;
+}

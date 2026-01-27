@@ -7,7 +7,9 @@ using System.Text;
 using Vikalp.Data;
 using Vikalp.Helpers;
 using Vikalp.Service;
+using Vikalp.Service.Implementations;
 using Vikalp.Service.Interfaces;
+using Vikalp.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +78,9 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDropdownService, DropdownService>();
 builder.Services.AddScoped<IAshaOrientationService, AshaOrientationService>();
 builder.Services.AddScoped<ISyncDataService, SyncDataService>();
-
+builder.Services.AddScoped<ILocationDistrictService, LocationDistrictService>();
+builder.Services.AddScoped<ILocationBlockService, LocationBlockService>();
+builder.Services.AddScoped<IFacilityService, FacilityService>();
 
 // Register DbContext
 //builder.Services.AddScoped<ApplicationDbContext>();

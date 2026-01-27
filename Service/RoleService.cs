@@ -25,7 +25,7 @@ public class RoleService : IRoleService
             RoleName = r.Field<string>("RoleName"),
             RoleType = r.Field<string>("RoleType"),
             Description = r.Field<string>("Description"),
-            IsActive = r.Field<bool>("IsActive")
+            IsActive = r.Field<int>("IsActive")
         }).ToList();
     }
 
@@ -41,7 +41,7 @@ public class RoleService : IRoleService
             RoleName = row.Field<string>("RoleName"),
             RoleType = row.Field<string>("RoleType"),
             Description = row.Field<string>("Description"),
-            IsActive = row.Field<bool>("IsActive")
+            IsActive = row.Field<int>("IsActive")
         };
     }
 

@@ -1,0 +1,117 @@
+﻿@model LocationBlockDto
+@using Vikalp.Models.DTO
+
+@{
+    ViewData["Title"] = "Edit Block";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card">
+        <div class="card-body">
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Edit Block</h3>
+                <a href="/LocationBlock/Index" class="btn btn-secondary">← Back to List</a>
+            </div>
+
+            <!-- Form -->
+            <form method="post" action="/LocationBlock/Edit" class="row g-3">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="BlockId" value="@Model.BlockId" />
+             
+         
+                <select id="stateDropdown" name="RegionId" class="form-select">
+                    <option value="">Select State</option>
+                    @foreach (var s in ViewBag.States)
+                    {
+                        <option value="@s.Id" @(s.Id == ViewBag.SelectedStateId ? "selected" : "")>
+                            @s.Name
+                        </option>
+                    }
+                </select>
+
+
+                <select id="districtDropdown" name="DistrictId" class="form-select">
+                    <option value="">Select District</option>
+                </select>
+
+
+                <div class="col-md-3">
+                    <label class="form-label">Block Name</label>
+                    <input name="BlockName" class="form-control" value="@Model.BlockName" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Block Code</label>
+                    <input name="BlockCode" class="form-control" value="@Model.BlockCode" />
+                </div>
+
+                <input type="hidden" name="IsActive" value="false" />
+                <input type="hidden" name="IsAspirational" value="false" />
+
+                <div class="col-md-3">
+                    <label class="form-label">Is Active</label><br />
+                    <input type="checkbox" name="IsActive" value="true"
+                           @(Model.IsActive ? "checked" : "") />
+                </div>
+
+ 
+                <div class="col-md-3">
+                    <label class="form-label">Aspirational</label><br />
+                    <input type="checkbox" name="IsAspirational" value="true"
+                           @(Model.IsAspirational ? "checked" : "") />
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/LocationBlock/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+     $(document).ready(function () {
+
+        const selectedStateId = '@Model.RegionId';
+        const selectedDistrictId = '@Model.DistrictId';
+
+        if (selectedStateId) {
+            loadDistricts(selectedStateId, selectedDistrictId);
+        }
+
+        $('#stateDropdown').change(function () {
+            const stateId = $(this).val();
+
+            $('#districtDropdown').html('<option value="">Select District</option>');
+
+            if (stateId) {
+                loadDistricts(stateId, null);
+            }
+        });
+    });
+
+    function loadDistricts(stateId, selectedDistrictId) {
+        $.getJSON('/LocationBlock/GetDistricts', { stateId }, function (data) {
+
+            $('#districtDropdown').html('<option value="">Select District</option>');
+
+            $.each(data, function (i, d) {
+                $('#districtDropdown').append(
+                    `<option value="${d.id}" ${d.id == selectedDistrictId ? 'selected' : ''}>
+                        ${d.name}
+                     </option>`
+                );
+            });
+        });
+    }
+
+</script>

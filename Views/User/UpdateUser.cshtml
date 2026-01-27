@@ -9,83 +9,233 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0">Edit User</h3>
-    <a href="/User/Index" class="btn btn-secondary">← Back to List</a>
-</div>
+                <h3 class="mb-0">Edit User</h3>
+                <a href="/User/Index" class="btn btn-secondary">← Back to List</a>
+            </div>
 
             <form action="/User/Edit" method="post" class="row g-3">
-    @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
 
-    <input type="hidden" name="UserId" value="@Model.UserId" />
+                <input type="hidden" name="UserId" value="@Model.UserId" />
 
-    <div class="col-md-3">
-        <label class="form-label">Full name</label>
-        <input name="FullName" value="@Model.FullName" class="form-control" />
-    </div>
+                <div class="col-md-3">
+                    <label class="form-label">Full name</label>
+                    <input name="FullName" value="@Model.FullName" class="form-control" />
+                </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Email</label>
-        <input name="Email" value="@Model.Email" class="form-control" />
-    </div>
+                <div class="col-md-3">
+                    <label class="form-label">Email</label>
+                    <input name="Email" value="@Model.Email" class="form-control" />
+                </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Mobile</label>
-        <input name="MobileNumber" value="@Model.MobileNumber" class="form-control" />
-    </div>
+                <div class="col-md-3">
+                    <label class="form-label">Mobile</label>
+                    <input name="MobileNumber" value="@Model.MobileNumber" class="form-control" />
+                </div>
 
-    <div class="col-md-3">
-        <label class="form-label">New password</label>
-        <input name="Password" type="password" class="form-control" />
-    </div>
+                <div class="col-md-3">
+                    <label class="form-label">New password</label>
+                    <input name="Password" type="password" class="form-control" />
+                </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Role</label>
-        <select name="RoleId" class="form-control">
-            <option value="">-- Select Role --</option>
-            @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Roles)
-            {
-                var selected = Model.RoleId == r.Id ? "selected" : "";
-                <option value="@r.Id" @selected>@r.Name</option>
-            }
-        </select>
-    </div>
+                <div class="col-md-3">
+                    <label class="form-label">Role</label>
+                    <select name="RoleId" class="form-control">
+                        <option value="">-- Select Role --</option>
+                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Roles)
+                        {
+                            var selected = Model.RoleId == r.Id ? "selected" : "";
+                            <option value="@r.Id" @selected>@r.Name</option>
+                        }
+                    </select>
+                </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Is Active</label><br />
-        <input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
-    </div>
+                <div class="col-md-3">
+                    <input type="checkbox"
+                           name="IsActive"
+                           value="1"
+                           @(Model.IsActive == 1 ? "checked" : "") />
+                </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Language</label>
-        <select name="LanguageId" class="form-control" multiple>
-            @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Languages)
-            {
-                var selected = !string.IsNullOrEmpty(Model.LanguageId) &&
-                               Model.LanguageId.Split(',').Contains(r.Id.ToString())
-                               ? "selected" : "";
+                <div class="col-md-3">
+                    <label class="form-label">Language</label>
 
-                <option value="@r.Id" @selected>@r.Name</option>
-            }
-        </select>
-    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                            Select Language
+                        </button>
 
-    <div class="col-md-3">
-        <label class="form-label">Gender</label>
-        <select name="GenderId" class="form-control">
-            <option value="">-- Select Gender --</option>
-            @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
-            {
-                var selected = Model.GenderId == r.Id ? "selected" : "";
-                <option value="@r.Id" @selected>@r.Name</option>
-            }
-        </select>
-    </div>
+                        <ul class="dropdown-menu w-100 p-2" style="max-height:250px; overflow-y:auto;">
+                            @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Languages)
+                            {
+                                var isChecked = !string.IsNullOrEmpty(Model.LanguageId) &&
+                                Model.LanguageId.Split(',').Contains(r.Id.ToString());
 
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Update</button>
-        <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
-    </div>
-</form>
+                                <li>
+                                    <div class="form-check">
+                                        <input class="form-check-input lang-checkbox"
+                                               type="checkbox"
+                                               value="@r.Id"
+                                               id="lang_@r.Id"
+                                               @(isChecked ? "checked" : "") />
+
+                                        <label class="form-check-label" for="lang_@r.Id">
+                                            @r.Name
+                                        </label>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+                    <label class="form-label">Gender</label>
+                    <select name="GenderId" class="form-control">
+                        <option value="">-- Select Gender --</option>
+                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
+                        {
+                            var selected = Model.GenderId == r.Id ? "selected" : "";
+                            <option value="@r.Id" @selected>@r.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <hr class="mt-4" />
+
+                <!-- LOCATION MAPPING -->
+                <h5>Location Mapping</h5>
+
+                <input type="hidden" id="hdnStateId" value="@Model.StateId" />
+                <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
+                <input type="hidden" id="hdnBlockId" value="@Model.BlockId" />
+
+                <!-- STATE -->
+                <div class="col-md-3">
+                    <label class="form-label">State <span class="text-danger">*</span></label>
+                    <select id="StateId" name="StateId" class="form-control" required>
+                        <option value="">-- Select State --</option>
+                        @foreach (var s in (IEnumerable<DropdownDto>)ViewBag.States)
+                        {
+                            var selected = Model.StateId == s.Id ? "selected" : "";
+                            <option value="@s.Id" @selected>@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- DISTRICT -->
+                <div class="col-md-3">
+                    <label class="form-label">District <span class="text-danger">*</span></label>
+                    <select id="DistrictId" name="DistrictId" class="form-control">
+                        <option value="">-- Select District --</option>
+                    </select>
+                </div>
+
+                <!-- BLOCK -->
+                <div class="col-md-3">
+                    <label class="form-label">Block</label>
+                    <select id="BlockId" name="BlockId" class="form-control">
+                        <option value="">-- Select Block --</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        let stateId = document.getElementById("hdnStateId").value;
+        let districtId = document.getElementById("hdnDistrictId").value;
+        let blockId = document.getElementById("hdnBlockId").value;
+
+        if (stateId) {
+            loadDistricts(stateId, districtId);
+        }
+
+        if (districtId) {
+            loadBlocks(districtId, blockId);
+        }
+
+        document.getElementById("StateId").addEventListener("change", function () {
+            let stateId = this.value;
+            reset("DistrictId", "-- Select District --");
+            reset("BlockId", "-- Select Block --");
+
+            if (!stateId) return;
+            loadDistricts(stateId, null);
+        });
+
+        document.getElementById("DistrictId").addEventListener("change", function () {
+            let districtId = this.value;
+            reset("BlockId", "-- Select Block --");
+
+            if (!districtId) return;
+            loadBlocks(districtId, null);
+        });
+
+        function loadDistricts(stateId, selectedDistrictId) {
+            fetch(`/User/GetDistricts?stateId=${stateId}`)
+                .then(r => r.json())
+                .then(data => {
+                    let ddl = document.getElementById("DistrictId");
+                    reset("DistrictId", "-- Select District --");
+
+                    data.forEach(x => {
+                        let opt = document.createElement("option");
+                        opt.value = x.id;
+                        opt.textContent = x.name;
+                        if (selectedDistrictId && x.id == selectedDistrictId) {
+                            opt.selected = true;
+                        }
+                        ddl.appendChild(opt);
+                    });
+                });
+        }
+
+        function loadBlocks(districtId, selectedBlockId) {
+            fetch(`/User/GetBlocks?districtId=${districtId}`)
+                .then(r => r.json())
+                .then(data => {
+                    let ddl = document.getElementById("BlockId");
+                    reset("BlockId", "-- Select Block --");
+
+                    data.forEach(x => {
+                        let opt = document.createElement("option");
+                        opt.value = x.id;
+                        opt.textContent = x.name;
+                        if (selectedBlockId && x.id == selectedBlockId) {
+                            opt.selected = true;
+                        }
+                        ddl.appendChild(opt);
+                    });
+                });
+        }
+
+        function reset(id, text) {
+            let ddl = document.getElementById(id);
+            ddl.innerHTML = `<option value="">${text}</option>`;
+        }
+
+        // Language multiselect binding
+            document.querySelector("form").addEventListener("submit", function () {
+        let ids = Array.from(
+            document.querySelectorAll(".lang-checkbox:checked")
+        ).map(x => x.value);
+
+        let value = ids.join(",");
+        console.log("LanguageId posting:", value);
+
+        document.getElementById("LanguageId").value = value;
+    });
+    });
+</script>

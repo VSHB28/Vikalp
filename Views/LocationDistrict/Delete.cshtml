@@ -1,0 +1,46 @@
+﻿@model Vikalp.DTO.LocationDistrictDTO
+
+@{
+    ViewData["Title"] = "Delete District";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card um-card">
+        <div class="card-body">
+            <h4 class="text-danger">Delete District</h4>
+            <hr />
+
+            <div class="alert alert-warning">
+                <strong>Are you sure?</strong> This action will deactivate the district.
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-4">District Name</dt>
+                <dd class="col-sm-8">@Model.DistrictName</dd>
+
+                <dt class="col-sm-4">District Code</dt>
+                <dd class="col-sm-8">@Model.DistrictCode</dd>
+
+                <dt class="col-sm-4">State Id</dt>
+                <dd class="col-sm-8">@Model.StateId</dd>
+
+                <dt class="col-sm-4">Active</dt>
+                <dd class="col-sm-8">
+                    @(Model.IsActive ? "Yes" : "No")
+                </dd>
+            </dl>
+
+            <form method="post" action="/LocationDistrict/DeleteConfirmed">
+                <input type="hidden" name="DistrictId" value="@Model.DistrictId" />
+
+                <button class="btn btn-danger" onclick="deleteDistrict(@Model.DistrictId)">
+                    Yes, Delete
+                </button>
+                <a href="/LocationDistrict/Index" class="btn btn-secondary ms-2">Cancel</a>
+
+            </form>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,213 @@
+﻿@using Vikalp.Models.DTO
+@{
+    ViewData["Title"] = "Facilities";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
+
+    .um-toolbar {
+        gap: .5rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .um-table thead th {
+        background: linear-gradient(90deg,#0d6efd, #6610f2);
+        color: #fff;
+        border: 0;
+    }
+
+    .um-table tbody tr:hover {
+        background: rgba(13,110,253,0.03);
+    }
+
+    .um-action .btn {
+        min-width: 44px;
+    }
+
+    .um-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="card um-card">
+        <div class="card-body">
+
+            @Html.AntiForgeryToken()
+
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h3 class="mb-0">Facilities</h3>
+                    
+                </div>
+
+                <div class="um-toolbar">
+                    <a href="/Facility/Create" class="btn btn-sm btn-primary">
+                        Add Facility
+                    </a>
+                    <a href="/Facility/Index" class="btn btn-sm btn-outline-secondary">
+                        Refresh
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <select id="stateDropdown" class="form-control form-control-sm">
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <select id="districtDropdown" class="form-control form-control-sm">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <select id="blockDropdown" class="form-control form-control-sm">
+                        <option value="">Select Block</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover um-table align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width:1%">#</th>
+                            <th>Facility Name</th>
+                            <th>Type</th>
+                            <th>NIN</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-center">Intervention</th>
+                            <th class="text-end" style="width:18%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="facilityList">
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">
+                                Select a block to see facilities
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+
+      
+        $('#stateDropdown').change(function () {
+            let stateId = $(this).val();
+            $('#districtDropdown').html('<option value="">Select District</option>');
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+            $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
+
+            if (!stateId) return;
+
+            $.getJSON('/Facility/GetDistricts', { stateId }, function (data) {
+                $.each(data, function (i, d) {
+                    $('#districtDropdown').append(`<option value="${d.id}">${d.name}</option>`);
+                });
+            });
+        });
+
+     
+        $('#districtDropdown').change(function () {
+            let districtId = $(this).val();
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+            $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
+
+            if (!districtId) return;
+
+            $.getJSON('/Facility/GetBlocks', { districtId }, function (data) {
+                $.each(data, function (i, b) {
+                    $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
+                });
+            });
+        });
+
+      
+        $('#blockDropdown').change(function () {
+            let blockId = $(this).val();
+            $('#facilityList').html('');
+
+            if (!blockId) return;
+
+            $.getJSON('/Facility/GetFacilities', { blockId }, function (data) {
+                let html = '';
+                if (!data || data.length === 0) {
+                    html = `<tr><td colspan="7" class="text-center">No facilities found</td></tr>`;
+                } else {
+                    $.each(data, function (i, f) {
+                        html += `<tr>
+                            <td>${i + 1}</td>
+                            <td>${f.facilityName}</td>
+                            <td>${f.facilityType}</td>
+                            <td>${f.ninNumber ?? ''}</td>
+                            <td>${f.isActive ? 'Yes' : 'No'}</td>
+                            <td>${f.isIntervention ? 'Yes' : 'No'}</td>
+                            <td>
+                                <a href="/Facility/Edit/${f.facilityId}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteFacility(${f.facilityId})">Delete</button>
+                            </td>
+                        </tr>`;
+                    });
+                }
+                $('#facilityList').html(html);
+            });
+        });
+
+    });
+
+
+    function deleteFacility(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This facility will be deleted',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Facility/DeleteConfirmed', 
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function () {
+                        Swal.fire('Deleted!', 'Facility deleted.', 'success');
+                        $('#blockDropdown').change();
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'Could not delete facility.', 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>

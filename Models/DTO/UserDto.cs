@@ -17,10 +17,10 @@ namespace Vikalp.Models.DTO
         public string? Email { get; set; }
         public int? GenderId { get; set; }
         public int? RoleId { get; set; }
-        public string? LanguageId { get; set; }
+        public string LanguageId { get; set; }
 
         // Status
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
 
         // Audit fields
         public DateTime CreatedAt { get; set; }
@@ -30,5 +30,11 @@ namespace Vikalp.Models.DTO
         public int? UpdatedBy { get; set; }
 
         public string? RoleName { get; set; }
+
+
+        // Location
+        public int StateId { get; set; }
+        public int DistrictId { get; set; }
+        public int? BlockId { get; set; }
     }
 }

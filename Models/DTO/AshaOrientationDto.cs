@@ -6,6 +6,7 @@ namespace Vikalp.Models.DTO
     public class AshaOrientationDto
     {
         public int UID { get; set; }
+        public int VenueId { get; set; }
         public string? VenueGuid { get; set; }
         public string? OrientationGuid { get; set; }
         public DateTime DateofOrientation { get; set; }
@@ -49,6 +50,14 @@ namespace Vikalp.Models.DTO
 
         // Orientation venue
         public string? Venue { get; set; }
+
+        // helper flags
+        public bool IsEdit { get; set; }   // 👈 key
+        public List<int> TopicsCovered { get; set; }
+        public int InterventionCount { get; set; }
+        public int NonInterventionCount { get; set; } 
+        public int TotalOrientations { get; set; }
+        public string? VenueName { get; set; }     // Comes from dropdown text or textbox
     }
 
     public class AshaOrientationCreateDto
@@ -63,6 +72,8 @@ namespace Vikalp.Models.DTO
         public string? FacilityName { get; set; }     // Comes from dropdown text or textbox
         public string? Venue { get; set; }            // Optional alias if you want
         public int IsIntervention { get; set; }       // 1 = Intervention, 0 = Non-intervention
+
+        public List<int> TopicsCovered { get; set; }   // For edit scenarios
 
         // Orientation
         [Required(ErrorMessage = "Orientation date is required")]
@@ -81,11 +92,12 @@ namespace Vikalp.Models.DTO
         public int? AshaId { get; set; }          // Nullable
         public string AshaName { get; set; }      // NOT NULL in table
         public string? AshaMobile { get; set; }
-
+        public string? VenueName { get; set; }     // Comes from dropdown text or textbox
+        public int VenueId { get; set; }
         public int? VCAT_PreTest { get; set; }
         public int? VCAT_PostTest { get; set; }
 
-        public bool IsOrientation { get; set; }   // Will convert to 1/0
+        public int IsOrientation { get; set; }   // Will convert to 1/0
     }
 
 }

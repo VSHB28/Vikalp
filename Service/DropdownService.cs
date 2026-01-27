@@ -147,4 +147,37 @@ public class DropdownService : IDropdownService
         }).FirstOrDefault();
     }
 
+    public List<DropdownDto> GetTopicsCovered(int userId, int flagId)
+    {
+        var param = new SqlParameter[]
+        {
+        new SqlParameter("@UserId", 1),
+        new SqlParameter("@FlagId", 1)
+        };
+
+        var dt = SqlUtils.ExecuteSP(Conn(), "sp_getTopicsCovered", param);
+
+        return dt.AsEnumerable().Select(r => new DropdownDto
+        {
+            Id = r.Field<int>("Id"),
+            Name = r.Field<string>("Value")
+        }).ToList();
+    }
+
+    public List<DropdownDto> GetFacilityTypes()
+    {
+        var dt = SqlUtils.ExecuteSP(
+            Conn(),
+            "sp_GetFacilityTypes",
+            null   // no parameters
+        );
+
+        return dt.AsEnumerable()
+                 .Select(r => new DropdownDto
+                 {
+                     Id = r.Field<int>("Id"),
+                     Name = r.Field<string>("Name")
+                 })
+                 .ToList();
+    }
 }

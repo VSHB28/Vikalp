@@ -1,0 +1,175 @@
+﻿@model Vikalp.Models.DTO.FacilityDto
+@{
+    ViewData["Title"] = "Edit Facility";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Edit Facility</h3>
+                <a href="/Facility/Index" class="btn btn-secondary">← Back to List</a>
+            </div>
+
+            <form asp-action="Edit" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="FacilityId" />
+
+                <div class="col-md-3">
+                    <label class="form-label">State</label>
+                    <select name="RegionId" id="stateDropdown" class="form-control" required>
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id" @(Model.RegionId == s.Id ? "selected" : "")>
+                                @s.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">District</label>
+                    <select name="DistrictId" id="districtDropdown" class="form-control" required>
+                        <option value="">Select District</option>
+                        @if (ViewBag.Districts != null)
+                        {
+                            foreach (var d in ViewBag.Districts)
+                            {
+                                <option value="@d.Id" @(Model.DistrictId == d.Id ? "selected" : "")>
+                                    @d.Name
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+          
+                <div class="col-md-3">
+                    <label class="form-label">Block</label>
+                    <select name="BlockId" id="blockDropdown" class="form-control" required>
+                        <option value="">Select Block</option>
+                        @if (ViewBag.Blocks != null)
+                        {
+                            foreach (var b in ViewBag.Blocks)
+                            {
+                                <option value="@b.Id" @(Model.BlockId == b.Id ? "selected" : "")>
+                                    @b.Name
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Facility Name</label>
+                    <input name="FacilityName" class="form-control" value="@Model.FacilityName" />
+
+                </div>
+
+                <input type="hidden" name="Facility ID" value="@Model.FacilityId" />
+
+                <input type="hidden" name="FacilityId" value="@Model.FacilityId" />
+
+
+                <div class="col-md-3">
+                    <label class="form-label">Facility Type</label>
+                    <select name="FacilityType" class="form-control">
+                        <option value="">--Select--</option>
+                        @foreach (var type in ViewBag.FacilityTypes)
+                        {
+                            <option value="@type.Id" @(type.Id.ToString() == Model.FacilityType ? "selected" : "")>
+                                @type.Name
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">NIN Number</label>
+                    <input name="NinNumber" class="form-control" value="@Model.NinNumber" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label d-block">Status</label>
+
+                    <input type="hidden" name="IsActive" value="false" />
+                    <input type="hidden" name="IsIntervention" value="false" />
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="IsActive" value="true"
+                               @(Model.IsActive ? "checked" : "") />
+                        <label class="form-check-label">Active</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="IsIntervention" value="true"
+                               @(Model.IsIntervention ? "checked" : "") />
+                        <label class="form-check-label">Intervention</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/Facility/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var selectedDistrict = '@Model.DistrictId';
+        var selectedBlock = '@Model.BlockId';
+
+        $('#stateDropdown').on('change', function () {
+            let stateId = $(this).val();
+            $('#districtDropdown').html('<option value="">Select District</option>');
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+
+            if (stateId) {
+                $.getJSON('/Facility/GetDistricts', { stateId }, function (data) {
+                    $.each(data, function (i, d) {
+                        let selected = d.id == selectedDistrict ? 'selected' : '';
+                        $('#districtDropdown').append(
+                            `<option value="${d.id}" ${selected}>${d.name}</option>`
+                        );
+                    });
+
+                    if (selectedDistrict) {
+                        $('#districtDropdown').trigger('change');
+                    }
+                });
+            }
+        });
+
+        $('#districtDropdown').on('change', function () {
+            let districtId = $(this).val();
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+
+            if (districtId) {
+                $.getJSON('/Facility/GetBlocks', { districtId }, function (data) {
+                    $.each(data, function (i, b) {
+                        let selected = b.id == selectedBlock ? 'selected' : '';
+                        $('#blockDropdown').append(
+                            `<option value="${b.id}" ${selected}>${b.name}</option>`
+                        );
+                    });
+                });
+            }
+        });
+
+        if ($('#stateDropdown').val()) {
+            $('#stateDropdown').trigger('change');
+        }
+    });
+</script>

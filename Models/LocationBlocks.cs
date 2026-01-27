@@ -16,13 +16,13 @@ namespace Vikalp.Models
         [StringLength(50)]
         public string? BlockCode { get; set; }
 
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
 
         public int? RegionId { get; set; }
 
         [Required]
         public int DistrictId { get; set; }
 
-        public bool IsAspirational { get; set; }
+        public int IsAspirational { get; set; }
     }
 }

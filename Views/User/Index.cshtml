@@ -103,7 +103,7 @@
                                     }
                                 </td>
                                 <td class="text-center">
-                                    @if (user.IsActive)
+                                    @if (user.IsActive==1)
                                     {
                                         <span class="badge bg-success">Yes</span>
                                     }
@@ -121,14 +121,6 @@
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <input type="hidden" asp-for="UserId" />
-                                        <a class="btn btn-sm btn-outline-success me-1"
-                                           asp-controller="User"
-                                           onclick="goToEdit(@user.UserId)"
-                                           asp-route-id="@user.UserId"
-                                           title="Details">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-
                                         <form asp-controller="User"
                                               asp-action="Delete"
                                               asp-route-id="@user.UserId"

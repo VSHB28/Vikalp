@@ -37,7 +37,7 @@
                             <td>@(role.idx + 1)</td>
                             <td>@role.r.RoleName</td>
                             <td>@role.r.RoleType</td>
-                            <td class="text-center">@((role.r.IsActive) ? "Yes" : "No")</td>
+                            <td class="text-center">@((role.r.IsActive==1) ? "Yes" : "No")</td>
                             <td class="text-end">
                                     <a class="btn btn-sm btn-outline-primary me-1"
                                        asp-controller="Role"

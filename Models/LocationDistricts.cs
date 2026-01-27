@@ -20,9 +20,9 @@ namespace Vikalp.Models
         [StringLength(50)]
         public string? DistrictCode { get; set; }
 
-        public bool IsActive { get; set; }
+        public int IsActive { get; set; }
 
-        public bool IsCentinalDistrict { get; set; }
+        public int IsCentinalDistrict { get; set; }
 
         // Navigation
         public List<LocationBlocks> Blocks { get; set; } = new();

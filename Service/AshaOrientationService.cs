@@ -26,83 +26,63 @@ namespace Vikalp.Service
         public async Task<List<AshaOrientationDto>> GetAllAsync()
         {
             // Run the synchronous DB call on thread-pool to avoid blocking
-            var dt = await Task.Run(() => SqlUtils.ExecuteSP(Conn(), "dbo.sp_GetAshaOrientationList", null));
+            var dt = await Task.Run(() => SqlUtils.ExecuteSP(Conn(), "dbo.sp_GetVenueOrientationSummary", null));
 
             var list = dt.AsEnumerable().Select(r => new AshaOrientationDto
             {
-                UID = r.Table.Columns.Contains("UID") && r["UID"] != DBNull.Value
-            ? Convert.ToInt32(r["UID"])
-            : 0,
+                VenueId = r.Table.Columns.Contains("VenueId") && r["VenueId"] != DBNull.Value
+                    ? Convert.ToInt32(r["VenueId"])
+                    : 0,
 
-                AshaId = r.Table.Columns.Contains("AshaId") && r["AshaId"] != DBNull.Value
-            ? (int?)Convert.ToInt32(r["AshaId"])
-            : null,
-
-                OrientationGuid = r.Table.Columns.Contains("OrientationGuid")
-            ? r.Field<string>("OrientationGuid")
-            : null,
-
-                VCAT_PreTest = r.Table.Columns.Contains("VCAT_PreTest") && r["VCAT_PreTest"] != DBNull.Value
-            ? (int?)Convert.ToInt32(r["VCAT_PreTest"])
-            : null,
-
-                VCAT_PostTest = r.Table.Columns.Contains("VCAT_PostTest") && r["VCAT_PostTest"] != DBNull.Value
-            ? (int?)Convert.ToInt32(r["VCAT_PostTest"])
-            : null,
-
-                IsOrientation = r.Table.Columns.Contains("IsOrientation") && r["IsOrientation"] != DBNull.Value
-            ? (int?)Convert.ToInt32(r["IsOrientation"])
-            : null,
-
-                DateofOrientation = (DateTime)Convert.ToDateTime(r["DateofOrientation"]),
-
-                Venue = r.Table.Columns.Contains("FacilityName")
-            ? r.Field<string>("FacilityName")
-            : null,
-
-                AshaName = r.Table.Columns.Contains("AshaName")
-            ? r.Field<string>("AshaName")
-            : null,
-
-                AshaMobile = r.Table.Columns.Contains("AshaMobile") && r["AshaMobile"] != DBNull.Value
-    ? r["AshaMobile"].ToString()
-    : null,
-
-                IsIntervention = r.Table.Columns.Contains("IsIntervention") && r["IsIntervention"] != DBNull.Value
-            ? Convert.ToInt32(r["IsIntervention"])
-            : 0,
+                VenueGuid = r.Table.Columns.Contains("VenueGuid")
+                    ? r.Field<string>("VenueGuid")
+                    : null,
 
                 FacilityId = r.Table.Columns.Contains("FacilityId") && r["FacilityId"] != DBNull.Value
-            ? Convert.ToInt32(r["FacilityId"])
-            : 0,
+                    ? Convert.ToInt32(r["FacilityId"])
+                    : 0,
 
                 FacilityName = r.Table.Columns.Contains("FacilityName")
-            ? r.Field<string>("FacilityName")
-            : null,
-
-                BlockId = r.Table.Columns.Contains("BlockId") && r["BlockId"] != DBNull.Value
-            ? Convert.ToInt32(r["BlockId"])
-            : 0,
-
-                BlockName = r.Table.Columns.Contains("BlockName")
-            ? r.Field<string>("BlockName")
-            : null,
-
-                DistrictId = r.Table.Columns.Contains("DistrictId") && r["DistrictId"] != DBNull.Value
-            ? Convert.ToInt32(r["DistrictId"])
-            : 0,
-
-                DistrictName = r.Table.Columns.Contains("DistrictName")
-            ? r.Field<string>("DistrictName")
-            : null,
+                    ? r.Field<string>("FacilityName")
+                    : null,
 
                 StateId = r.Table.Columns.Contains("StateId") && r["StateId"] != DBNull.Value
-            ? Convert.ToInt32(r["StateId"])
-            : 0,
+                    ? Convert.ToInt32(r["StateId"])
+                    : 0,
 
                 StateName = r.Table.Columns.Contains("StateName")
-            ? r.Field<string>("StateName")
-            : null
+                    ? r.Field<string>("StateName")
+                    : null,
+
+                DistrictId = r.Table.Columns.Contains("DistrictId") && r["DistrictId"] != DBNull.Value
+                    ? Convert.ToInt32(r["DistrictId"])
+                    : 0,
+
+                DistrictName = r.Table.Columns.Contains("DistrictName")
+                    ? r.Field<string>("DistrictName")
+                    : null,
+
+                BlockId = r.Table.Columns.Contains("BlockId") && r["BlockId"] != DBNull.Value
+                    ? Convert.ToInt32(r["BlockId"])
+                    : 0,
+
+                BlockName = r.Table.Columns.Contains("BlockName")
+                    ? r.Field<string>("BlockName")
+                    : null,
+
+                DateofOrientation = r.Table.Columns.Contains("DateofOrientation") ?r.Field<DateTime>("DateofOrientation") : DateTime.MinValue,
+
+                InterventionCount = r.Table.Columns.Contains("InterventionCount") && r["InterventionCount"] != DBNull.Value
+                    ? Convert.ToInt32(r["InterventionCount"])
+                    : 0,
+
+                NonInterventionCount = r.Table.Columns.Contains("NonInterventionCount") && r["NonInterventionCount"] != DBNull.Value
+                    ? Convert.ToInt32(r["NonInterventionCount"])
+                    : 0,
+
+                TotalOrientations = r.Table.Columns.Contains("TotalOrientations") && r["TotalOrientations"] != DBNull.Value
+                    ? Convert.ToInt32(r["TotalOrientations"])
+                    : 0
             }).ToList();
 
             return list;
@@ -146,7 +126,7 @@ namespace Vikalp.Service
             });
         }
 
-        public async Task<List<DropdownDto>> GetAshasByFacilityAsync(int facilityId)
+        public async Task<List<AshaListDto>> GetAshasByFacilityAsync(int facilityId)
         {
             return await Task.Run(() =>
             {
@@ -155,15 +135,32 @@ namespace Vikalp.Service
             new SqlParameter("@FacilityId", facilityId)
                 };
 
-                var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetAshasByFacility", param);
+                var dt = SqlUtils.ExecuteSP(
+                    Conn(),
+                    "sp_GetAshasByFacility",
+                    param
+                );
 
-                return dt.AsEnumerable().Select(r => new DropdownDto
-                {
-                    Id = r.Field<int>("AshaId"),
-                    Name = r.Field<string>("AshaName")
-                }).ToList();
+                return dt.AsEnumerable()
+                    .Select(r => new AshaListDto
+                    {
+                        AshaId = r.Field<int>("AshaId"),
+
+                        FacilityId = r.Field<int>("FacilityId"),
+                        AshaName = r.Field<string>("AshaName"),
+
+                        // ? BIGINT ? string safely
+                        AshaMobile = r["AshaMobile"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt64(r["AshaMobile"]).ToString(),
+
+                        SubCenter = r.Field<string?>("SubCentre"),
+                        FacilityName = r.Field<string?>("FacilityName")
+                    })
+                    .ToList();
             });
         }
+
 
         public async Task<object?> GetAshaDetailsAsync(int ashaId)
         {
@@ -258,6 +255,7 @@ namespace Vikalp.Service
             {
                 try
                 {
+                    string topicsCoveredCsv = model.TopicsCovered != null && model.TopicsCovered.Any() ? string.Join(",", model.TopicsCovered) : null;
                     var venueGuid = Guid.NewGuid().ToString();
 
                     // 1?? Save Venue
@@ -271,6 +269,7 @@ namespace Vikalp.Service
                 new SqlParameter("@FacilityId", (object?)model.FacilityId ?? DBNull.Value),
                 new SqlParameter("@FacilityName", model.FacilityName ?? ""),
                 new SqlParameter("@DateofOrientation", model.DateofOrientation),
+                new SqlParameter("@TopicsCovered", (object?)topicsCoveredCsv ?? DBNull.Value),
                 new SqlParameter("@NIN", (object?)model.NIN ?? DBNull.Value),
                 new SqlParameter("@CreatedBy", userId)
                     };
@@ -290,12 +289,12 @@ namespace Vikalp.Service
                     new SqlParameter("@AshaId", (object?)a.AshaId ?? DBNull.Value),
                     new SqlParameter("@AshaName", a.AshaName ?? ""),
                     new SqlParameter("@AshaMobile", (object?)a.AshaMobile ?? DBNull.Value),
-                    new SqlParameter("@FacilityId", (object?)model.FacilityId ?? DBNull.Value),
-                    new SqlParameter("@FacilityName", model.FacilityName),
+                    new SqlParameter("@FacilityId", (object?)a.VenueId ?? DBNull.Value),
+                    new SqlParameter("@FacilityName", a.VenueName),
                     new SqlParameter("@NIN", (object?)model.NIN ?? DBNull.Value),
                     new SqlParameter("@VCAT_PreTest", (object?)a.VCAT_PreTest ?? DBNull.Value),
                     new SqlParameter("@VCAT_PostTest", (object?)a.VCAT_PostTest ?? DBNull.Value),
-                    new SqlParameter("@IsOrientation", a.IsOrientation ? 1 : 0),
+                    new SqlParameter("@IsOrientation", a.IsOrientation),
                     new SqlParameter("@CreatedBy", userId)
                         };
 
@@ -309,6 +308,52 @@ namespace Vikalp.Service
                     // log error
                     return false;
                 }
+            });
+        }
+
+        public async Task<AshaOrientationCreateDto?> GetOrientationForEditAsync(string venueGuid)
+        {
+            return await Task.Run(() =>
+            {
+                var param = new SqlParameter[]
+                {
+            new SqlParameter("@VenueGuid", venueGuid)
+                };
+
+                var ds = SqlUtils.ExecuteSP_DS(Conn(), "dbo.sp_GetOrientationForEdit", param);
+
+                if (ds.Tables.Count < 2 || ds.Tables[0].Rows.Count == 0)
+                    return null;
+
+                var venueRow = ds.Tables[0].Rows[0];
+
+                var model = new AshaOrientationCreateDto
+                {
+                    StateId = Convert.ToInt32(venueRow["StateId"]),
+                    DistrictId = Convert.ToInt32(venueRow["DistrictId"]),
+                    BlockId = Convert.ToInt32(venueRow["BlockId"]),
+                    FacilityId = venueRow["FacilityId"] == DBNull.Value ? null : (int?)Convert.ToInt32(venueRow["FacilityId"]),
+                    FacilityName = venueRow["FacilityName"].ToString(),
+                    IsIntervention = Convert.ToInt32(venueRow["IsIntervention"]),
+                    DateofOrientation = Convert.ToDateTime(venueRow["DateofOrientation"]),
+                    NIN = venueRow["NIN"] == DBNull.Value ? null : (long?)Convert.ToInt64(venueRow["NIN"]),
+                    Attendees = new List<AshaOrientationRowDto>()
+                };
+
+                foreach (DataRow r in ds.Tables[1].Rows)
+                {
+                    model.Attendees.Add(new AshaOrientationRowDto
+                    {
+                        AshaId = r["AshaId"] == DBNull.Value ? null : (int?)Convert.ToInt32(r["AshaId"]),
+                        AshaName = r["AshaName"].ToString(),
+                        AshaMobile = r["AshaMobile"] == DBNull.Value ? null : r["AshaMobile"].ToString(),
+                        VCAT_PreTest = r["VCAT_PreTest"] == DBNull.Value ? null : (int?)Convert.ToInt32(r["VCAT_PreTest"]),
+                        VCAT_PostTest = r["VCAT_PostTest"] == DBNull.Value ? null : (int?)Convert.ToInt32(r["VCAT_PostTest"]),
+                        IsOrientation = r["IsOrientation"] == DBNull.Value ? 0 : Convert.ToInt32(r["IsOrientation"])
+                    });
+                }
+
+                return model;
             });
         }
 

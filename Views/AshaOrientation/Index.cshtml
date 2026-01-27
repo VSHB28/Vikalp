@@ -3,35 +3,9 @@
 @{
     ViewData["Title"] = "ASHA Orientation Records";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-
-    var total = Model.Count();
-    var completed = Model.Count(x => x.IsOrientation == 1);
-    var pending = Model.Count(x => x.IsOrientation == 0);
 }
 
 <div class="container-fluid">
-
-    <!-- ===== SUMMARY CARDS ===== -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-                <h3 class="text-danger">@total</h3>
-                <p class="mb-0">TOTAL ENTRIES</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-                <h3 class="text-success">@completed</h3>
-                <p class="mb-0">COMPLETED ORIENTATION</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-                <h3 class="text-warning">@pending</h3>
-                <p class="mb-0">PENDING ORIENTATION</p>
-            </div>
-        </div>
-    </div>
 
     <!-- ===== HEADER BAR ===== -->
     <div class="card mb-3">
@@ -43,51 +17,17 @@
             </a>
         </div>
 
-        <!-- ===== FILTERS ===== -->
-        <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <input type="text" id="searchBox" class="form-control"
-                           placeholder="Search by ANM name, mobile..." />
-                </div>
-
-                <div class="col-md-3">
-                    <select class="form-control" id="stateFilter">
-                        <option value="">All States</option>
-                        @* You can bind dynamically later *@
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <select class="form-control" id="statusFilter">
-                        <option value="">All Status</option>
-                        <option value="1">Completed</option>
-                        <option value="0">Pending</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 text-end">
-                    <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">
-                        <i class="fa fa-refresh"></i> Reset
-                    </button>
-                </div>
-            </div>
-
             <!-- ===== TABLE ===== -->
             <div class="table-responsive">
                 <table class="table table-bordered align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>S.No</th>
-                            <th>ASHA Name</th>
-                            <th>Mobile</th>
-                            <th>Facility</th>
-                            <th>State</th>
-                            <th>District</th>
-                            <th>Pre-Test</th>
-                            <th>Post-Test</th>
-                            <th>Orientation</th>
-                            <th>Actions</th>
+                        <th>S.No</th>
+                        <th>Date Of Orientation</th>
+                        <th>Facility</th>
+                        <th>Intervention Participants</th>
+                        <th>NonIntervention Participants</th>
+                        <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="dataTable">
@@ -98,27 +38,30 @@
                         {
                             <tr>
                                 <td>@i</td>
-                                <td>@item.AshaName</td>
-                                <td>@item.AshaMobile</td>
+                            <td>@item.DateofOrientation.ToString("dd-MM-yyyy")</td>
                                 <td>@item.FacilityName</td>
-                                <td>@item.StateName</td>
-                                <td>@item.DistrictName</td>
-                                <td>@item.VCAT_PreTest</td>
-                                <td>@item.VCAT_PostTest</td>
-                                <td>
-                                    @if (item.IsOrientation == 1)
-                                    {
-                                        <span class="badge bg-success">COMPLETED</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning text-dark">PENDING</span>
-                                    }
-                                </td>
-                                <td>
-                                    <a href="#" class="btn btn-sm btn-danger"><i class="fa fa-eye"></i></a>
-                                    <a href="#" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i></a>
-                                    <a href="#" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                                <td>@item.InterventionCount</td>
+                                <td>@item.NonInterventionCount</td>
+                                <td class="text-end um-action">
+                                    <a class="btn btn-sm btn-outline-primary me-1"
+                                       asp-controller="AshaOrientation"
+                                       onclick="goToEdit('@item.VenueGuid')"
+                                       asp-route-id="'@item.VenueGuid'"
+                                       title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <form asp-controller="AshaOrientation"
+                                          asp-action="Delete"
+                                          asp-route-id="'@item.VenueGuid'"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Delete Record \" ' + ' @item.Venue' + '\"?' );">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                             i++;
@@ -137,6 +80,11 @@
             document.getElementById("searchBox").value = "";
             document.getElementById("stateFilter").value = "";
             document.getElementById("statusFilter").value = "";
+        }
+
+            function goToEdit(venueGuid) {
+            window.location.href =
+                '/AshaOrientation/Edit?venueGuid=' + venueGuid;
         }
     </script>
 }

@@ -1,0 +1,227 @@
+﻿@using Vikalp.Models.DTO
+@{
+    ViewData["Title"] = "Location Blocks";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var states = ViewBag.States as List<DropdownDto> ?? new();
+}
+
+<div class="container py-4">
+    <div class="card um-card">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Location Blocks</h3>
+
+                <div class="d-flex gap-2 align-items-center">
+   
+                    <select id="stateDropdown"
+                            class="form-select form-select-sm"
+                            style="min-width:180px;">
+                        <option value="">Select State</option>
+                        @foreach (var state in states)
+                        {
+                            <option value="@state.Id">@state.Name</option>
+                        }
+                    </select>
+
+                    <select id="districtDropdown"
+                            class="form-select form-select-sm"
+                            style="min-width:180px;">
+                        <option value="">Select District</option>
+                    </select>
+
+                    <a href="/LocationBlock/Create"
+                       class="btn btn-sm btn-primary"
+                       style="min-width:120px;">
+                        + Add Block
+                    </a>
+
+                    <a href="@Url.Action("Index", "LocationBlock")"
+                       class="btn btn-sm btn-outline-secondary"
+                       title="Refresh">
+                        Refresh
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover um-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Block Name</th>
+                            <th>Block Code</th>
+                            <th>Region Id</th>
+                            <th>District Id</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-center">Aspirational</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blockList">
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                Select state and district to view blocks.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $('#stateDropdown').on('change', loadDistricts);
+        $('#districtDropdown').on('change', loadBlocks);
+
+        function loadDistricts() {
+            const stateId = $('#stateDropdown').val();
+
+            $('#districtDropdown').html(`<option value="">Select District </option>`);
+            $('#blockList').html(`
+                <tr>
+                    <td colspan="8" class="text-center">
+                        Select district to view blocks.
+                    </td>
+                </tr>
+            `);
+
+            if (!stateId) return;
+
+            $.getJSON('/LocationBlock/GetDistricts', { stateId }, function (districts) {
+                let options = `<option value="">Select District</option>`;
+
+                $.each(districts, function (_, district) {
+                    options += `<option value="${district.id}">${district.name}</option>`;
+                });
+
+                $('#districtDropdown').html(options);
+            });
+        }
+
+        function loadBlocks() {
+            const districtId = $('#districtDropdown').val();
+
+            $('#blockList').html(`
+                <tr>
+                    <td colspan="8" class="text-center">Loading...</td>
+                </tr>
+            `);
+
+            if (!districtId) return;
+
+            $.getJSON('/LocationBlock/GetBlocks', { districtId }, function (blocks) {
+
+                if (!blocks || blocks.length === 0) {
+                    $('#blockList').html(`
+                        <tr>
+                            <td colspan="8" class="text-center">No blocks found.</td>
+                        </tr>
+                    `);
+                    return;
+                }
+
+                let rows = '';
+
+                $.each(blocks, function (i, block) {
+                    rows += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${block.blockName}</td>
+                            <td>${block.blockCode}</td>
+                            <td>${block.regionId}</td>
+                            <td>${block.districtId}</td>
+                            <td class="text-center">
+                                ${block.isActive
+                                    ? '<span class="badge bg-success">Yes</span>'
+                                    : '<span class="badge bg-secondary">No</span>'}
+                            </td>
+                            <td class="text-center">
+                                ${block.isAspirational
+                                    ? '<span class="badge bg-info">Yes</span>'
+                                    : '<span class="badge bg-secondary">No</span>'}
+                            </td>
+                            <td class="text-end">
+                                <a href="/LocationBlock/Edit/${block.blockId}"
+                                   class="btn btn-sm btn-outline-primary">
+                                   <i class="bi bi-pencil"></i>
+                                </a>
+                               
+                                    <button type="button"
+            class="btn btn-sm btn-outline-danger"
+            onclick="deleteBlock(${block.blockId})">
+        <i class="bi bi-trash"></i>
+    </button>
+
+                            </td>
+                        </tr>`;
+                });
+
+                $('#blockList').html(rows);
+            });
+        }
+    });
+
+
+    function deleteBlock(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This block will be deleted',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/LocationBlock/DeleteConfirmed',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        __RequestVerificationToken: $('#antiForgeryForm input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Block deleted successfully.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                res.message || 'Could not delete block.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong while deleting block.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+</script>

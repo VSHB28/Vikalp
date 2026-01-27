@@ -16,7 +16,7 @@ namespace Vikalp.Models
         [StringLength(50)]
         public string? StateCode { get; set; }
 
-        public bool? IsActive { get; set; }
+        public int? IsActive { get; set; }
 
         // Navigation
         public List<LocationDistricts> Districts { get; set; } = new();

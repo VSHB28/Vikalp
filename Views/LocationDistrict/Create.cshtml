@@ -1,0 +1,90 @@
+﻿@model Vikalp.DTO.LocationDistrictDTO
+
+@{
+    ViewData["Title"] = "Add District";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card">
+        <div class="card-body">
+
+         
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Add District</h3>
+                <a href="/LocationDistrict/Index" class="btn btn-secondary">
+                    ← Back to List
+                </a>
+            </div>
+
+            <!-- Form -->
+            <form action="/LocationDistrict/Create" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="DistrictId" value="@Model.DistrictId" />
+
+                <!-- District Name -->
+                <div class="col-md-3">
+                    <label class="form-label">District Name</label>
+                    <input type="text"
+                           name="DistrictName"
+                           value="@Model.DistrictName"
+                           class="form-control"
+                           required />
+                </div>
+
+                <!-- District Code -->
+                <div class="col-md-3">
+                    <label class="form-label">District Code</label>
+                    <input type="text"
+                           name="DistrictCode"
+                           value="@Model.DistrictCode"
+                           class="form-control"
+                           required />
+                </div>
+                <!-- State -->
+                <div class="col-md-3">
+                    <label class="form-label">State</label>
+                    <select name ="StateId" class="form-select" required>
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.StateList)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+
+
+                <!-- Is Active -->
+                <div class="col-md-3">
+                    <label class="form-label d-block">Is Active</label>
+                    <input type="checkbox"
+                           name="IsActive"
+                           value="true"
+                           @(Model.IsActive ? "checked" : "") />
+                </div>
+
+                <!-- Is Centinal -->
+                <div class="col-md-3">
+                    <label class="form-label d-block">Is Centinal District</label>
+                    <input type="checkbox"
+                           name="IsCentinalDistrict"
+                           value="true"
+                           @(Model.IsCentinalDistrict ? "checked" : "") />
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        Save
+                    </button>
+                    <a href="/LocationDistrict/Index"
+                       class="btn btn-secondary ms-2">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

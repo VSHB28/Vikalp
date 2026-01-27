@@ -1,0 +1,194 @@
+﻿@using Vikalp.Models.DTO
+@model HsActivityCreateDto
+
+@{
+    ViewData["Title"] = "Health Systems Activity Form (HS-09)";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h3 class="mb-3">
+    Health Systems Activity Form (HS-09)
+    <small class="text-muted">v4.0 (Jan 2025)</small>
+</h3>
+
+<form asp-action="Create" method="post">
+@Html.AntiForgeryToken()
+
+    <!-- A. GENERAL INFORMATION -->
+    <fieldset class="border p-3 mb-4">
+        <legend class="w-auto px-2">A. General Information</legend>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="CollectedBy" class="form-label"></label>
+                <input asp-for="CollectedBy" class="form-control" />
+                <span asp-validation-for="CollectedBy" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="ActivityType" class="form-label"></label>
+                <select asp-for="ActivityType" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option>Training of providers on reversible contraceptive methods</option>
+                    <option>Supportive supervision</option>
+                    <option>Review meeting</option>
+                    <option>Other</option>
+                </select>
+                <span asp-validation-for="ActivityType" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="OtherActivityType" class="form-label"></label>
+                <input asp-for="OtherActivityType" class="form-control" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="State" class="form-label"></label>
+                <input asp-for="State" class="form-control" />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="District" class="form-label"></label>
+                <input asp-for="District" class="form-control" />
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="VenueName" class="form-label"></label>
+            <input asp-for="VenueName" class="form-control" />
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label asp-for="TrainingType" class="form-label"></label>
+                <select asp-for="TrainingType" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option>Clinical</option>
+                    <option>Non-Clinical</option>
+                    <option>Both</option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="ActivityFormat" class="form-label"></label>
+                <select asp-for="ActivityFormat" class="form-select">
+                    <option value="">-- Select --</option>
+                    <option>In-person</option>
+                    <option>Virtual</option>
+                    <option>Hybrid</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label asp-for="TotalParticipants" class="form-label"></label>
+                <input asp-for="TotalParticipants" type="number" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="StartDate" class="form-label"></label>
+                <input asp-for="StartDate" type="date" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="EndDate" class="form-label"></label>
+                <input asp-for="EndDate" type="date" class="form-control" />
+            </div>
+        </div>
+    </fieldset>
+    <!-- B. TRAINING CONTENT -->
+    <fieldset class="border p-3 mb-4">
+        <legend class="w-auto px-2">B. Training Content</legend>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Clinical</h6>
+
+                @foreach (var item in Model.ClinicalTopics)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="SelectedClinicalTopics"
+                               value="@item.Key"
+                               @(item.Value ? "checked" : "") />
+                        <label class="form-check-label">@item.Key</label>
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-6">
+                <h6>Non-Clinical</h6>
+
+                @foreach (var item in Model.NonClinicalTopics)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="SelectedNonClinicalTopics"
+                               value="@item.Key"
+                               @(item.Value ? "checked" : "") />
+                        <label class="form-check-label">@item.Key</label>
+                    </div>
+                }
+            </div>
+        </div>
+    </fieldset>
+
+    <!-- C. PARTICIPANTS BY CADRE -->
+    <fieldset class="border p-3 mb-4">
+        <legend class="w-auto px-2">C. Number of Participants by Cadre</legend>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Provider Type</th>
+                    <th>Intervention District</th>
+                    <th>Non-Intervention District</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cadre in Model.Cadres)
+                {
+                    <tr>
+                        <td>@cadre.Name</td>
+                        <td>
+                            <input type="number"
+                                   name="Cadres[@cadre.Id].InterventionCount"
+                                   class="form-control" />
+                        </td>
+                        <td>
+                            <input type="number"
+                                   name="Cadres[@cadre.Id].NonInterventionCount"
+                                   class="form-control" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+
+    <!-- REMARKS -->
+    <div class="mb-4">
+        <label asp-for="Remarks" class="form-label"></label>
+        <textarea asp-for="Remarks" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary">
+            Save HS Activity
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">
+            Back to List
+        </a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Data;
 using System.Security.Claims;
 using Vikalp.Models.DTO;
 using Vikalp.Service;
@@ -33,72 +35,7 @@ namespace Vikalp.Controllers
             return View(new AshaOrientationCreateDto());
         }
 
-        // ===================== CREATE (POST) =====================
-        [HttpPost]
-        public async Task<IActionResult> Create(AshaOrientationCreateDto model)
-        {
-            string? facilityName = null;
-
-            if (model.IsIntervention == 1 && model.FacilityId.HasValue)
-            {
-                var facility = await _service.GetFacilityByIdAsync(model.FacilityId.Value);
-                facilityName = facility?.FacilityName;
-            }
-            else
-            {
-                facilityName = model.FacilityName;
-            }
-
-            string venueGuid = Guid.NewGuid().ToString();
-
-            // 1️⃣ Save Venue
-            var venueDto = new OrientationVenueDetailsDto
-            {
-                VenueGuid = venueGuid,
-                IsIntervention = model.IsIntervention,
-                StateId = model.StateId,
-                DistrictId = model.DistrictId,
-                BlockId = model.BlockId,
-                FacilityId = model.IsIntervention == 1 ? model.FacilityId : null,
-                FacilityName = facilityName!, // NOT NULL
-                DateofOrientation = model.DateofOrientation,
-                NIN = model.IsIntervention == 0 ? model.NIN : null,
-                CreatedBy = 1
-            };
-
-            await _service.SaveVenueAsync(venueDto);
-
-            // 2️⃣ Save ASHA Rows
-            foreach (var a in model.Attendees)
-            {
-                string orientationGuid = Guid.NewGuid().ToString();
-
-                var dto = new AshaOrientationDto
-                {
-                    VenueGuid = venueGuid,
-                    OrientationGuid = orientationGuid,            // REQUIRED
-                    IsIntervention = model.IsIntervention,        // REQUIRED
-
-                    AshaId = a.AshaId,
-                    AshaName = a.AshaName!,                       // NOT NULL
-                    AshaMobile = a.AshaMobile,
-
-                    FacilityId = (int)model.FacilityId,
-                    FacilityName = facilityName!,                 // REQUIRED
-
-                    VCAT_PreTest = a.VCAT_PreTest,
-                    VCAT_PostTest = a.VCAT_PostTest,
-                    IsOrientation = a.IsOrientation ? 1 : 0,
-
-                    NIN = model.IsIntervention == 0 ? model.NIN : null,
-                    CreatedBy = 1
-                };
-
-                await _service.SaveAshaOrientationAsync(dto);
-            }
-
-            return RedirectToAction("Index");
-        }
+        // ===================== CREATE (POST) =====================        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -148,6 +85,28 @@ namespace Vikalp.Controllers
             return Json(result);
         }
 
+        // EDIT (GET) → reuse Create.cshtml
+        public async Task<IActionResult> Edit(string venueGuid)
+        {
+            LoadMasters();
+            var model = await _service.GetOrientationForEditAsync(venueGuid);
+
+            if (model == null)
+                return NotFound();
+
+            ViewBag.IsEdit = true;
+            return View("Create", model);
+        }
+
+        public async Task<IActionResult> Details(string venueGuid)
+        {
+            var model = await _service.GetOrientationForEditAsync(venueGuid);
+
+            if (model == null)
+                return NotFound();
+
+            return View(model);
+        }
 
         // ===================== AJAX APIs =====================
 
@@ -186,6 +145,7 @@ namespace Vikalp.Controllers
         {
             ViewBag.States = _dropdownService.GetStates();
             ViewBag.Ashas = _dropdownService.GetAshas();
+            ViewBag.Topics = _dropdownService.GetTopicsCovered(1, 1);
         }
     }
 }

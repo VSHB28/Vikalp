@@ -11,4 +11,13 @@
         public string MobileNumber { get; set; }
     }
 
+    public class AshaListDto
+    {
+        public int AshaId { get; set; }
+        public int? FacilityId { get; set; }
+        public string? AshaName { get; set; }
+        public string? AshaMobile { get; set; }
+        public string? SubCenter { get; set; }
+        public string? FacilityName { get; set; }
+    }
 }

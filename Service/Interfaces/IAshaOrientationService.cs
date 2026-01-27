@@ -10,12 +10,14 @@ namespace Vikalp.Service.Interfaces
         Task<List<AshaOrientationDto>> GetAllAsync();
         Task CreateAsync(AshaOrientationDto model);
         Task<List<DropdownDto>> SearchFacilitiesAsync(string term);
-        Task<List<DropdownDto>> GetAshasByFacilityAsync(int facilityId);
+        Task<List<AshaListDto>> GetAshasByFacilityAsync(int facilityId);
         Task<object?> GetAshaDetailsAsync(int ashaId);
         Task<MstFacilityDto?> GetFacilityByIdAsync(int facilityId);
 
         Task SaveVenueAsync(OrientationVenueDetailsDto dto);
         Task SaveAshaOrientationAsync(AshaOrientationDto dto);
         Task<bool> SaveOrientationJsonAsync(AshaOrientationCreateDto model, int userId);
+
+        Task<AshaOrientationCreateDto?> GetOrientationForEditAsync(string venueGuid);
     }
 }

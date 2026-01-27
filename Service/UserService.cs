@@ -49,7 +49,7 @@ public class UserService : IUserService
             Email = r.Field<string>("Email"),
             RoleId = r.Field<int?>("RoleId"),
             RoleName = r.Field<string>("RoleName"),
-            IsActive = r.Field<bool>("IsActive"),
+            IsActive = r.Field<int>("IsActive"),
             GenderId = r.Field<int?>("GenderId"),
             LanguageId = r.Field<string>("LanguageId")
         }).ToList();
@@ -69,9 +69,12 @@ public class UserService : IUserService
             FullName = row.Field<string>("FullName"),
             RoleId = row.Field<int?>("RoleId"),
             RoleName = row.Field<string>("RoleName"),
-            IsActive = row.Field<bool>("IsActive"),
+            IsActive = row.Field<int>("IsActive"),
             GenderId = row.Field<int?>("GenderId"),
-            LanguageId = row.Field<string>("LanguageId")
+            LanguageId = row.Field<string>("LanguageId"),
+            StateId = row.Field<int?>("StateId") ?? 0,
+            DistrictId = row.Field<int?>("DistrictId") ?? 0,
+            BlockId = row.Field<int?>("BlockId") ?? 0,
         };
     }
 
@@ -115,7 +118,12 @@ public class UserService : IUserService
             new SqlParameter("@IsActive", SqlDbType.Bit) { Value = user.IsActive },
             new SqlParameter("@CreatedBy", SqlDbType.Int) { Value = createdByValue },
             new SqlParameter("@LanguageId", SqlDbType.NVarChar) { Value = (object?)user.LanguageId ?? DBNull.Value },
-            new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value }
+            new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
+
+        new SqlParameter("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
+        new SqlParameter("@DistrictId", SqlDbType.Int) { Value = (object?)user.DistrictId ?? DBNull.Value },
+        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value }
+
         };
 
         var dt = SqlUtils.ExecuteSP(Conn(), "dbo.sp_CreateUser", parameters);
@@ -171,7 +179,11 @@ public class UserService : IUserService
             new SqlParameter("@UpdatedBy", SqlDbType.Int) { Value = updatedByValue },
             new SqlParameter("@Name", SqlDbType.NVarChar) { Value = (object?)user.FullName ?? DBNull.Value },
             new SqlParameter("@LanguageId", SqlDbType.NVarChar) { Value = (object?)user.LanguageId ?? DBNull.Value },
-            new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value }
+            new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
+
+            new SqlParameter("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
+        new SqlParameter("@DistrictId", SqlDbType.Int) { Value = (object?)user.DistrictId ?? DBNull.Value },
+        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value }
         };
 
         SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateUser", parameters);
