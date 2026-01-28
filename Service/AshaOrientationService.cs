@@ -337,7 +337,9 @@ namespace Vikalp.Service
                     IsIntervention = Convert.ToInt32(venueRow["IsIntervention"]),
                     DateofOrientation = Convert.ToDateTime(venueRow["DateofOrientation"]),
                     NIN = venueRow["NIN"] == DBNull.Value ? null : (long?)Convert.ToInt64(venueRow["NIN"]),
-                    Attendees = new List<AshaOrientationRowDto>()
+                    Attendees = new List<AshaOrientationRowDto>(),
+                    VenueGuid = venueRow["VenueGuid"].ToString(),
+                    TopicsCovered = venueRow["TopicsCovered"] == DBNull.Value ? new List<int>() : venueRow["TopicsCovered"].ToString().Split(',').Select(s => int.Parse(s)).ToList()
                 };
 
                 foreach (DataRow r in ds.Tables[1].Rows)
@@ -349,12 +351,69 @@ namespace Vikalp.Service
                         AshaMobile = r["AshaMobile"] == DBNull.Value ? null : r["AshaMobile"].ToString(),
                         VCAT_PreTest = r["VCAT_PreTest"] == DBNull.Value ? null : (int?)Convert.ToInt32(r["VCAT_PreTest"]),
                         VCAT_PostTest = r["VCAT_PostTest"] == DBNull.Value ? null : (int?)Convert.ToInt32(r["VCAT_PostTest"]),
-                        IsOrientation = r["IsOrientation"] == DBNull.Value ? 0 : Convert.ToInt32(r["IsOrientation"])
+                        IsOrientation = r["IsOrientation"] == DBNull.Value ? 0 : Convert.ToInt32(r["IsOrientation"]),
+                        VenueName = r["FacilityName"].ToString()
                     });
                 }
 
                 return model;
             });
+        }
+
+
+        public async Task<bool> UpdateOrientationAsync(string venueGuid, AshaOrientationCreateDto model)
+        {
+            return await Task.Run(() =>
+            {
+                var param = new SqlParameter[]
+                {
+                new SqlParameter("@VenueGuid", venueGuid),
+                new SqlParameter("@FacilityId", (object?)model.FacilityId ?? DBNull.Value),
+                new SqlParameter("@FacilityName", model.FacilityName ?? (object)DBNull.Value),
+                new SqlParameter("@IsIntervention", model.IsIntervention),
+                new SqlParameter("@DateofOrientation", model.DateofOrientation),
+                new SqlParameter("@NIN", (object?)model.NIN ?? DBNull.Value)
+                };
+
+                SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateOrientationVenue", param);
+
+                // Delete & re-insert attendees (simplest + safest)
+                var delParam = new SqlParameter[]
+{
+    new SqlParameter("@VenueGuid", venueGuid)
+};
+
+
+                SqlUtils.ExecuteSP(Conn(), "dbo.sp_DeleteOrientationAttendees", delParam);
+
+                foreach (var a in model.Attendees)
+                {
+                    var attendeeParam = new SqlParameter[]
+                    {
+                    new SqlParameter("@VenueGuid", venueGuid),
+                    new SqlParameter("@AshaId", (object?)a.AshaId ?? DBNull.Value),
+                    new SqlParameter("@AshaName", a.AshaName),
+                    new SqlParameter("@AshaMobile", (object?)a.AshaMobile ?? DBNull.Value),
+                    new SqlParameter("@VCAT_PreTest", (object?)a.VCAT_PreTest ?? DBNull.Value),
+                    new SqlParameter("@VCAT_PostTest", (object?)a.VCAT_PostTest ?? DBNull.Value),
+                    new SqlParameter("@IsOrientation", a.IsOrientation)
+                    };
+
+                    SqlUtils.ExecuteSP(Conn(), "dbo.sp_InsertOrientationAttendee", attendeeParam);
+                }
+
+                return true;
+            });
+        }
+
+        public void Delete(int venueId)
+        {
+            var param = new[]
+            {
+        new SqlParameter("@VenueId", venueId)
+    };
+
+            SqlUtils.ExecuteSP(Conn(), "dbo.sp_DeleteOrientation", param);
         }
 
     }

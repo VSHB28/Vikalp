@@ -19,5 +19,7 @@ namespace Vikalp.Service.Interfaces
         Task<bool> SaveOrientationJsonAsync(AshaOrientationCreateDto model, int userId);
 
         Task<AshaOrientationCreateDto?> GetOrientationForEditAsync(string venueGuid);
+        Task<bool> UpdateOrientationAsync(string venueGuid, AshaOrientationCreateDto model);
+        void Delete(int userId);
     }
 }

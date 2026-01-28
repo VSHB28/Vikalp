@@ -40,21 +40,30 @@ public class UserService : IUserService
     public List<UserDto> GetAll()
     {
         var dt = SqlUtils.ExecuteSP(Conn(), "dbo.sp_GetUsers", null);
+
         return dt.AsEnumerable().Select(r => new UserDto
         {
-            // read UserId as int
-            FullName = r.Field<string>("FullName"),
             UserId = r.Field<int>("UserId"),
+            FullName = r.Field<string>("FullName"),
             MobileNumber = r.Field<string>("MobileNumber"),
             Email = r.Field<string>("Email"),
             RoleId = r.Field<int?>("RoleId"),
             RoleName = r.Field<string>("RoleName"),
             IsActive = r.Field<int>("IsActive"),
             GenderId = r.Field<int?>("GenderId"),
-            LanguageId = r.Field<string>("LanguageId")
+
+            LanguageId =
+                r["LanguageId"] == DBNull.Value
+                    ? new List<int>()
+                    : r["LanguageId"]
+                        .ToString()!
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => int.TryParse(s, out var id) ? id : (int?)null)
+                        .Where(x => x.HasValue)
+                        .Select(x => x.Value)
+                        .ToList()
         }).ToList();
     }
-
     public UserDto? GetById(int id)
     {
         var parameters = new SqlParameter[] { new SqlParameter("@UserId", SqlDbType.Int) { Value = id } };
@@ -71,7 +80,16 @@ public class UserService : IUserService
             RoleName = row.Field<string>("RoleName"),
             IsActive = row.Field<int>("IsActive"),
             GenderId = row.Field<int?>("GenderId"),
-            LanguageId = row.Field<string>("LanguageId"),
+            LanguageId =
+                row["LanguageId"] == DBNull.Value
+                    ? new List<int>()
+                    : row["LanguageId"]
+                        .ToString()!
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => int.TryParse(s, out var id) ? id : (int?)null)
+                        .Where(x => x.HasValue)
+                        .Select(x => x.Value)
+                        .ToList(),
             StateId = row.Field<int?>("StateId") ?? 0,
             DistrictId = row.Field<int?>("DistrictId") ?? 0,
             BlockId = row.Field<int?>("BlockId") ?? 0,
@@ -117,12 +135,17 @@ public class UserService : IUserService
             new SqlParameter("@RoleId", SqlDbType.Int) { Value = (object?)user.RoleId ?? DBNull.Value },
             new SqlParameter("@IsActive", SqlDbType.Bit) { Value = user.IsActive },
             new SqlParameter("@CreatedBy", SqlDbType.Int) { Value = createdByValue },
-            new SqlParameter("@LanguageId", SqlDbType.NVarChar) { Value = (object?)user.LanguageId ?? DBNull.Value },
             new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
 
         new SqlParameter("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
         new SqlParameter("@DistrictId", SqlDbType.Int) { Value = (object?)user.DistrictId ?? DBNull.Value },
-        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value }
+        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value },
+        new SqlParameter("@LanguageId", SqlDbType.NVarChar)
+    {
+        Value = user.LanguageId != null && user.LanguageId.Any()
+            ? string.Join(",", user.LanguageId)
+            : DBNull.Value
+    }
 
         };
 
@@ -178,18 +201,23 @@ public class UserService : IUserService
             new SqlParameter("@IsActive", SqlDbType.Bit) { Value = user.IsActive },
             new SqlParameter("@UpdatedBy", SqlDbType.Int) { Value = updatedByValue },
             new SqlParameter("@Name", SqlDbType.NVarChar) { Value = (object?)user.FullName ?? DBNull.Value },
-            new SqlParameter("@LanguageId", SqlDbType.NVarChar) { Value = (object?)user.LanguageId ?? DBNull.Value },
             new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
 
             new SqlParameter("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
         new SqlParameter("@DistrictId", SqlDbType.Int) { Value = (object?)user.DistrictId ?? DBNull.Value },
-        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value }
+        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value },
+        new SqlParameter("@LanguageId", SqlDbType.NVarChar)
+{
+    Value = user.LanguageId != null && user.LanguageId.Any()
+        ? string.Join(",", user.LanguageId)
+        : DBNull.Value
+}
+
         };
 
         SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateUser", parameters);
         return true;
     }
-
     public bool Delete(int id)
     {
         var parameters = new SqlParameter[] { new SqlParameter("@UserId", SqlDbType.Int) { Value = id } };

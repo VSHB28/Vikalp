@@ -17,7 +17,7 @@ namespace Vikalp.Models.DTO
         public string? Email { get; set; }
         public int? GenderId { get; set; }
         public int? RoleId { get; set; }
-        public string LanguageId { get; set; }
+        public List<int> LanguageId { get; set; }
 
         // Status
         public int IsActive { get; set; }

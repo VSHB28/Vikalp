@@ -51,8 +51,8 @@
                            name="IsActive"
                            value="1"
                            @(Model.IsActive == 1 ? "checked" : "") />
-                </div>
-                <div class="col-md-3">
+                </div>                
+               <div class="col-md-3">
                     <label class="form-label">Language</label>
 
                     <div class="dropdown">
@@ -69,8 +69,10 @@
                                     <div class="form-check">
                                         <input class="form-check-input lang-checkbox"
                                                type="checkbox"
+                                               name="LanguageId"
                                                value="@r.Id"
                                                id="lang_@r.Id" />
+
                                         <label class="form-check-label" for="lang_@r.Id">
                                             @r.Name
                                         </label>
@@ -127,7 +129,9 @@
                 </div>
 
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    @* <button type="submit" class="btn btn-primary">Create</button> *@
+                    <button type="button" class="btn btn-primary" onclick="saveUser()">Create</button>
+
                     <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
                 </div>
             </form>
@@ -137,6 +141,15 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+
+                    document.querySelector("form").addEventListener("submit", function () {
+
+            let ids = Array.from(
+                document.querySelectorAll(".lang-checkbox:checked")
+            ).map(x => x.value);
+
+            document.getElementById("LanguageId").value = ids.join(",");
+        });
 
 
             document.getElementById("StateId").addEventListener("change", function () {
@@ -196,21 +209,59 @@
                 opt.textContent = x.name;
                 ddl.appendChild(opt);
             });
+        }            
+
+        });
+
+                function saveUser() {
+
+            // collect language ids
+                    let languageIds = Array.from(
+            document.querySelectorAll(".lang-checkbox:checked")
+        ).map(x => parseInt(x.value));
+
+            let model = {
+                FullName: document.querySelector('[name="FullName"]').value || null,
+                Email: document.querySelector('[name="Email"]').value || null,
+                MobileNumber: document.querySelector('[name="MobileNumber"]').value || null,
+                Password: document.querySelector('[name="Password"]').value || null,
+                RoleId: document.querySelector('[name="RoleId"]').value || null,
+                GenderId: document.querySelector('[name="GenderId"]').value || null,
+                IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
+
+                StateId: document.getElementById("StateId").value || null,
+                DistrictId: document.getElementById("DistrictId").value || null,
+                BlockId: document.getElementById("BlockId").value || null,
+
+                LanguageId: languageIds   // <-- IMPORTANT
+            };
+
+            console.log("Posting user:", model);
+
+            fetch('/User/CreateJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(model)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("User saved successfully!");
+                    window.location.href = "/User/Index";
+                } else {
+                    alert(data.message || "Save failed");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error occurred while saving user");
+            });
         }
 
-            // Language multiselect binding
-                document.querySelector("form").addEventListener("submit", function () {
-            let ids = Array.from(
-                document.querySelectorAll(".lang-checkbox:checked")
-            ).map(x => x.value);
-
-            let value = ids.join(",");
-            console.log("LanguageId posting:", value);
-
-            document.getElementById("LanguageId").value = value;
-        });
-
-        });
     </script>
 
 }

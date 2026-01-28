@@ -63,6 +63,7 @@ namespace Vikalp.Models.DTO
     public class AshaOrientationCreateDto
     {
         // Location
+        public string? VenueGuid { get; set; }
         public int StateId { get; set; }
         public int DistrictId { get; set; }
         public int BlockId { get; set; }

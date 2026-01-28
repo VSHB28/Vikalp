@@ -1,0 +1,76 @@
+﻿@using Vikalp.Models.DTO
+@model HealthSystemActivityDto
+
+@{
+    ViewData["Title"] = "Health Systems Activity Form (HS-09)";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Create Activity</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="ActivityName" class="control-label"></label>
+        <input asp-for="ActivityName" class="form-control" />
+        <span asp-validation-for="ActivityName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="OtherActivity" class="control-label"></label>
+        <input asp-for="OtherActivity" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StateId" class="control-label"></label>
+        <input asp-for="StateId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DistrictId" class="control-label"></label>
+        <input asp-for="DistrictId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TrainingVenue" class="control-label"></label>
+        <input asp-for="TrainingVenue" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ActivityTypeId" class="control-label"></label>
+        <input asp-for="ActivityTypeId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ActivityFormatId" class="control-label"></label>
+        <input asp-for="ActivityFormatId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="NoOfParticipants" class="control-label"></label>
+        <input asp-for="NoOfParticipants" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label"></label>
+        <input asp-for="StartDate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label"></label>
+        <input asp-for="EndDate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Remarks" class="control-label"></label>
+        <textarea asp-for="Remarks" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

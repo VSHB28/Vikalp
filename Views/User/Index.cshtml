@@ -126,7 +126,7 @@
                                               asp-route-id="@user.UserId"
                                               method="post"
                                               class="d-inline"
-                                              onsubmit="return confirm('Delete user \" ' + ' @user.MobileNumber' + '\"?' );">
+                                              onclick="deleteUser(@user.UserId)">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                                 <i class="bi bi-trash"></i>
@@ -147,4 +147,35 @@
     function goToEdit(id) {
         window.location.href = '/User/Edit/' + id;
     }
+
+
+        function deleteUser(userId) {
+        if (!confirm("Are you sure you want to delete this user?")) {
+            return;
+        }
+
+        fetch('/User/Delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken':
+                    document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(userId)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("User deleted successfully");
+                window.location.reload();
+            } else {
+                alert(data.message || "Delete failed");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error occurred while deleting user");
+        });
+    }
+
 </script>

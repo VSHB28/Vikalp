@@ -30,21 +30,39 @@ namespace Vikalp.Controllers
             return View("AddUser", new UserDto());
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(UserDto model)
+        public IActionResult CreateJson([FromBody] UserDto model)
         {
-            model.LanguageId = Request.Form["LanguageId"].ToString();
-
-            if (!ModelState.IsValid)
+            if (model == null)
             {
-                LoadMasters();
-                return View("AddUser", model);
+                return Json(new
+                {
+                    success = false,
+                    message = "Invalid data"
+                });
             }
 
-            _service.Create(model);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _service.Create(model);
+
+                return Json(new
+                {
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
         }
+
 
 
         public IActionResult Edit(int id)
@@ -57,43 +75,75 @@ namespace Vikalp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(UserDto model)
+        public IActionResult Edit([FromBody] UserDto model)
         {
-            model.LanguageId = Request.Form["LanguageId"].ToString();
-
-            foreach (var key in ModelState.Keys)
+            if (model == null)
             {
-                var state = ModelState[key];
-                foreach (var error in state.Errors)
+                return Json(new
                 {
-                    Console.WriteLine($"{key}: {error.ErrorMessage}");
-                }
+                    success = false,
+                    message = "Invalid data"
+                });
             }
-
 
             if (!ModelState.IsValid)
             {
-                LoadMasters();
-                return View("UpdateUser", model);
+                return Json(new
+                {
+                    success = false,
+                    message = "Validation failed"
+                });
             }
 
-            _service.Update(model);
-            return RedirectToAction(nameof(Index));
-        }
-        public IActionResult Delete(int id)
-        {
-            var user = _service.GetById(id);
-            if (user == null) return NotFound();
-            return View(user);
+            try
+            {
+                _service.Update(model);
+
+                return Json(new
+                {
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("Delete")]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult Delete([FromBody] int userId)
         {
-            _service.Delete(id);
-            return RedirectToAction(nameof(Index));
+            if (userId <= 0)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Invalid user id"
+                });
+            }
+
+            try
+            {
+                _service.Delete(userId);
+
+                return Json(new
+                {
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
         }
 
 

@@ -71,6 +71,72 @@ namespace Vikalp.Controllers
             return Json(result);
         }
 
+
+
+        // ===================== Edit (GET) =====================
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string venueGuid)
+        {
+            LoadMasters();
+            var model = await _service.GetOrientationForEditAsync(venueGuid);
+
+            if (model == null)
+                return NotFound();
+
+            ViewBag.IsEdit = true;
+            return View("Update", model);
+        }
+
+        // ===================== Edit (POST) =====================
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateJson(string venueGuid, [FromBody] AshaOrientationCreateDto model)
+        {
+            if (!ModelState.IsValid)
+                return Json(new { success = false });
+
+            var result = await _service.UpdateOrientationAsync(venueGuid, model);
+
+            return Json(new { success = result });
+        }
+
+
+        //===================== Delete Orientation (POST) =====================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete([FromBody] int venueId)
+        {
+            if (venueId <= 0)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Invalid user id"
+                });
+            }
+
+            try
+            {
+                _service.Delete(venueId);
+
+                return Json(new
+                {
+                    success = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> GetAshasByFacility(int facilityId)
         {
@@ -83,19 +149,6 @@ namespace Vikalp.Controllers
         {
             var result = await _service.GetAshaDetailsAsync(ashaId);
             return Json(result);
-        }
-
-        // EDIT (GET) → reuse Create.cshtml
-        public async Task<IActionResult> Edit(string venueGuid)
-        {
-            LoadMasters();
-            var model = await _service.GetOrientationForEditAsync(venueGuid);
-
-            if (model == null)
-                return NotFound();
-
-            ViewBag.IsEdit = true;
-            return View("Create", model);
         }
 
         public async Task<IActionResult> Details(string venueGuid)

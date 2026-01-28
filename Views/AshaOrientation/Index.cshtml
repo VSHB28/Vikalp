@@ -5,6 +5,12 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    #orientation-record {
+        padding: 20px;
+    }
+</style>
+
 <div class="container-fluid">
 
     <!-- ===== HEADER BAR ===== -->
@@ -56,7 +62,7 @@
                                           asp-route-id="'@item.VenueGuid'"
                                           method="post"
                                           class="d-inline"
-                                          onsubmit="return confirm('Delete Record \" ' + ' @item.Venue' + '\"?' );">
+                                      onclick="deleteOrientation(@item.VenueId)">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                             <i class="bi bi-trash"></i>
@@ -86,5 +92,35 @@
             window.location.href =
                 '/AshaOrientation/Edit?venueGuid=' + venueGuid;
         }
+
+                function deleteOrientation(Venueid) {
+            if (!confirm("Are you sure you want to delete this Orientation?")) {
+                return;
+            }
+
+            fetch('/AshaOrientation/Delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(Venueid)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Orientation deleted successfully");
+                    window.location.reload();
+                } else {
+                    alert(data.message || "Delete failed");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error occurred while deleting Orientation");
+            });
+        }
+
     </script>
 }
