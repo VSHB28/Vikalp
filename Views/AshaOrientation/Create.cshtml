@@ -190,7 +190,7 @@
 
                 <div class="col-md-4 d-flex">
                     <label>Orientation Date</label>
-                    <input name="DateofOrientation" type="date" class="form-control-sm" />
+                    <input name="DateofOrientation" type="date" class="form-control" />
                     <span asp-validation-for="DateofOrientation" class="text-danger"></span>
 
                 </div>
@@ -201,7 +201,7 @@
     <div class="row">
         <div class="col-md-2">
             <label>State</label>
-            <select name="StateId" class="form-control-sm" id="StateId">
+            <select name="StateId" class="form-control" id="StateId">
                 <option value="">-- Select State --</option>
                 @foreach (var s in ViewBag.States)
                 {
@@ -212,33 +212,33 @@
 
         <div class="col-md-2">
             <label>District</label>
-            <select name="DistrictId" class="form-control-sm" id="DistrictId">
+            <select name="DistrictId" class="form-control" id="DistrictId">
                 <option value="">-- Select District --</option>
             </select>
         </div>
 
         <div class="col-md-2">
             <label>Block</label>
-            <select name="BlockId" class="form-control-sm" id="BlockId">
+            <select name="BlockId" class="form-control" id="BlockId">
                 <option value="">-- Select Block --</option>
             </select>
         </div>
 
         <div class="col-md-2" id="facilityDropdownDiv">
             <label>Facility</label>
-            <select name="FacilityId" class="form-control-sm" id="FacilityId">
+            <select name="FacilityId" class="form-control" id="FacilityId">
                 <option value="">-- Select Facility --</option>
             </select>
         </div>
 
         <div class="col-md-2 d-none" id="manualFacilityDiv">
             <label>Facility</label>
-            <input name="FacilityName" class="form-control-sm" placeholder="Enter Facility name" />
+            <input name="FacilityName" class="form-control" placeholder="Enter Facility name" />
         </div>
 
         <div class="col-md-2">
             <label>Facility NIN</label>
-            <input name="NIN" id="NinNumber" class="form-control-sm" placeholder="Enter NIN" />
+            <input name="NIN" id="NinNumber" class="form-control" placeholder="Enter NIN" />
         </div>
         <div class="col-md-2">
             <label>Topic Covered</label>
@@ -302,8 +302,8 @@
     <hr />
 
     @* <button type="submit" class="btn btn-primary">Save</button> *@
-    <button type="button" class="btn btn-primary btn-sm" onclick="saveOrientation()">Save</button>
-    <a href="@Url.Action("Index", "AshaOrientation")" class="btn btn-secondary btn-sm">Back</a>
+    <button type="button" class="btn btn-primary btn" onclick="saveOrientation()">Save</button>
+    <a href="@Url.Action("Index", "AshaOrientation")" class="btn btn-secondary btn">Back</a>
 
 
     <div class="modal fade" id="ashaModal" tabindex="-1">
@@ -340,7 +340,7 @@
                         <label>Select ASHA(s)</label>
 
                         <div class="border rounded p-2" style="max-height:300px; overflow-y:auto;">
-                            <table class="table table-sm table-bordered mb-0">
+                            <table class="table table table-bordered mb-0">
                                 <thead>
                                     <tr>
                                         <th>Select</th>
@@ -416,7 +416,7 @@
 
 
             <td>
-                <button type="button" class="btn btn-danger btn-sm removeRow">Remove</button>
+                <button type="button" class="btn btn-danger btn removeRow">Remove</button>
             </td>
         </tr>
 </script>
