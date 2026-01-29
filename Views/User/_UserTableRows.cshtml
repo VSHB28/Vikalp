@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Vikalp.Models.DTO.UserDto>
+
+@foreach (var item in Model.Select((value, index) => (value, index)))
+{
+    var user = item.value;
+    var idx = item.index + 1;
+
+    <tr>
+        <td>@idx</td>
+        <td>
+            <div class="fw-semibold">@user.MobileNumber</div>
+        </td>
+        <td>@user.Email</td>
+        <td>
+            @if (user.RoleName != null)
+            {
+                <span class="badge bg-info um-badge-role">@user.RoleName</span>
+            }
+            else
+            {
+                <span class="text-muted small">—</span>
+            }
+        </td>
+        <td class="text-center">
+            @if (user.IsActive == 1)
+            {
+                <span class="badge bg-success">Yes</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">No</span>
+            }
+        </td>
+        <td class="text-end um-action">
+            <a class="btn btn-sm btn-outline-primary me-1"
+               href="/User/Edit/@user.UserId">
+                <i class="bi bi-pencil"></i>
+            </a>
+            <form asp-action="Delete"
+                  asp-controller="User"
+                  asp-route-id="@user.UserId"
+                  method="post"
+                  class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        </td>
+    </tr>
+}

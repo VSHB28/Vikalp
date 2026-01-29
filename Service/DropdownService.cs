@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Mono.TextTemplating;
 using System.Data;
 using Vikalp.Models.DTO;
@@ -179,5 +180,87 @@ public class DropdownService : IDropdownService
                      Name = r.Field<string>("Name")
                  })
                  .ToList();
+    }
+    public async Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsAsync(int userId, int languageId)
+    {
+        var result = new Dictionary<string, List<SelectListItem>>();
+
+        using (var conn = new SqlConnection(Conn()))
+        using (var cmd = new SqlCommand("dbo.sp_getCommonDatafordropdown", conn))
+        {
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@LanguageId", languageId);
+
+            await conn.OpenAsync();
+            using (var reader = await cmd.ExecuteReaderAsync())
+            {
+                // ActivityTypeName
+                var activityTypeName = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    activityTypeName.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["ActivityTypeName"] = activityTypeName;
+
+                await reader.NextResultAsync();
+
+                var activityType = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    activityType.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["ActivityType"] = activityType;
+
+                await reader.NextResultAsync();
+
+                var activityFormat = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    activityFormat.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["ActivityFormat"] = activityFormat;
+
+                await reader.NextResultAsync();
+
+                var clinical = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    clinical.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["Clinical"] = clinical;
+
+                await reader.NextResultAsync();
+
+                var nonClinical = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    nonClinical.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["NonClinical"] = nonClinical;
+            }
+        }
+
+        return result;
     }
 }

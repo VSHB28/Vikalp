@@ -22,29 +22,46 @@ namespace Vikalp.Controllers
         // ===================== LIST =====================
         public async Task<IActionResult> Index()
         {
-            var list = await _service.GetAllAsync();
-            return View(list);
+            var activities = await _service.GetAllAsync();
+            return View(activities);
         }
 
         // ===================== CREATE (GET) =====================
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            LoadMasters();
+            var dropdowns = await _dropdownService.GetCommonDropdownsAsync(userId: 1, languageId: 1);
+
+            ViewBag.ActivityTypeName = dropdowns["ActivityTypeName"];
+            ViewBag.ActivityType = dropdowns["ActivityType"];
+            ViewBag.ActivityFormat = dropdowns["ActivityFormat"];
+            ViewBag.Clinical = dropdowns["Clinical"];
+            ViewBag.NonClinical = dropdowns["NonClinical"];
+
+            return View("Create", new HealthSystemActivityDto());
         }
 
         // ===================== CREATE (POST) =====================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(HealthSystemActivityDto dto)
+        public async Task<IActionResult> CreateJson([FromBody] HealthSystemActivityDto model)
         {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dto);
-        }
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
+            if (model == null)
+                return BadRequest("Invalid data");
+
+            if (model.Activities == null || model.Activities.Count == 0)
+                return BadRequest("At least one Activity is required");
+
+            var result = await _service.SaveHealthSystemActivityJsonAsync(model, userId);
+
+            if (!result)
+                return StatusCode(500, "Save failed");
+
+            return Ok(new { success = true });
+        }
 
         // ===================== AJAX APIs =====================
 

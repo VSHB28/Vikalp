@@ -1,159 +1,175 @@
 ﻿@using Vikalp.Models.DTO
-@model HealthSystemActivityDto
-
+@model IEnumerable<Vikalp.Models.DTO.HealthSystemActivityDto>
 @{
-    ViewData["Title"] = "Health Systems Activity Form (HS-09)";
+    ViewData["Title"] = "Health Systems Activity Form";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h3 class="mb-3">
-    Health Systems Activity Form (HS-09)
-    <small class="text-muted">v4.0 (Jan 2025)</small>
-</h3>
+<style>
+    .um-action {
+        white-space: nowrap;
+    }
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
 
-    <!-- A. GENERAL INFORMATION -->
-    <fieldset class="border p-3 mb-4">
-        <legend class="w-auto px-2">A. General Information</legend>
+    .um-toolbar {
+        gap: .5rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
 
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label asp-for="CollectedBy" class="form-label"></label>
-                <input asp-for="CollectedBy" class="form-control" />
-                <span asp-validation-for="CollectedBy" class="text-danger"></span>
+    .um-search {
+        max-width: 320px;
+    }
+
+    .um-table thead th {
+        background: linear-gradient(90deg,#0d6efd, #6610f2);
+        color: #fff;
+        border: 0;
+    }
+
+    .um-table tbody tr:hover {
+        background: rgba(13,110,253,0.03);
+    }
+
+    .um-action .btn {
+        min-width: 44px;
+    }
+
+    .um-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="card um-card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h3 class="mb-0">Health System Activity</h3>
+                </div>
+
+                <div class="um-toolbar">
+                    <div class="d-flex um-search">
+                        <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by activity name" />
+                        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="searchActivity()">Search</button>
+                    </div>
+
+                    <a href="@Url.Action("Create","HealthSystemActivity")" class="btn btn-sm btn-primary ms-3">
+                        Add Activity
+                    </a>
+                </div>
             </div>
+
+            @if (!Model?.Any() ?? true)
+            {
+                <div class="um-empty">
+                    <p class="mb-1">No data found.</p>
+                    <a a href="@Url.Action("Create", "HealthSystemActivity")" class="btn btn-outline-primary">Add your first activity</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table id="activitiesTable" class="table table-striped um-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Activity Name</th>
+                                <th>Venue</th>
+                                <th>Type</th>
+                                <th>No. of Participants</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.StartDate?.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.EndDate?.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.ActivityName</td>
+                                    <td>@item.TrainingVenue</td>
+                                    <td>@item.ActivityTypeId</td>
+                                    <td>@item.NoOfParticipants</td>
+                                    <td class="text-end um-action">
+                                        <a class="btn btn-sm btn-outline-primary me-1"
+                                           asp-controller="HealthSystemActivity"
+                                           asp-action="Edit"
+                                           asp-route-id="@item.ActivityId"
+                                           title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form asp-controller="HealthSystemActivity"
+                                              asp-action="Delete"
+                                              asp-route-id="@item.ActivityId"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this activity?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label asp-for="ActivityType" class="form-label"></label>
-                <select asp-for="ActivityType" class="form-select">
-                    <option value="">-- Select --</option>
-                    <option>Training of providers on reversible contraceptive methods</option>
-                    <option>Supportive supervision</option>
-                    <option>Review meeting</option>
-                    <option>Other</option>
-                </select>
-                <span asp-validation-for="ActivityType" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="OtherActivityType" class="form-label"></label>
-                <input asp-for="OtherActivityType" class="form-control" />
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label asp-for="State" class="form-label"></label>
-                <input asp-for="State" class="form-control" />
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="District" class="form-label"></label>
-                <input asp-for="District" class="form-control" />
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="VenueName" class="form-label"></label>
-            <input asp-for="VenueName" class="form-control" />
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label asp-for="TrainingType" class="form-label"></label>
-                <select asp-for="TrainingType" class="form-select">
-                    <option value="">-- Select --</option>
-                    <option>Clinical</option>
-                    <option>Non-Clinical</option>
-                    <option>Both</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="ActivityFormat" class="form-label"></label>
-                <select asp-for="ActivityFormat" class="form-select">
-                    <option value="">-- Select --</option>
-                    <option>In-person</option>
-                    <option>Virtual</option>
-                    <option>Hybrid</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label asp-for="TotalParticipants" class="form-label"></label>
-                <input asp-for="TotalParticipants" type="number" class="form-control" />
-            </div>
-
-            <div class="col-md-4">
-                <label asp-for="StartDate" class="form-label"></label>
-                <input asp-for="StartDate" type="date" class="form-control" />
-            </div>
-
-            <div class="col-md-4">
-                <label asp-for="EndDate" class="form-label"></label>
-                <input asp-for="EndDate" type="date" class="form-control" />
-            </div>
-        </div>
-    </fieldset>
-    <!-- B. TRAINING CONTENT -->
-    <fieldset class="border p-3 mb-4">
-        <legend class="w-auto px-2">B. Training Content</legend>
-
-        <div class="row">
-            <div class="col-md-6">
-                <h6>Clinical</h6>
-
-                
-            </div>
-
-            <div class="col-md-6">
-                <h6>Non-Clinical</h6>
-
-                
-            </div>
-        </div>
-    </fieldset>
-
-    <!-- C. PARTICIPANTS BY CADRE -->
-    <fieldset class="border p-3 mb-4">
-        <legend class="w-auto px-2">C. Number of Participants by Cadre</legend>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Provider Type</th>
-                    <th>Intervention District</th>
-                    <th>Non-Intervention District</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-            </tbody>
-        </table>
-    </fieldset>
-
-    <!-- REMARKS -->
-    <div class="mb-4">
-        <label asp-for="Remarks" class="form-label"></label>
-        <textarea asp-for="Remarks" class="form-control" rows="3"></textarea>
     </div>
+</div>
+<script>
+    function goToEdit(id) {
+        window.location.href = '/User/Edit/' + id;
+    }
 
-    <div class="text-end">
-        <button type="submit" class="btn btn-primary">
-            Save HS Activity
-        </button>
-        <a asp-action="Index" class="btn btn-secondary">
-            Back to List
-        </a>
-    </div>
-</form>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+        function deleteUser(userId) {
+        if (!confirm("Are you sure you want to delete this user?")) {
+            return;
+        }
+
+        fetch('/User/Delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken':
+                    document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(userId)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("User deleted successfully");
+                window.location.reload();
+            } else {
+                alert(data.message || "Delete failed");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error occurred while deleting user");
+        });
+    }
+
+            async function searchActivity() {
+        const term = document.getElementById("searchTerm").value;
+
+        const response = await fetch(`/User/Search?q=${encodeURIComponent(term)}`);
+        const html = await response.text();
+
+        document.querySelector("#usersTable tbody").innerHTML = html;
+    }
+
+</script>

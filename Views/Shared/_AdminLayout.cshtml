@@ -20,6 +20,7 @@
             --ipas-text-dark: #2C2C2C; /* Dark text on light backgrounds */
             --ipas-text-muted: #666666; /* Muted text */
             --ipas-white: #FFFFFF; /* Pure white */
+            --ipas-sidebar:#3F0C11;
         }
 
         body {
@@ -43,8 +44,8 @@
 
         /* --- SIDEBAR STYLING --- */
         .sidebar {
-            width: 240px;
-            background: var(--ipas-primary);
+            width: 265px;
+            background: var(--ipas-sidebar);
             border-right: none;
             display: flex;
             flex-direction: column;
@@ -161,7 +162,7 @@
         /* Navigation Links - Enhanced */
         .nav-link {
             color: rgba(255, 255, 255, 0.85);
-            padding: 10px;
+            padding: 6px;
             margin: 4px 12px;
             font-size: 0.95rem;
             font-weight: 500;
@@ -267,7 +268,7 @@
         /* --- MAIN CONTENT AREA --- */
         .main-content {
             flex: 1;
-            margin-left: 240px;
+            margin-left: 265px;
             display: flex;
             flex-direction: column;
             height: 100vh;

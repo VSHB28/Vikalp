@@ -45,17 +45,14 @@
                 </div>
 
                 <div class="um-toolbar">
-                    <form method="get" asp-action="Index" asp-controller="User" class="d-flex um-search" role="search">
-                        <input name="q" value="@Context.Request.Query["q"]" class="form-control form-control-sm" placeholder="Search by username or email" />
-                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-2" title="Search">
-                        </button>
-                    </form>
+                    <div class="d-flex um-search">
+                        <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by name or email" />
+                        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="searchUser()">Search</button>
+                    </div>
+
 
                     <a href="@Url.Action("Create", "User")" class="btn btn-sm btn-primary ms-3" style="z-index: 1000; position: relative;">
                         Add User
-                    </a>
-
-                    <a class="btn btn-sm btn-outline-secondary ms-2" asp-action="Index" asp-controller="User" title="Refresh">
                     </a>
                 </div>
             </div>
@@ -70,7 +67,7 @@
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-hover um-table align-middle">
+                    <table id="usersTable" class="table table-hover um-table align-middle">
                         <thead>
                             <tr>
                                 <th style="width:1%;">#</th>
@@ -176,6 +173,15 @@
             console.error(err);
             alert("Error occurred while deleting user");
         });
+    }
+
+            async function searchUser() {
+        const term = document.getElementById("searchTerm").value;
+
+        const response = await fetch(`/User/Search?q=${encodeURIComponent(term)}`);
+        const html = await response.text();
+
+        document.querySelector("#usersTable tbody").innerHTML = html;
     }
 
 </script>

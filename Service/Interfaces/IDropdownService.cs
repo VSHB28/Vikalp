@@ -1,4 +1,5 @@
-﻿using Vikalp.Models.DTO;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Vikalp.Models.DTO;
 
 public interface IDropdownService
 {
@@ -16,5 +17,8 @@ public interface IDropdownService
     AshaDetailDto GetAshaDetails(int ashaId);
 
     List<DropdownDto> GetTopicsCovered(int userId, int flagId);
+
+    Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsAsync(int userId, int languageId);
+
 
 }

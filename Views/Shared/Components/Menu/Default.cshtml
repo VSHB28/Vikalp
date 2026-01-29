@@ -25,7 +25,7 @@ else
                         @foreach (var child in menu.Children)
                         {
                             <li class="submenu-item mb-1">
-                                <a class="text-decoration-none text-white-50 nav-link" href="@child.Url">
+                                <a class="text-decoration-none text-white nav-link" href="@child.Url">
                                     @if (!string.IsNullOrWhiteSpace(child.MenuIcon))
                                     {
                                         <i class="@child.MenuIcon me-2"></i>

@@ -6,71 +6,322 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h2>Create Activity</h2>
-
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="ActivityName" class="control-label"></label>
-        <input asp-for="ActivityName" class="form-control" />
-        <span asp-validation-for="ActivityName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="OtherActivity" class="control-label"></label>
-        <input asp-for="OtherActivity" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="StateId" class="control-label"></label>
-        <input asp-for="StateId" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="DistrictId" class="control-label"></label>
-        <input asp-for="DistrictId" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="TrainingVenue" class="control-label"></label>
-        <input asp-for="TrainingVenue" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ActivityTypeId" class="control-label"></label>
-        <input asp-for="ActivityTypeId" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ActivityFormatId" class="control-label"></label>
-        <input asp-for="ActivityFormatId" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="NoOfParticipants" class="control-label"></label>
-        <input asp-for="NoOfParticipants" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="StartDate" class="control-label"></label>
-        <input asp-for="StartDate" type="date" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="EndDate" class="control-label"></label>
-        <input asp-for="EndDate" type="date" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Remarks" class="control-label"></label>
-        <textarea asp-for="Remarks" class="form-control"></textarea>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+<style>
+        .dropdown-menu.show {
+        display: block;
     }
+
+    #activityDropdownBtn {
+        cursor: pointer;
+    }
+
+</style>
+
+<h2 class="mb-4">Create Activity</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div class="row">
+
+                <div class="col-md-2">
+                    <label>State</label>
+                    <select name="StateId" class="form-control" id="StateId">
+                        <option value="">-- Select State --</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>District</label>
+                    <select name="DistrictId" class="form-control" id="DistrictId">
+                        <option value="">-- Select District --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label>Activity Name</label>
+                    <select name="ActivityNameId" class="form-control" id="ActivityNameId">
+                        <option value="">-- Select ActivityName --</option>
+                        @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityTypeName)
+                        {
+                            <option value="@s.Value" @(Model.ActivityNameId.ToString() == s.Value ? "selected" : "")>
+                                @s.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2" id="otherActivityDiv">
+                    <label>Other Activity</label>
+                    <input name="OtherActivity" class="form-control" id="OtherActivity" disabled />
+                </div>
+
+                <div class="col-md-2">
+                    <label>Training Venue</label>
+                    <input name="TrainingVenue" class="form-control" id="TrainingVenue" />
+                    <span asp-validation-for="TrainingVenue" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-2">
+                    <label>Activity Type</label>
+                    <select name="ActivityTypeId" class="form-control" id="ActivityTypeId">
+                        <option value="">-- Select ActivityType --</option>
+                        @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityType)
+                        {
+                            <option value="@s.Value" @(Model.ActivityTypeId.ToString() == s.Value ? "selected" : "")>
+                                @s.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label class="form-label">Activity List</label>
+
+                    <div class="dropdown w-100">
+                        <button class="form-control text-start d-flex justify-content-between align-items-center"
+                                type="button"
+                                id="activityDropdownBtn">
+                            <span id="activityDropdownText" class="text-muted">Select Activities</span>
+                            <span class="ms-2">▼</span>
+                        </button>
+
+                        <div class="dropdown-menu w-100 p-2"
+                             id="ActivitiesContainer"
+                             style="max-height:250px; overflow-y:auto;">
+                            <span class="text-muted">Select Activity Type first</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label>Activity Format</label>
+                    <select name="ActivityFormatId" class="form-control" id="ActivityFormatId">
+                        <option value="">-- Select ActivityFormat --</option>
+                        @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityFormat)
+                        {
+                            <option value="@s.Value" @(Model.ActivityFormatId.ToString() == s.Value ? "selected" : "")>
+                                @s.Text
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label>No of Participants</label>
+                    <input name="NoOfParticipants" class="form-control" type="number" id="NoOfParticipants" />
+                </div>
+                <div class="col-md-2">
+                    <label name="StartDate" class="form-label">Start Date</label>
+                    <input name="StartDate" type="date" class="form-control" id="StartDate" />
+                </div>
+                <div class="col-md-2">
+                    <label>End Date</label>
+                    <input name="EndDate" type="date" class="form-control" id="EndDate" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Observations/Remarks</label>
+                    <textarea name="Remarks" class="form-control" rows="3" id="Remarks"></textarea>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary btn" onclick="saveHealthSystemActivity()">Save</button>
+                <a href="@Url.Action("Index", "HealthSystemActivity")" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script>
+
+
+        document.getElementById("StateId").addEventListener("change", function () {
+                    let stateId = this.value;
+                    resetDropdown("DistrictId", "-- Select District --");
+
+                    if (!stateId) return;
+
+                    fetch(`/HealthSystemActivity/GetDistricts?stateId=${stateId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            fillDropdown("DistrictId", data, "id", "name");
+                        });
+                });
+
+                         function resetDropdown(id, placeholder) {
+                            let ddl = document.getElementById(id);
+                            ddl.innerHTML = `<option value="">${placeholder}</option>`;
+                        }
+
+                function fillDropdown(id, data, valueField, textField) {
+                            let ddl = document.getElementById(id);
+                            data.forEach(x => {
+                                let opt = document.createElement("option");
+                                opt.value = x[valueField];
+                                opt.text = x[textField];
+                                ddl.appendChild(opt);
+                            });
+                        }
+                        const activityNameSelect = document.getElementById("ActivityNameId");
+                    const otherDiv = document.getElementById("otherActivityDiv");
+                    const otherInput = document.getElementById("OtherActivity");
+
+                    function toggleOtherActivity() {
+                        const selectedText =
+                            activityNameSelect.options[activityNameSelect.selectedIndex]?.text;
+
+                        if (selectedText === "Others") {
+                            otherDiv.style.display = "block";
+                            otherInput.disabled = false;
+                        } else {
+                            otherDiv.style.display = "none";
+                            otherInput.value = "";
+                            otherInput.disabled = true;
+                        }
+                    }
+
+                    activityNameSelect.addEventListener("change", toggleOtherActivity);
+
+                    // Run once on page load (for edit case)
+                    toggleOtherActivity();
+
+        const activityType = document.getElementById("ActivityTypeId");
+        const container = document.getElementById("ActivitiesContainer");
+        const dropdownBtn = document.getElementById("activityDropdownBtn");
+        const dropdownText = document.getElementById("activityDropdownText");
+
+        const clinicalList = @Html.Raw(Json.Serialize(ViewBag.Clinical));
+        const nonClinicalList = @Html.Raw(Json.Serialize(ViewBag.NonClinical));
+
+        dropdownBtn.addEventListener("click", function () {
+            container.classList.toggle("show");
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!dropdownBtn.contains(e.target) && !container.contains(e.target)) {
+                container.classList.remove("show");
+            }
+        });
+
+        function clearActivities() {
+            container.innerHTML = "";
+        }
+
+        function updateSelectedText() {
+            const checked = container.querySelectorAll("input[type='checkbox']:checked");
+
+            if (checked.length === 0) {
+                dropdownText.innerText = "Select Activities";
+                dropdownText.classList.add("text-muted");
+            } else if (checked.length <= 2) {
+                dropdownText.innerText = [...checked].map(x => x.nextElementSibling.innerText).join(", ");
+                dropdownText.classList.remove("text-muted");
+            } else {
+                dropdownText.innerText = `${checked.length} activities selected`;
+                dropdownText.classList.remove("text-muted");
+            }
+        }
+
+        function renderCheckboxes(list, heading) {
+            if (!list || list.length === 0) return;
+
+            const title = document.createElement("div");
+            title.className = "fw-bold mt-2";
+            title.innerText = heading;
+            container.appendChild(title);
+
+            list.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "form-check";
+
+                div.innerHTML = `
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="Activities"
+                           value="${item.value}"
+                           id="act_${item.value}">
+                    <label class="form-check-label" for="act_${item.value}">
+                        ${item.text}
+                    </label>
+                `;
+
+                div.querySelector("input").addEventListener("change", updateSelectedText);
+                container.appendChild(div);
+            });
+        }
+
+        activityType.addEventListener("change", function () {
+            clearActivities();
+            dropdownText.innerText = "Select Activities";
+            dropdownText.classList.add("text-muted");
+
+            switch (this.value) {
+                case "1": // Clinical
+                    renderCheckboxes(clinicalList, "Clinical Activities");
+                    break;
+
+                case "2": // Non-Clinical
+                    renderCheckboxes(nonClinicalList, "Non-Clinical Activities");
+                    break;
+
+                case "3": // Both
+                    renderCheckboxes(clinicalList, "Clinical Activities");
+                    renderCheckboxes(nonClinicalList, "Non-Clinical Activities");
+                    break;
+
+                default:
+                    container.innerHTML = `<span class="text-muted">Select Activity Type first</span>`;
+            }
+        });
+
+        function saveHealthSystemActivity() {
+
+            const token = document.querySelector(
+                'input[name="__RequestVerificationToken"]'
+            ).value;
+
+            const activities = [...document.querySelectorAll(
+                'input[name="Activities"]:checked'
+            )].map(x => parseInt(x.value));
+
+            const data = {
+                activityNameId: parseInt(document.getElementById("ActivityNameId").value),
+                otherActivity: document.getElementById("OtherActivity")?.value,
+                stateId: parseInt(document.getElementById("StateId").value) || null,
+                districtId: parseInt(document.getElementById("DistrictId").value) || null,
+                trainingVenue: document.getElementById("TrainingVenue").value,
+                activityTypeId: parseInt(document.getElementById("ActivityTypeId").value),
+                activities: activities,
+                activityFormatId: parseInt(document.getElementById("ActivityFormatId").value),
+                noOfParticipants: parseInt(document.getElementById("NoOfParticipants").value),
+                startDate: document.getElementById("StartDate").value,
+                endDate: document.getElementById("EndDate").value,
+                remarks: document.getElementById("Remarks").value
+            };
+
+            fetch('/HealthSystemActivity/CreateJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    alert("Saved successfully");
+                    window.location.href = '/HealthSystemActivity/Index';
+                } else {
+                    alert("Save failed");
+                }
+            })
+            .catch(() => alert("Something went wrong"));
+        }
+    </script>
+
 }

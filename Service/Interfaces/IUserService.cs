@@ -13,6 +13,7 @@ namespace Vikalp.Service.Interfaces
         Guid Create(UserDto user);
         bool Update(UserDto user);
         bool Delete(int id);
+        Task<List<UserDto>> SearchUser(string term);
 
     }
 }

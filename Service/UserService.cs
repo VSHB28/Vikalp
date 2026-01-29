@@ -224,4 +224,41 @@ public class UserService : IUserService
         SqlUtils.ExecuteSP(Conn(), "dbo.sp_DeleteUser", parameters);
         return true;
     }
+
+    public async Task<List<UserDto>> SearchUser(string term)
+    {
+        return await Task.Run(() =>
+        {
+            var param = new SqlParameter[]
+            {
+            new SqlParameter("@Term", term)
+            };
+
+            // Call your stored procedure for searching users
+            var dt = SqlUtils.ExecuteSP(Conn(), "dbo.sp_SearchUsers", param);
+
+            return dt.AsEnumerable().Select(r => new UserDto
+            {
+                UserId = r.Field<int>("UserId"),
+                FullName = r.Field<string>("FullName"),
+                MobileNumber = r.Field<string>("MobileNumber"),
+                Email = r.Field<string>("Email"),
+                RoleId = r.Field<int?>("RoleId"),
+                RoleName = r.Field<string>("RoleName"),
+                IsActive = r.Field<int>("IsActive"),
+                GenderId = r.Field<int?>("GenderId"),
+
+                LanguageId =
+                    r["LanguageId"] == DBNull.Value
+                        ? new List<int>()
+                        : r["LanguageId"]
+                            .ToString()!
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                            .Select(s => int.TryParse(s, out var id) ? id : (int?)null)
+                            .Where(x => x.HasValue)
+                            .Select(x => x.Value)
+                            .ToList()
+            }).ToList();
+        });
+    }
 }

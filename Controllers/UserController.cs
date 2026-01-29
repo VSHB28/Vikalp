@@ -16,7 +16,7 @@ namespace Vikalp.Controllers
             _service = service;
             _dropdownService = dropdownService;
         }
-
+        //============================ LIST ============================
         public IActionResult Index()
         {
             LoadMasters();
@@ -24,12 +24,14 @@ namespace Vikalp.Controllers
             return View(users);
         }
 
+        //============================ CREATE (GET) ============================
         public IActionResult Create()
         {
             LoadMasters();
             return View("AddUser", new UserDto());
         }
 
+        //============================ CREATE (POST) ============================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -64,7 +66,7 @@ namespace Vikalp.Controllers
         }
 
 
-
+        //============================ EDIT (GET) ============================
         public IActionResult Edit(int id)
         {
             LoadMasters();
@@ -72,6 +74,8 @@ namespace Vikalp.Controllers
             if (user == null) return NotFound();
             return View("UpdateUser", user);
         }
+
+        //============================ EDIT (POST) ============================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -114,6 +118,8 @@ namespace Vikalp.Controllers
             }
         }
 
+        //============================ DELETE (POST) ============================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete([FromBody] int userId)
@@ -146,7 +152,15 @@ namespace Vikalp.Controllers
             }
         }
 
+        //============================ SEARCH (GET) =========================
+        [HttpGet]
+        public async Task<IActionResult> Search(string q)
+        {
+            var users = await _service.SearchUser(q);
+            return PartialView("_UserTableRows", users);
+        }
 
+        //============================ AJAX APIS ============================
         public IActionResult GetDistricts(int stateId)
         {
             var data = _dropdownService.GetDistricts(stateId);
