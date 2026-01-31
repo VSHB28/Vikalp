@@ -93,5 +93,135 @@ namespace Vikalp.Service
                 }
             });
         }
+
+        public async Task<List<DropdownDto>> SearchFacilitiesAsync(string term)
+        {
+            return await Task.Run(() =>
+            {
+                var param = new SqlParameter[]
+                {
+            new SqlParameter("@Term", term)
+                };
+
+                var dt = SqlUtils.ExecuteSP(Conn(), "sp_SearchFacilities", param);
+
+                return dt.AsEnumerable().Select(r => new DropdownDto
+                {
+                    Id = r.Field<int>("FacilityId"),
+                    Name = r.Field<string>("FacilityName")
+                }).ToList();
+            });
+        }
+
+        public async Task<List<ParticipantListDto>> GetparticipantByFacilityAsync(int facilityId)
+        {
+            return await Task.Run(() =>
+            {
+                var param = new SqlParameter[]
+                {
+            new SqlParameter("@FacilityId", facilityId)
+                };
+
+                var dt = SqlUtils.ExecuteSP(
+                    Conn(),
+                    "sp_GetParticipantByFacility",
+                    param
+                );
+
+                return dt.AsEnumerable()
+                    .Select(r => new ParticipantListDto
+                    {
+                        FullName = r.Field<string>("FullName"),
+
+                        FacilityId = r.Field<int>("FacilityId"),
+                        // ? BIGINT ? string safely
+                        Mobile = r["Mobile"] == DBNull.Value ? null : Convert.ToInt64(r["Mobile"]).ToString(),
+                        FacilityName = r.Field<string?>("FacilityName")
+                    })
+                    .ToList();
+            });
+        }
+
+        public async Task<MstFacilityDto?> GetFacilityByIdAsync(int facilityId)
+        {
+            return await Task.Run(() =>
+            {
+                var param = new SqlParameter[]
+                {
+            new SqlParameter("@FacilityId", facilityId)
+                };
+
+                var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetFacilityById", param);
+
+                return dt.AsEnumerable().Select(r => new MstFacilityDto
+                {
+                    FacilityId = r.Field<int>("FacilityId"),
+                    FacilityName = r.Field<string>("FacilityName"),
+                    NinNumber = r.Field<long?>("NinNumber")
+                }).FirstOrDefault();
+            });
+        }
+        public async Task<List<HealthSystemParticipantDto>> GetAllParticipantAsync()
+        {
+            var parameters = new SqlParameter[]
+            {
+        new SqlParameter("@UserId", SqlDbType.Int) { Value = 1 }
+            };
+
+            // Run the synchronous DB call on thread-pool to avoid blocking
+            var dt = await Task.Run(() => SqlUtils.ExecuteSP(Conn(), "dbo.sp_GetHealthSystemParticipants", parameters));
+
+            var list = dt.AsEnumerable().Select(r => new HealthSystemParticipantDto
+            {
+                ParticipantId = r.Field<int>("ParticipantId"),
+                FullName = r.Field<string>("FullName"),
+                ProviderTypeId = r.Field<int?>("ProviderTypeId"),
+                FacilityId = r.Field<int?>("FacilityId"),
+                FacilityName = r.Field<string?>("FacilityName"),
+                FacilityTypeId = r.Field<int?>("FacilityTypeId"),
+                FacilityTypeOther = r.Field<string?>("FacilityTypeOther"),
+                InterventionFacility = r.Field<int?>("InterventionFacility"),
+                DistrictId = r.Field<int?>("DistrictId"),
+                GenderId = r.Field<int?>("GenderId"),
+                Mobile = r.Field<string?>("Mobile"),
+                VCATScorePreTest = r.Field<int?>("VCATScorePreTest"),
+                VCATScorePostTest = r.Field<int?>("VCATScorePostTest"),
+                RefresherTraining = r.Field<int?>("RefresherTraining"),
+                Remarks = r.Field<string?>("Remarks"),
+                CreatedAt = r.Field<DateTime?>("CreatedAt"),
+                UpdatedAt = r.Field<DateTime?>("UpdatedAt")
+            }).ToList();
+
+            return list;
+        }
+
+        public async Task<bool> SaveHealthSystemParticipantJsonAsync(HealthSystemParticipantDto model, int userId)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+
+                    var activityGuid = Guid.NewGuid().ToString();
+
+                    var parameters = new SqlParameter[]
+                    {
+                    };
+
+                    SqlUtils.ExecuteSP(
+                        Conn(),
+                        "sp_InsertHealthSystemActivity",
+                        parameters
+                    );
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    // TODO: log ex
+                    return false;
+                }
+            });
+        }
     }
 }

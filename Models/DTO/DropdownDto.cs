@@ -20,4 +20,12 @@
         public string? SubCenter { get; set; }
         public string? FacilityName { get; set; }
     }
+
+    public class ParticipantListDto
+    {
+        public string? FullName { get; set; }
+        public int? FacilityId { get; set; }
+        public string? Mobile { get; set; }
+        public string? FacilityName { get; set; }
+    }
 }
