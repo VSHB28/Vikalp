@@ -57,25 +57,36 @@
 
                 <!-- Is Active -->
                 <div class="col-md-3">
-                    <label class="form-label d-block">Is Active</label>
-                    <input type="checkbox"
-                           name="IsActive"
-                           value="true"
-                           @(Model.IsActive ? "checked" : "") />
+                    <div class="d-flex gap-2">
+                        <div>
+                                <label class="form-label d-block">Is Active</label>
+                                <input type="checkbox"
+                                       name="IsActive"
+                                       value="true"
+                                       @(Model.IsActive ? "checked" : "") />
+                        </div>
+                        <div>
+                            <label class="form-label d-block">Is Centinal District</label>
+                            <input type="checkbox"
+                                   name="IsCentinalDistrict"
+                                   value="true"
+                                   @(Model.IsCentinalDistrict ? "checked" : "") />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Is Centinal -->
-                <div class="col-md-3">
+                @* <div class="col-md-3">
                     <label class="form-label d-block">Is Centinal District</label>
                     <input type="checkbox"
                            name="IsCentinalDistrict"
                            value="true"
                            @(Model.IsCentinalDistrict ? "checked" : "") />
-                </div>
+                </div> *@
 
                 <!-- Buttons -->
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn  btn-save btn-primary">
                         Save
                     </button>
                     <a href="/LocationDistrict/Index"

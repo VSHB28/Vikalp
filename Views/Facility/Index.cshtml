@@ -18,9 +18,13 @@
     }
 
     .um-table thead th {
-        background: linear-gradient(90deg,#0d6efd, #6610f2);
+        /* background: linear-gradient(90deg,#0d6efd, #6610f2);
         color: #fff;
-        border: 0;
+        border: 0; */
+        color: #fff;
+        border: 1px dotted;
+        background: var(--ipas-primary);
+
     }
 
     .um-table tbody tr:hover {
@@ -51,12 +55,12 @@
                 </div>
 
                 <div class="um-toolbar">
-                    <a href="/Facility/Create" class="btn btn-sm btn-primary">
+                    <a href="/Facility/Create" class="btn btn-sm btn-add btn-primary">
                         Add Facility
                     </a>
-                    <a href="/Facility/Index" class="btn btn-sm btn-outline-secondary">
+                    @* <a href="/Facility/Index" class="btn btn-sm btn-outline-secondary">
                         Refresh
-                    </a>
+                    </a> *@
                 </div>
             </div>
 

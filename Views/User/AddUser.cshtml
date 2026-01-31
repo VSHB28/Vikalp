@@ -47,16 +47,22 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input type="checkbox"
-                           name="IsActive"
-                           value="1"
-                           @(Model.IsActive == 1 ? "checked" : "") />
-                </div>                
+                    <label class="form-label">Gender</label>
+                    <select name="GenderId" class="form-control">
+                        <option value="">-- Select Gender --</option>
+                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
+                        {
+                            var selected = Model.GenderId == r.Id ? "selected" : "";
+                            <option value="@r.Id" @selected>@r.Name</option>
+                        }
+                    </select>
+                </div>
+                              
                <div class="col-md-3">
                     <label class="form-label">Language</label>
 
                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                        <button class="btn form-control dropdown-toggle w-100 text-start"
                                 type="button"
                                 data-bs-toggle="dropdown">
                             Select Language
@@ -83,16 +89,13 @@
                     </div>
                 </div>
 
+                
                 <div class="col-md-3">
-                    <label class="form-label">Gender</label>
-                    <select name="GenderId" class="form-control">
-                        <option value="">-- Select Gender --</option>
-                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
-                        {
-                            var selected = Model.GenderId == r.Id ? "selected" : "";
-                            <option value="@r.Id" @selected>@r.Name</option>
-                        }
-                    </select>
+                    <label class="form-label d-block">Is Active</label>
+                    <input type="checkbox"
+                           name="IsActive"
+                           value="1"
+                           @(Model.IsActive == 1 ? "checked" : "") />
                 </div>
 
                 <hr class="mt-4" />
@@ -130,7 +133,7 @@
 
                 <div class="col-12">
                     @* <button type="submit" class="btn btn-primary">Create</button> *@
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">Create</button>
+                    <button type="button" class="btn btn-create btn-primary" onclick="saveUser()">Create</button>
 
                     <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
                 </div>
