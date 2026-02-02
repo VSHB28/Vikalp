@@ -50,19 +50,24 @@ namespace Vikalp.Controllers
         // ===================== CREATE (POST) =====================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateJson([FromBody] HealthSystemParticipantDto model)
+        public async Task<IActionResult> SaveParticipantsJson([FromBody] HealthSystemParticipantSaveDto model)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            if (model == null || model.Participants == null || !model.Participants.Any())
+                return Json(new { success = false, message = "No participants found" });
 
-            if (model == null)
-                return BadRequest("Invalid data");
+            int userId = 1; // later from claims
 
-            var result = await _service.SaveHealthSystemParticipantJsonAsync(model, userId);
+            bool result = await _service.SaveParticipantsAsync(
+                model.DateofActivity,
+                model.StateId,
+                model.DistrictId,
+                model.FacilityTypeId,
+                model.FacilityTypeOther,
+                model.Participants,
+                userId
+            );
 
-            if (!result)
-                return StatusCode(500, "Save failed");
-
-            return Ok(new { success = true });
+            return Json(new { success = result });
         }
 
         // ===================== AJAX APIs =====================

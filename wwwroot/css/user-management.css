@@ -15,10 +15,10 @@
 
 /* Table */
 .um-table thead th {
-  background: linear-gradient(90deg,#0d6efd, #6610f2);
-  color: #fff;
-  border: 0;
-  vertical-align: middle;
+    color: #fff;
+    border: 1px dotted;
+    background: var(--ipas-primary);
+    vertical-align: middle;
 }
 .um-table tbody tr:hover { background: rgba(13,110,253,0.03); }
 .um-table tbody td { vertical-align: middle; }

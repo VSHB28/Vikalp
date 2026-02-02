@@ -20,7 +20,7 @@
             --ipas-text-dark: #2C2C2C; /* Dark text on light backgrounds */
             --ipas-text-muted: #666666; /* Muted text */
             --ipas-white: #FFFFFF; /* Pure white */
-            --ipas-sidebar:#3F0C11;
+            --ipas-sidebar: #551118db;
         }
 
         body {
@@ -264,7 +264,37 @@
                     transition: opacity 0.3s ease, visibility 0.3s ease, width 0.3s ease;
                     white-space: nowrap;
                 }
+        .btn-add {
+            background-color: #3F0C11;
+            color: white;
+        }
 
+        .btn-create {
+            background-color: #F15A29;
+            color: white;
+            border: 2px solid #F15A29;
+            transition: all 0.3s ease;
+        }
+
+            .btn-create:hover {
+                background-color: #D14A1F;
+                border-color: #D14A1F;
+            }
+
+
+
+
+        .btn-save {
+            background-color: #F15A29;
+            color: white;
+            border: 2px solid #F15A29;
+            transition: all 0.3s ease;
+        }
+
+            .btn-save:hover {
+                background-color: #D14A1F;
+                border-color: #D14A1F;
+            }
         /* --- MAIN CONTENT AREA --- */
         .main-content {
             flex: 1;
@@ -283,7 +313,9 @@
         /* --- HEADER STYLING --- */
         .top-header {
             height: 60px;
-            background: var(--ipas-white);
+            /* background: var(--ipas-white); */
+            background: var(--ipas-sidebar);
+            color: white;
             border-bottom: 2px solid #E8E4E0;
             display: flex;
             align-items: center;
@@ -298,7 +330,7 @@
             font-size: 1.2rem;
             font-weight: 600;
             margin: 0;
-            color: var(--ipas-text-dark);
+            color: white;
         }
 
         .header-actions {
@@ -505,6 +537,8 @@
             .nav.flex-column::-webkit-scrollbar-thumb:hover {
                 background: rgba(255, 255, 255, 0.5);
             }
+
+            /* checkbox */
     </style>
 </head>
 <body>
@@ -542,7 +576,7 @@
                     <button class="menu-toggle" id="menu-toggle">
                         <i class="bi bi-list"></i>
                     </button>
-                    <h2 class="page-title">Program Overview</h2>
+                    <h2 class="page-title">Vikalp</h2>
                 </div>
 
                 <div class="header-actions">
@@ -555,16 +589,21 @@
                     </div>
                     <div class="user-profile">
                         <div class="text-end me-2 d-none d-md-block">
-                            <div style="font-size: 0.9rem; font-weight: 600;">Vikram Singh</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted);">State Officer</div>
+                            <div style="font-size: 0.9rem; font-weight: 600;">
+                                @User.Identity?.Name
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                            </div>
                         </div>
-                        <div class="user-avatar">V</div>
+
+                        <div class="user-avatar">
+                            @User.FindFirst("Avatar")?.Value
+                        </div>
                     </div>
+
                 </div>
             </header>
-
-
-
 
             <div class="content-body-wrapper">
                 @RenderBody()

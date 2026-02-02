@@ -61,12 +61,22 @@ public class AuthService : IAuthService
             ? row["Username"].ToString() ?? username
             : username;
 
+        var fullName = dt.Columns.Contains("FullName") && row["FullName"] != DBNull.Value
+            ? row["FullName"].ToString() ?? string.Empty
+            : string.Empty;
+
+        var roleName = dt.Columns.Contains("RoleName") && row["RoleName"] != DBNull.Value
+            ? row["RoleName"].ToString() ?? string.Empty
+            : string.Empty;
+
         return new AuthResult
         {
             Success = true,
             UserId = userId,
             RoleId = roleInt,
-            Username = returnedUsername
+            Username = returnedUsername,
+            RoleName = roleName,
+            FullName = fullName
         };
     }
 }

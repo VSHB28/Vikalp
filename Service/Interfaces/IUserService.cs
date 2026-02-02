@@ -10,7 +10,7 @@ namespace Vikalp.Service.Interfaces
         Task<string> GetUsersAsync();
         List<UserDto> GetAll();
         UserDto? GetById(int id);
-        Guid Create(UserDto user);
+        int Create(UserDto user);
         bool Update(UserDto user);
         bool Delete(int id);
         Task<List<UserDto>> SearchUser(string term);

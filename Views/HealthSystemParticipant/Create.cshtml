@@ -326,7 +326,7 @@
                         <input type="text" id="modalParticipantText" class="form-control" placeholder="Enter Participant name" />
                     </div>
 
-                    <div class="col-md-3 d-none" id="modalgenderdiv">
+                    <div class="mb-3 d-none" id="modalgenderdiv">
                         <label>Gender</label>
                         <select name="GenderId" class="form-control" id="GenderId">
                             <option value="">-- Select Gender --</option>
@@ -336,6 +336,7 @@
                             }
                         </select>
                     </div>
+
                     <div class="mb-3 d-none" id="modalParticipantMobDiv">
                         <label>Mobile Number</label>
                         <input type="text" id="modelMobNumber" class="form-control" maxlength="10" pattern="\d{10}" placeholder="Enter Mobile Number" />
@@ -349,35 +350,31 @@
         </div>
     </div>
 
-    <div class="card mt-3">
-        <div class="card-body">
-            <table class="table table-bordered" id="participantTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Facility</th>
-                        <th>Full Name</th>
-                        <th>Mobile</th>
-                        <th>VCAT Pre</th>
-                        <th>VCAT Post</th>
-                        <th>RefresherTraining</th>
-                        <th>
-                            <button type="button" class="btn btn-success px-2 py-1" id="addRowBtn">
-                                + Participant
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="participantRows"></tbody>
-            </table>
-        </div>
-    </div>
+    <table class="table table-bordered" id="participantTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Facility</th>
+                <th>Full Name</th>
+                <th>Mobile</th>
+                <th>VCAT Pre</th>
+                <th>VCAT Post</th>
+                <th>RefresherTraining</th>
+                <th>
+                    <button type="button" class="btn btn-success px-2 py-1" id="addRowBtn">
+                        + Participant
+                    </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="participantRows"></tbody>
+    </table>
+    <hr />
 
-    <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary" onclick="saveParticipants()">Save</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </div>
-  
+    <button type="button" class="btn btn-save btn-primary btn" onclick="saveParticipants()">Save</button>
+    <a href="@Url.Action("Index", "HealthSystemParticipant")" class="btn btn-secondary btn">Back</a>
+
+
 </form>
 
 
@@ -423,7 +420,7 @@
         </td>
 
         <td>
-            <button type="button" class="btn btn-sm btn-danger removeRow">X</button>
+            <button type="button" class="btn btn-sm btn-danger removeRow">Remove</button>
         </td>
     </tr>
 </script>
@@ -534,7 +531,7 @@
                 ).hide();
             });
         });
-                
+
         // Remove row
         document.addEventListener("click", function (e) {
             if (e.target.classList.contains("removeRow")) {
@@ -913,7 +910,7 @@
                 Participants: participants
             };
 
-            fetch('/HealthSystemParticipant/CreateJson', {
+            fetch('/HealthSystemParticipant/SaveParticipantsJson', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

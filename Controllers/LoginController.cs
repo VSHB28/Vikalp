@@ -47,12 +47,18 @@ namespace Vikalp.Controllers
             }
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, result.Username),
-                new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
-                new Claim(ClaimTypes.Role, result.RoleId.ToString()),
-                new Claim("RoleId", result.RoleId.ToString())
-            };
+{
+    // Standard identity
+    new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
+    new Claim(ClaimTypes.Name, result.FullName),
+    new Claim(ClaimTypes.Role, result.RoleName),
+
+    // Custom claims
+    new Claim("Username", result.Username),
+    new Claim("RoleId", result.RoleId.ToString()),
+    new Claim("Avatar", result.FullName.Substring(0, 1).ToUpper())
+};
+
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);

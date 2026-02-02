@@ -17,14 +17,15 @@
 
 </style>
 
-<h2 class="mb-4">Create Activity</h2>
-
+<div class="container py-4">
 <div class="card shadow-sm">
     <div class="card-body">
+
+        <h2 class="mb-4">Create Activity</h2>
         <form asp-action="Create" method="post">
             <div class="row">
 
-                <div class="col-md-2">
+                <div class="col-md-3 mb-1">
                     <label>State</label>
                     <select name="StateId" class="form-control" id="StateId">
                         <option value="">-- Select State --</option>
@@ -34,14 +35,14 @@
                         }
                     </select>
                 </div>
-                <div class="col-md-2">
+                    <div class="col-md-3 mb-1">
                     <label>District</label>
                     <select name="DistrictId" class="form-control" id="DistrictId">
                         <option value="">-- Select District --</option>
                     </select>
                 </div>
 
-                <div class="col-md-2">
+                    <div class="col-md-3 mb-1">
                     <label>Activity Name</label>
                     <select name="ActivityNameId" class="form-control" id="ActivityNameId">
                         <option value="">-- Select ActivityName --</option>
@@ -52,19 +53,19 @@
                             </option>
                         }
                     </select>
-                </div>
-                <div class="col-md-2" id="otherActivityDiv">
+                </div> 
+                    <div class="col-md-3 mb-1" id="otherActivityDiv">
                     <label>Other Activity</label>
                     <input name="OtherActivity" class="form-control" id="OtherActivity" disabled />
                 </div>
 
-                <div class="col-md-2">
+                    <div class="col-md-3 mb-1">
                     <label>Training Venue</label>
                     <input name="TrainingVenue" class="form-control" id="TrainingVenue" />
                     <span asp-validation-for="TrainingVenue" class="text-danger"></span>
                 </div>
 
-                <div class="col-md-2">
+                    <div class="col-md-3 mb-1">
                     <label>Activity Type</label>
                     <select name="ActivityTypeId" class="form-control" id="ActivityTypeId">
                         <option value="">-- Select ActivityType --</option>
@@ -76,64 +77,70 @@
                         }
                     </select>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
-                    <label class="form-label">Activity List</label>
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">Activity List</label>
 
-                    <div class="dropdown w-100">
-                        <button class="form-control text-start d-flex justify-content-between align-items-center"
-                                type="button"
-                                id="activityDropdownBtn">
-                            <span id="activityDropdownText" class="text-muted">Select Activities</span>
-                            <span class="ms-2">▼</span>
-                        </button>
+                        <div class="dropdown w-100">
+                            <button class="form-control text-start d-flex justify-content-between align-items-center"
+                                    type="button"
+                                    id="activityDropdownBtn">
+                                <span id="activityDropdownText" class="text-muted">Select Activities</span>
+                                <span class="ms-2">▼</span>
+                            </button>
 
-                        <div class="dropdown-menu w-100 p-2"
-                             id="ActivitiesContainer"
-                             style="max-height:250px; overflow-y:auto;">
-                            <span class="text-muted">Select Activity Type first</span>
+                            <div class="dropdown-menu w-100 p-2"
+                                 id="ActivitiesContainer"
+                                 style="max-height:250px; overflow-y:auto;">
+                                <span class="text-muted">Select Activity Type first</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                     
+                    <div class="col-md-3 mb-1">
+                        <label>Activity Format</label>
+                        <select name="ActivityFormatId" class="form-control" id="ActivityFormatId">
+                            <option value="">-- Select ActivityFormat --</option>
+                            @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityFormat)
+                            {
+                                <option value="@s.Value" @(Model.ActivityFormatId.ToString() == s.Value ? "selected" : "")>
+                                    @s.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
 
-                <div class="col-md-2">
-                    <label>Activity Format</label>
-                    <select name="ActivityFormatId" class="form-control" id="ActivityFormatId">
-                        <option value="">-- Select ActivityFormat --</option>
-                        @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityFormat)
-                        {
-                            <option value="@s.Value" @(Model.ActivityFormatId.ToString() == s.Value ? "selected" : "")>
-                                @s.Text
-                            </option>
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label>No of Participants</label>
-                    <input name="NoOfParticipants" class="form-control" type="number" id="NoOfParticipants" />
-                </div>
-                <div class="col-md-2">
-                    <label name="StartDate" class="form-label">Start Date</label>
-                    <input name="StartDate" type="date" class="form-control" id="StartDate" />
-                </div>
-                <div class="col-md-2">
-                    <label>End Date</label>
-                    <input name="EndDate" type="date" class="form-control" id="EndDate" />
-                </div>
-
+                    <div class="col-md-3 mb-1">
+                        <label>No of Participants</label>
+                        <input name="NoOfParticipants" class="form-control" type="number" id="NoOfParticipants" />
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label name="StartDate" class="form-label">Start Date</label>
+                        <input name="StartDate" type="date" class="form-control" id="StartDate" />
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label>End Date</label>
+                        <input name="EndDate" type="date" class="form-control" id="EndDate" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Observations/Remarks</label>
+                            <textarea name="Remarks" class="form-control" rows="3" id="Remarks"></textarea>
+                        </div>
+                    </div>
+            </div>
+            @* <div class="row">
                 <div class="mb-3">
                     <label>Observations/Remarks</label>
                     <textarea name="Remarks" class="form-control" rows="3" id="Remarks"></textarea>
                 </div>
-            </div>
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary btn" onclick="saveHealthSystemActivity()">Save</button>
+            </div> *@
+            <div class="d-flex justify-content-start gap-2">
+                <button type="button" class="btn btn-save btn-primary btn" onclick="saveHealthSystemActivity()">Save</button>
                 <a href="@Url.Action("Index", "HealthSystemActivity")" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
+</div>
 </div>
 @section Scripts {
     <script>

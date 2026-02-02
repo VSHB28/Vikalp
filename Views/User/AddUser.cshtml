@@ -47,16 +47,22 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input type="checkbox"
-                           name="IsActive"
-                           value="1"
-                           @(Model.IsActive == 1 ? "checked" : "") />
-                </div>                
+                    <label class="form-label">Gender</label>
+                    <select name="GenderId" class="form-control">
+                        <option value="">-- Select Gender --</option>
+                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
+                        {
+                            var selected = Model.GenderId == r.Id ? "selected" : "";
+                            <option value="@r.Id" @selected>@r.Name</option>
+                        }
+                    </select>
+                </div>
+                              
                <div class="col-md-3">
                     <label class="form-label">Language</label>
 
                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                        <button class="btn form-control dropdown-toggle w-100 text-start"
                                 type="button"
                                 data-bs-toggle="dropdown">
                             Select Language
@@ -83,16 +89,13 @@
                     </div>
                 </div>
 
+                
                 <div class="col-md-3">
-                    <label class="form-label">Gender</label>
-                    <select name="GenderId" class="form-control">
-                        <option value="">-- Select Gender --</option>
-                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
-                        {
-                            var selected = Model.GenderId == r.Id ? "selected" : "";
-                            <option value="@r.Id" @selected>@r.Name</option>
-                        }
-                    </select>
+                    <label class="form-label d-block">Is Active</label>
+                    <input type="checkbox"
+                           name="IsActive"
+                           value="1"
+                           @(Model.IsActive == 1 ? "checked" : "") />
                 </div>
 
                 <hr class="mt-4" />
@@ -113,15 +116,35 @@
                 </div>
 
                 <!-- DISTRICT -->
-                <div class="col-md-3">
+                <div class="col-md-3 d-none">
                     <label class="form-label">District <span class="text-danger">*</span></label>
                     <select id="DistrictId" name="DistrictId" class="form-control">
                         <option value="">-- Select District --</option>
                     </select>
                 </div>
 
-                <!-- BLOCK -->
+                <!-- DISTRICT MULTISELECT -->
                 <div class="col-md-3">
+                    <label class="form-label">District <span class="text-danger">*</span></label>
+
+                    <div class="dropdown">
+                        <button class="btn form-control dropdown-toggle w-100 text-start"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                            Select District
+                        </button>
+
+                        <ul class="dropdown-menu w-100 p-2"
+                            id="DistrictDropdown"
+                            style="max-height:250px; overflow-y:auto;">
+                            <!-- districts will be loaded dynamically -->
+                        </ul>
+                    </div>
+                </div>
+
+
+                <!-- BLOCK -->
+                <div class="col-md-3 d-none">
                     <label class="form-label">Block</label>
                     <select id="BlockId" name="BlockId" class="form-control">
                         <option value="">-- Select Block --</option>
@@ -130,7 +153,7 @@
 
                 <div class="col-12">
                     @* <button type="submit" class="btn btn-primary">Create</button> *@
-                    <button type="button" class="btn btn-primary" onclick="saveUser()">Create</button>
+                    <button type="button" class="btn btn-create btn-primary" onclick="saveUser()">Create</button>
 
                     <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
                 </div>
@@ -152,19 +175,34 @@
         });
 
 
-            document.getElementById("StateId").addEventListener("change", function () {
-                let stateId = this.value;
+        document.getElementById("StateId").addEventListener("change", function () {
+            let stateId = this.value;
 
-                reset("DistrictId", "-- Select District --");
-                reset("BlockId", "-- Select Block --");
-                reset("FacilityId", "-- Select Facility --");
+            let ddl = document.getElementById("DistrictDropdown");
+            ddl.innerHTML = "";
 
-                if (!stateId) return;
+            if (!stateId) return;
 
-                fetch(`/User/GetDistricts?stateId=${stateId}`)
-                    .then(r => r.json())
-                    .then(data => fill("DistrictId", data));
-            });
+            fetch(`/User/GetDistricts?stateId=${stateId}`)
+                .then(r => r.json())
+                .then(data => {
+                    data.forEach(d => {
+                        ddl.insertAdjacentHTML("beforeend", `
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input district-checkbox"
+                                           type="checkbox"
+                                           value="${d.id}"
+                                           id="dist_${d.id}">
+                                    <label class="form-check-label" for="dist_${d.id}">
+                                        ${d.name}
+                                    </label>
+                                </div>
+                            </li>
+                        `);
+                    });
+                });
+        });
 
             document.getElementById("DistrictId").addEventListener("change", function () {
                 let districtId = this.value;
@@ -213,12 +251,64 @@
 
         });
 
+        //         function saveUser() {
+
+        //     // collect language ids
+        //             let languageIds = Array.from(
+        //     document.querySelectorAll(".lang-checkbox:checked")
+        // ).map(x => parseInt(x.value));
+
+        //     let model = {
+        //         FullName: document.querySelector('[name="FullName"]').value || null,
+        //         Email: document.querySelector('[name="Email"]').value || null,
+        //         MobileNumber: document.querySelector('[name="MobileNumber"]').value || null,
+        //         Password: document.querySelector('[name="Password"]').value || null,
+        //         RoleId: document.querySelector('[name="RoleId"]').value || null,
+        //         GenderId: document.querySelector('[name="GenderId"]').value || null,
+        //         IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
+
+        //         StateId: document.getElementById("StateId").value || null,
+        //         DistrictId: document.getElementById("DistrictId").value || null,
+        //         BlockId: document.getElementById("BlockId").value || null,
+
+        //         LanguageId: languageIds   // <-- IMPORTANT
+        //     };
+
+        //     console.log("Posting user:", model);
+
+        //     fetch('/User/CreateJson', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'RequestVerificationToken':
+        //                 document.querySelector('input[name="__RequestVerificationToken"]').value
+        //         },
+        //         body: JSON.stringify(model)
+        //     })
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             alert("User saved successfully!");
+        //             window.location.href = "/User/Index";
+        //         } else {
+        //             alert(data.message || "Save failed");
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.error(err);
+        //         alert("Error occurred while saving user");
+        //     });
+        // }
+
                 function saveUser() {
 
-            // collect language ids
-                    let languageIds = Array.from(
-            document.querySelectorAll(".lang-checkbox:checked")
-        ).map(x => parseInt(x.value));
+            let languageIds = Array.from(
+                document.querySelectorAll(".lang-checkbox:checked")
+            ).map(x => parseInt(x.value));
+
+            let districtIds = Array.from(
+                document.querySelectorAll(".district-checkbox:checked")
+            ).map(x => parseInt(x.value));
 
             let model = {
                 FullName: document.querySelector('[name="FullName"]').value || null,
@@ -230,13 +320,10 @@
                 IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
 
                 StateId: document.getElementById("StateId").value || null,
-                DistrictId: document.getElementById("DistrictId").value || null,
-                BlockId: document.getElementById("BlockId").value || null,
 
-                LanguageId: languageIds   // <-- IMPORTANT
+                DistrictIds: districtIds,   // ✅ MULTI DISTRICT
+                LanguageId: languageIds     // ✅ MULTI LANGUAGE
             };
-
-            console.log("Posting user:", model);
 
             fetch('/User/CreateJson', {
                 method: 'POST',
@@ -256,10 +343,7 @@
                     alert(data.message || "Save failed");
                 }
             })
-            .catch(err => {
-                console.error(err);
-                alert("Error occurred while saving user");
-            });
+            .catch(() => alert("Error while saving user"));
         }
 
     </script>

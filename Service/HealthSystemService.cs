@@ -195,33 +195,40 @@ namespace Vikalp.Service
             return list;
         }
 
-        public async Task<bool> SaveHealthSystemParticipantJsonAsync(HealthSystemParticipantDto model, int userId)
+        public async Task<bool> SaveParticipantsAsync(DateTime dateOfActivity, int stateId, int? districtId, int? facilityTypeId, string? facilityTypeOther, List<HealthSystemParticipantDto> participants, int createdBy)
         {
-            return await Task.Run(() =>
+            using SqlConnection con = new SqlConnection(Conn());
+            await con.OpenAsync();
+
+            foreach (var p in participants)
             {
-                try
-                {
+                using SqlCommand cmd =
+                    new SqlCommand("sp_InsertHealthSystemParticipant", con);
 
-                    var activityGuid = Guid.NewGuid().ToString();
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    var parameters = new SqlParameter[]
-                    {
-                    };
+                cmd.Parameters.AddWithValue("@DateofActivity", dateOfActivity);
+                cmd.Parameters.AddWithValue("@FullName", p.FullName);
+                cmd.Parameters.AddWithValue("@StateId", stateId);
+                cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityId", (object?)p.FacilityId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityName", (object?)p.FacilityName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityTypeId", (object?)facilityTypeId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityTypeOther", (object?)facilityTypeOther ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@InterventionFacility", (object?)p.InterventionFacility ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@GenderId", (object?)p.GenderId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Mobile", (object?)p.Mobile ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ProviderTypeId", (object?)p.ProviderTypeId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@VCATScorePreTest", (object?)p.VCATScorePreTest ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@VCATScorePostTest", (object?)p.VCATScorePostTest ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@RefresherTraining", (object?)p.RefresherTraining ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Remarks", (object?)p.Remarks ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@CreatedBy", createdBy);
 
-                    SqlUtils.ExecuteSP(
-                        Conn(),
-                        "sp_InsertHealthSystemActivity",
-                        parameters
-                    );
+                await cmd.ExecuteNonQueryAsync();
+            }
 
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    // TODO: log ex
-                    return false;
-                }
-            });
+            return true;
         }
     }
 }

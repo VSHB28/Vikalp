@@ -35,6 +35,7 @@ namespace Vikalp.Models.DTO
         // Location
         public int StateId { get; set; }
         public int DistrictId { get; set; }
+        public List<int> DistrictIds { get; set; }
         public int? BlockId { get; set; }
     }
 }

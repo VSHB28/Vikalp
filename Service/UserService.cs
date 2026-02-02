@@ -96,70 +96,84 @@ public class UserService : IUserService
         };
     }
 
-    public Guid Create(UserDto user)
+    public int Create(UserDto user)
     {
-        // Compute password hash from provided Password when available
+        // ===== PASSWORD HASH =====
         object passwordHashValue;
         if (!string.IsNullOrWhiteSpace(user.Password))
-        {
-            // Use existing helper to compute SHA hash
             passwordHashValue = CommonController.EncryptSHAHash(user.Password);
-        }
         else
-        {
             passwordHashValue = (object?)user.PasswordHash ?? DBNull.Value;
-        }
 
-        // Determine CreatedBy from current principal (if available)
+        // ===== CREATED BY =====
         object createdByValue = DBNull.Value;
         try
         {
-            var userClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!string.IsNullOrWhiteSpace(userClaim) && int.TryParse(userClaim, out var createdBy))
+            var userClaim = _httpContextAccessor.HttpContext?
+                .User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!string.IsNullOrWhiteSpace(userClaim) &&
+                int.TryParse(userClaim, out var createdBy))
             {
                 createdByValue = createdBy;
             }
         }
-        catch
-        {
-            createdByValue = DBNull.Value;
-        }
+        catch { }
 
+        // ===== USER CREATE PARAMETERS =====
         var parameters = new SqlParameter[]
         {
-            new SqlParameter("@Email", SqlDbType.NVarChar) { Value = (object?)user.Email ?? DBNull.Value },
-            new SqlParameter("@Name", SqlDbType.NVarChar) { Value = (object?)user.FullName ?? DBNull.Value },
-            new SqlParameter("@MobileNumber", SqlDbType.NVarChar) { Value = (object?)user.MobileNumber ?? DBNull.Value },
-            new SqlParameter("@Password", SqlDbType.NVarChar) { Value = (object?)user.Password ?? DBNull.Value },
-            new SqlParameter("@PasswordHash", SqlDbType.NVarChar) { Value = passwordHashValue },
-            new SqlParameter("@RoleId", SqlDbType.Int) { Value = (object?)user.RoleId ?? DBNull.Value },
-            new SqlParameter("@IsActive", SqlDbType.Bit) { Value = user.IsActive },
-            new SqlParameter("@CreatedBy", SqlDbType.Int) { Value = createdByValue },
-            new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
+        new("@Email", SqlDbType.NVarChar) { Value = (object?)user.Email ?? DBNull.Value },
+        new("@Name", SqlDbType.NVarChar) { Value = (object?)user.FullName ?? DBNull.Value },
+        new("@MobileNumber", SqlDbType.NVarChar) { Value = (object?)user.MobileNumber ?? DBNull.Value },
+        new("@Password", SqlDbType.NVarChar) { Value = (object?)user.Password ?? DBNull.Value },
+        new("@PasswordHash", SqlDbType.NVarChar) { Value = passwordHashValue },
+        new("@RoleId", SqlDbType.Int) { Value = (object?)user.RoleId ?? DBNull.Value },
+        new("@IsActive", SqlDbType.Bit) { Value = user.IsActive },
+        new("@CreatedBy", SqlDbType.Int) { Value = createdByValue },
+        new("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
+        new("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
 
-        new SqlParameter("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
-        new SqlParameter("@DistrictId", SqlDbType.Int) { Value = (object?)user.DistrictId ?? DBNull.Value },
-        new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value },
-        new SqlParameter("@LanguageId", SqlDbType.NVarChar)
-    {
-        Value = user.LanguageId != null && user.LanguageId.Any()
-            ? string.Join(",", user.LanguageId)
-            : DBNull.Value
-    }
-
+        new("@LanguageId", SqlDbType.NVarChar)
+        {
+            Value = user.LanguageId != null && user.LanguageId.Any()
+                ? string.Join(",", user.LanguageId)
+                : DBNull.Value
+        }
         };
 
+        // ===== CREATE USER =====
         var dt = SqlUtils.ExecuteSP(Conn(), "dbo.sp_CreateUser", parameters);
-        // Expect stored proc to return NewId as uniqueidentifier (or a column you return)
-        if (dt.Rows.Count > 0 && dt.Columns.Contains("NewId"))
+
+
+        int userid = Convert.ToInt32(dt.Rows[0]["UserId"]);
+
+        // ===== INSERT DISTRICTS (MULTIPLE ROWS) =====
+        if (user.DistrictIds != null && user.DistrictIds.Any())
         {
-            var raw = dt.Rows[0]["NewId"];
-            if (raw is Guid g) return g;
-            if (Guid.TryParse(Convert.ToString(raw), out var parsed)) return parsed;
+            SaveUserDistricts(userid, user.StateId, user.RoleId, user.DistrictIds, user.BlockId);
         }
 
-        return Guid.Empty;
+        return userid;
     }
+
+    private void SaveUserDistricts(int userid, int stateid, int? roleid, List<int> districtIds, int? blockid)
+    {
+        foreach (var districtId in districtIds)
+        {
+            var parameters = new SqlParameter[]
+            {
+            new("@Userid", SqlDbType.Int) { Value = userid },
+            new("@StateId", SqlDbType.Int) { Value = stateid },
+            new("@RoleId", SqlDbType.Int) { Value = roleid },
+            new("@DistrictId", SqlDbType.Int) { Value = districtId },
+            new("@BlockId", SqlDbType.Int) { Value = blockid }
+            };
+            SqlUtils.ExecuteSP(Conn(), "sp_InsertUserDistrictMapping", parameters
+            );
+        }
+    }
+
 
     public bool Update(UserDto user)
     {

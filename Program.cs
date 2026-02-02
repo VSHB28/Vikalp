@@ -82,6 +82,8 @@ builder.Services.AddScoped<ILocationDistrictService, LocationDistrictService>();
 builder.Services.AddScoped<ILocationBlockService, LocationBlockService>();
 builder.Services.AddScoped<IFacilityService, FacilityService>();
 builder.Services.AddScoped<IHealthSystemService, HealthSystemService>();
+builder.Services.AddScoped<IRoleMenuService, RoleMenuService>();
+
 
 // Register DbContext
 //builder.Services.AddScoped<ApplicationDbContext>();
