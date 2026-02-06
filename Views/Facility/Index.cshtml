@@ -23,7 +23,7 @@
         border: 0; */
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
 
     }
 
@@ -42,27 +42,29 @@
     }
 </style>
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card um-card">
         <div class="card-body">
 
             @Html.AntiForgeryToken()
-
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h3 class="mb-0">Facilities</h3>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-start ">
+                    <div>
+                        <h3 class="mb-0">Facilities</h3>
                     
-                </div>
+                    </div>
 
-                <div class="um-toolbar">
-                    <a href="/Facility/Create" class="btn btn-sm btn-add btn-primary">
-                        Add Facility
-                    </a>
-                    @* <a href="/Facility/Index" class="btn btn-sm btn-outline-secondary">
-                        Refresh
-                    </a> *@
+                    <div class="um-toolbar">
+                        <a href="/Facility/Create" class="btn  btn-add btn-primary">
+                            Add Facility
+                        </a>
+                        @* <a href="/Facility/Index" class="btn btn-sm btn-outline-secondary">
+                            Refresh
+                        </a> *@
+                    </div>
                 </div>
             </div>
+            <hr />
 
             <div class="row g-2 mb-3">
                 <div class="col-md-4">

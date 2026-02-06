@@ -5,10 +5,10 @@
 }
 
 <style>
-    .um-action {
+    /* .um-action {
         white-space: nowrap;
     }
-    /* Small, focused styles for the user management page */
+   
     .um-card { border-radius: 0.5rem; box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08); }
     .um-toolbar { gap: .5rem; display: flex; align-items: center; flex-wrap: wrap; }
     .um-search { max-width: 320px; }
@@ -16,7 +16,7 @@
     .um-table thead th {
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
     }
     .um-table tbody tr:hover { background: rgba(13,110,253,0.03); }
     .um-action .btn { min-width: 44px; }
@@ -42,30 +42,33 @@
     .btn-add {
         background-color: #3F0C11;
         color: white;
-    }
+    } */
 </style>
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card um-card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h3 class="mb-0">Users</h3>
-                    <div class="text-muted small">Manage application users and their roles</div>
-                </div>
-
-                <div class="um-toolbar">
-                    <div class="d-flex um-search">
-                        <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by name or email" />
-                        <button type="button" class="btn btn-sm  btn-outline-secondary ms-2" onclick="searchUser()">Search</button>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h3 class="mb-0">Users</h3>
+                        <div class="text-muted small">Manage application users and their roles</div>
                     </div>
 
+                    <div class="um-toolbar">
+                        <div class="d-flex um-search">
+                            <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by name or email" />
+                            <button type="button" class="btn btn-sm  btn-outline-secondary ms-2" onclick="searchUser()">Search</button>
+                        </div>
 
-                    <a href="@Url.Action("Create", "User")" class="btn btn-sm btn-add btn-primary ms-3" style="z-index: 1000; position: relative;">
-                        Add User
-                    </a>
+
+                        <a href="@Url.Action("Create", "User")" class="btn  btn-add btn-primary ms-3" style="z-index: 1000; position: relative;">
+                            Add User
+                        </a>
+                    </div>
                 </div>
             </div>
+            <hr />
 
             @if (!Model?.Any() ?? true)
             {

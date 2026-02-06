@@ -31,7 +31,7 @@
             border: 0; */
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
     }
 
     .um-table tbody tr:hover {
@@ -66,14 +66,14 @@
     }
 </style>
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card um-card">
         <div class="card-body">
+            <div class="umcard-header">
+                 <div class="d-flex justify-content-between align-items-center ">
+                    <h3 class="mb-0">Location Blocks</h3>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">Location Blocks</h3>
-
-                <div class="d-flex gap-2 align-items-center">
+                    <div class="d-flex gap-2 align-items-center">
    
                     @* <select id="stateDropdown"
                             class="form-select form-select-sm"
@@ -103,9 +103,13 @@
                         Refresh
                     </a> *@
 
-                </div>
+                    </div>
                 
+                </div>
             </div>
+            <hr />
+
+
             <div class="dropdown-section mb-2">
                 <div class="row">
                     <div class="col-md-4">

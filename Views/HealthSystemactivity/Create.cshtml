@@ -17,16 +17,17 @@
 
 </style>
 
-<div class="container py-4">
+<div class="container py-2">
 <div class="card shadow-sm">
     <div class="card-body">
-
-        <h2 class="mb-4">Create Activity</h2>
-        <form asp-action="Create" method="post">
+        <div class="umcard-header">
+          <h3 class="">Create Activity</h3>
+        </div>
+            <form asp-action="Create" method="post" class="mt-2 g-3">
             <div class="row">
 
                 <div class="col-md-3 mb-1">
-                    <label>State</label>
+                        <label class="form-label">State </label>
                     <select name="StateId" class="form-control" id="StateId">
                         <option value="">-- Select State --</option>
                         @foreach (var s in ViewBag.States)
@@ -36,14 +37,14 @@
                     </select>
                 </div>
                     <div class="col-md-3 mb-1">
-                    <label>District</label>
+                        <label class="form-label">District</label>
                     <select name="DistrictId" class="form-control" id="DistrictId">
                         <option value="">-- Select District --</option>
                     </select>
                 </div>
 
                     <div class="col-md-3 mb-1">
-                    <label>Activity Name</label>
+                        <label class="form-label">Activity Name</label>
                     <select name="ActivityNameId" class="form-control" id="ActivityNameId">
                         <option value="">-- Select ActivityName --</option>
                         @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityTypeName)
@@ -55,18 +56,18 @@
                     </select>
                 </div> 
                     <div class="col-md-3 mb-1" id="otherActivityDiv">
-                    <label>Other Activity</label>
+                        <label class="form-label">Other Activity</label>
                     <input name="OtherActivity" class="form-control" id="OtherActivity" disabled />
                 </div>
 
                     <div class="col-md-3 mb-1">
-                    <label>Training Venue</label>
+                        <label class="form-label">Training Venue</label>
                     <input name="TrainingVenue" class="form-control" id="TrainingVenue" />
                     <span asp-validation-for="TrainingVenue" class="text-danger"></span>
                 </div>
 
                     <div class="col-md-3 mb-1">
-                    <label>Activity Type</label>
+                        <label class="form-label">Activity Type</label>
                     <select name="ActivityTypeId" class="form-control" id="ActivityTypeId">
                         <option value="">-- Select ActivityType --</option>
                         @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityType)
@@ -97,7 +98,7 @@
                     </div>
                      
                     <div class="col-md-3 mb-1">
-                        <label>Activity Format</label>
+                        <label class="form-label">Activity Format</label>
                         <select name="ActivityFormatId" class="form-control" id="ActivityFormatId">
                             <option value="">-- Select ActivityFormat --</option>
                             @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityFormat)
@@ -110,7 +111,7 @@
                     </div>
 
                     <div class="col-md-3 mb-1">
-                        <label>No of Participants</label>
+                        <label class="form-label">No of Participants</label>
                         <input name="NoOfParticipants" class="form-control" type="number" id="NoOfParticipants" />
                     </div>
                     <div class="col-md-3 mb-1">
@@ -118,13 +119,13 @@
                         <input name="StartDate" type="date" class="form-control" id="StartDate" />
                     </div>
                     <div class="col-md-3 mb-1">
-                        <label>End Date</label>
+                        <label class="form-label">End Date</label>
                         <input name="EndDate" type="date" class="form-control" id="EndDate" />
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label>Observations/Remarks</label>
-                            <textarea name="Remarks" class="form-control" rows="3" id="Remarks"></textarea>
+                            <label class="form-label">Observations/Remarks</label>
+                            <textarea name="Remarks" class="form-control" rows="1" id="Remarks"></textarea>
                         </div>
                     </div>
             </div>
@@ -135,8 +136,8 @@
                 </div>
             </div> *@
             <div class="d-flex justify-content-start gap-2">
-                <button type="button" class="btn btn-save btn-primary btn" onclick="saveHealthSystemActivity()">Save</button>
-                <a href="@Url.Action("Index", "HealthSystemActivity")" class="btn btn-secondary">Back to List</a>
+                <button type="button" class="btn btn-save btn" onclick="saveHealthSystemActivity()">Save</button>
+                <a href="@Url.Action("Index", "HealthSystemActivity")" class="btn btn-back ">Back to List</a>
             </div>
         </form>
     </div>

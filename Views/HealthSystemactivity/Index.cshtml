@@ -32,7 +32,7 @@
         border: 0; */
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
     }
 
     .um-table tbody tr:hover {
@@ -53,27 +53,39 @@
         background-color: #3F0C11;
         color: white;
     }
+    .um-toolbar .form-control {
+        background-color: var #FFFFFF (--ipas-white);
+        border: 2px solid #E8E4E0;
+        border-radius: 8px;
+        color: var(--ipas-text-dark);
+        padding: 8px !important ;
+        font-size: 11px;
+        height: auto;
+    }
 </style>
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card um-card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h3 class="mb-0">Health System Activity</h3>
-                </div>
-
-                <div class="um-toolbar">
-                    <div class="d-flex um-search">
-                        <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by activity name" />
-                        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="searchActivity()">Search</button>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">Health System Activity</h3>
                     </div>
 
-                    <a href="@Url.Action("Create","HealthSystemActivity")" class="btn btn-sm btn-add btn-primary ms-3">
-                        Add Activity
-                    </a>
+                    <div class="um-toolbar">
+                        <div class="d-flex um-search">
+                            <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by activity name" />
+                            <button type="button" class="btn btn-sm btn-secondary ms-2" onclick="searchActivity()">Search</button>
+                        </div>
+
+                        <a href="@Url.Action("Create", "HealthSystemActivity")" class="btn btn-add ms-3">
+                            Add Activity
+                        </a>
+                    </div>
                 </div>
             </div>
+            <hr />
 
             @if (!Model?.Any() ?? true)
             {
@@ -85,7 +97,7 @@
             else
             {
                 <div class="table-responsive">
-                    <table id="activitiesTable" class="table table-striped um-table align-middle">
+                    <table id="activitiesTable" class="table table-striped  um-table align-middle">
                         <thead>
                             <tr>
                                 <th>Start Date</th>

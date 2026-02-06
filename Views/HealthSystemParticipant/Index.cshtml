@@ -8,7 +8,7 @@
 
 <style>
     #health-system {
-        padding: 20px;
+        padding: 10px;
     }
 </style>
 <style>
@@ -38,7 +38,7 @@
             border: 0; */
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
     }
 
     .um-table tbody tr:hover {
@@ -84,14 +84,17 @@
 </style>
 
 <div class="container-fluid" id="health-system">
-    <div class="card shadow-sm">
+    <div class="card um-card shadow-sm">
         <div class="card-body">
-            <div class="d-flex justify-content-between mb-3">
-                <h3 class="mb-0">Health System Participants</h3>
-                <a href="@Url.Action("Create", "HealthSystemParticipant")" asp-action="Create" class="btn btn-add">
-                    <i class="fa fa-plus"></i> Add Participant
-                </a>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Health System Participants</h3>
+                    <a href="@Url.Action("Create", "HealthSystemParticipant")" asp-action="Create" class="btn btn-add">
+                        <i class="fa fa-plus"></i> Add Participant
+                    </a>
+                </div>
             </div>
+            <hr />
 
             @if (!Model?.Any() ?? true)
             {
@@ -100,7 +103,7 @@
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-hover um-table align-middle">
+                    <table class="table table-hover table-striped um-table align-middle">
                         <thead class="table-light">
                             <tr>
                                 <th>Full Name</th>

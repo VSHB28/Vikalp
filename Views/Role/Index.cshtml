@@ -30,7 +30,7 @@
         border: 0; */
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
     }
 
     .um-table tbody tr:hover {
@@ -75,15 +75,18 @@
     }
 </style>
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card um-card">
         <div class="card-body">
-            <div class="d-flex justify-content-between mb-3">
-                <h3 class="mb-0">Roles</h3>
-                <a href="@Url.Action("Create", "Role")" class="btn btn-add btn-sm btn-primary ms-3" style="z-index: 1000; position: relative;">
-                    Add Role
-                </a>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between">
+                    <h3 class="mb-0">Roles</h3>
+                    <a href="@Url.Action("Create", "Role")" class="btn btn-add  btn-primary ms-3" style="z-index: 1000; position: relative;">
+                        Add Role
+                    </a>
+                </div>
             </div>
+            <hr />
 
             @if (!Model?.Any() ?? true)
             {

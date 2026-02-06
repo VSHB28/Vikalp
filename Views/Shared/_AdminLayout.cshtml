@@ -20,7 +20,8 @@
             --ipas-text-dark: #2C2C2C; /* Dark text on light backgrounds */
             --ipas-text-muted: #666666; /* Muted text */
             --ipas-white: #FFFFFF; /* Pure white */
-            --ipas-sidebar: #551118db;
+            /* --ipas-sidebar: #551118db; */
+            --ipas-sidebar: #b3202f;
         }
 
         body {
@@ -45,7 +46,8 @@
         /* --- SIDEBAR STYLING --- */
         .sidebar {
             width: 265px;
-            background: var(--ipas-sidebar);
+            /* background: var(--ipas-primary); */
+            background: #f57b20;
             border-right: none;
             display: flex;
             flex-direction: column;
@@ -268,6 +270,11 @@
             background-color: #3F0C11;
             color: white;
         }
+        
+            .btn-add:hover {
+                background-color: #3F0C11;
+                color: white;
+            }
 
         .btn-create {
             background-color: #F15A29;
@@ -285,16 +292,43 @@
 
 
         .btn-save {
-            background-color: #F15A29;
+            /* background-color: #F15A29;
             color: white;
             border: 2px solid #F15A29;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease; */
+            border: 2px solid #f57b20;
+            border-radius: 0;
+            color: #f57b20;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 15px 45px;
+            padding: 12px 45px;
+            
         }
 
             .btn-save:hover {
-                background-color: #D14A1F;
-                border-color: #D14A1F;
+                /* background-color: #D14A1F;
+                border-color: #D14A1F; */
+                background: #f57b20;
+                color: #fff;
             }
+
+        .btn-back{
+            border: 2px solid #6c757d;
+            border-radius: 0;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 15px 45px;
+            padding: 12px 45px;
+        }
+        .btn-back:hover{
+                background: #6c757d;
+                color: #fff;
+
+        }
         /* --- MAIN CONTENT AREA --- */
         .main-content {
             flex: 1;
@@ -313,8 +347,8 @@
         /* --- HEADER STYLING --- */
         .top-header {
             height: 60px;
-            /* background: var(--ipas-white); */
-            background: var(--ipas-sidebar);
+            background: var(--ipas-primary);
+            /* background: var(--ipas-sidebar); */
             color: white;
             border-bottom: 2px solid #E8E4E0;
             display: flex;
@@ -538,7 +572,96 @@
                 background: rgba(255, 255, 255, 0.5);
             }
 
-            /* checkbox */
+           /* tables css and cards */
+        .um-action {
+            white-space: nowrap;
+        }
+        /* Small, focused styles for the user management page */
+        .um-card {
+            border-radius: 0.5rem;
+            box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+            border: 1px solid #3F0C11;
+        }
+
+        .um-toolbar {
+            gap: .5rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .um-search {
+            max-width: 320px;
+        }
+
+        .um-table thead th {
+            color: #fff;
+            border: 1px dotted;
+            /* background: var(--ipas-primary); */
+            background: #5e5e5e !important;
+        }
+
+        .um-table tbody tr:hover {
+            background: rgba(13,110,253,0.03);
+        }
+
+        .um-action .btn {
+            min-width: 44px;
+        }
+
+        .um-badge-role {
+            font-size: .8rem;
+            padding: .25rem .45rem;
+            border-radius: .25rem;
+        }
+
+        .um-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .um-action a,
+        .um-action button {
+            position: relative;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .um-action svg {
+            pointer-events: none;
+        }
+
+        .table-responsive {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-add {
+            background-color: #3F0C11;
+            color: white;
+        }
+
+        .umcard-header {
+            /* background: linear-gradient(135deg, #F15A29, #b10315b5); */
+            color: #ffffff;
+            padding: 5px 20px !important;
+            background: #33b5b3 !important;
+        }
+        /* table changes */
+        .um-table tr th {
+            font-size: 15px !important;
+        }
+
+        .um-table tbody tr td {
+            font-size: 12px !important;
+            text-align: left !important;
+            padding: 3px 6px !important;
+        }
+
+        .umcard-header h3 {
+            font-size: 21px !important;
+        }
     </style>
 </head>
 <body>
@@ -580,9 +703,9 @@
                 </div>
 
                 <div class="header-actions">
-                    <div class="icon-btn">
+                    @* <div class="icon-btn">
                         <i class="bi bi-search"></i>
-                    </div>
+                    </div> *@
                     <div class="icon-btn">
                         <i class="bi bi-bell"></i>
                         <span class="badge-dot"></span>

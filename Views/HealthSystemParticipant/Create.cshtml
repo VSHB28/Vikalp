@@ -186,7 +186,7 @@
     <div class="card">
         <div class="fh-cardBody">
             <div class="fh-cardHeader d-flex gap-5">
-                <h2 class="mb-3">Add Participant</h2>
+                <h2>Add Participant</h2>
                 <div class="col-md-4 d-flex">
                     <label>Activity Date</label>
                     <input name="DateofActivity" type="date" class="form-control" />
@@ -350,7 +350,7 @@
         </div>
     </div>
 
-    <table class="table table-bordered" id="participantTable">
+    <table class="table table-bordered mt-2" id="participantTable">
         <thead>
             <tr>
                 <th>#</th>
@@ -371,8 +371,8 @@
     </table>
     <hr />
 
-    <button type="button" class="btn btn-save btn-primary btn" onclick="saveParticipants()">Save</button>
-    <a href="@Url.Action("Index", "HealthSystemParticipant")" class="btn btn-secondary btn">Back</a>
+    <button type="button" class="btn-save  btn" onclick="saveParticipants()">Save</button>
+    <a href="@Url.Action("Index", "HealthSystemParticipant")" class="btn btn-back btn">Back</a>
 
 
 </form>

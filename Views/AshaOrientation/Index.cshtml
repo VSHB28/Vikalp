@@ -7,7 +7,7 @@
 
 <style>
     #orientation-record {
-        padding: 20px;
+        padding: 10px;
     }
 </style>
 <style>
@@ -37,7 +37,7 @@
         border: 0; */
         color: #fff;
         border: 1px dotted;
-        background: var(--ipas-primary);
+        background: var(--ipas-sidebar);
     }
 
     .um-table tbody tr:hover {
@@ -79,6 +79,14 @@
         background-color: #3F0C11;
         color:white;
     }
+
+    .umcard-header{
+        background: linear-gradient(135deg, #F15A29, #b10315b5);
+        color:#ffffff;
+        padding:10px 20px;
+    }
+
+    
 </style>
 
 <div class="container-fluid" id="orientation-record">
@@ -92,29 +100,32 @@
                     <i class="fa fa-plus"></i> Add New Entry
                 </a>
             </div> *@
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <h3 class="mb-0">ASHA Orientation Records</h3>
-                </div>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="mb-0">ASHA Orientation Records</h3>
+                    </div>
 
-                <div class="um-toolbar">
-                    <a href="@Url.Action("Create", "AshaOrientation")" asp-action="Create" class="btn btn-add">
-                        <i class="fa fa-plus"></i> Add New Entry
-                    </a>
+                    <div class="um-toolbar">
+                        <a href="@Url.Action("Create", "AshaOrientation")" asp-action="Create" class="btn btn-add">
+                            <i class="fa fa-plus"></i> Add New Entry
+                        </a>
+                    </div>
                 </div>
             </div>
+            <hr />
 
             <!-- ===== TABLE ===== -->
             <div class="table-responsive">
-                <table class="table table-hover um-table align-middle">
+                <table class="table table-hover table-striped um-table align-middle">
                     <thead class="table-light">
                         <tr>
-                        <th>S.No</th>
-                        <th>Date Of Orientation</th>
-                        <th>Facility</th>
-                        <th>Intervention Participants</th>
-                        <th>NonIntervention Participants</th>
-                        <th>Actions</th>
+                            <th><i class="bi bi-hash me-2"></i>S.No</th>
+                            <th><i class="bi bi-calendar3 me-2"></i>Date Of Orientation</th>
+                            <th><i class="bi bi-building-add me-2"></i>Facility</th>
+                            <th><i class="bi bi-people me-2"></i>Intervention Participants</th>
+                            <th><i class="bi bi-people me-2"></i>NonIntervention Participants</th>
+                            <th><i class="bi bi-pencil me-2"></i>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="dataTable">

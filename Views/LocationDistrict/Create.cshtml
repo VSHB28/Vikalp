@@ -5,20 +5,21 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card">
         <div class="card-body">
 
-         
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">Add District</h3>
-                <a href="/LocationDistrict/Index" class="btn btn-secondary">
-                    ← Back to List
-                </a>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Add District</h3>
+                    <a href="/LocationDistrict/Index" class="btn btn-secondary">
+                        ← Back to List
+                    </a>
+                </div>
             </div>
 
             <!-- Form -->
-            <form action="/LocationDistrict/Create" method="post" class="row g-3">
+            <form action="/LocationDistrict/Create" method="post" class="row mt-2 g-3">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="DistrictId" value="@Model.DistrictId" />
 
@@ -86,11 +87,11 @@
 
                 <!-- Buttons -->
                 <div class="col-12">
-                    <button type="submit" class="btn  btn-save btn-primary">
+                    <button type="submit" class="btn  btn-save">
                         Save
                     </button>
                     <a href="/LocationDistrict/Index"
-                       class="btn btn-secondary ms-2">
+                       class="btn btn-back ms-2">
                         Cancel
                     </a>
                 </div>

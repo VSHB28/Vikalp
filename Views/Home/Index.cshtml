@@ -2,17 +2,59 @@
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+<style>
+    .content-body {
+        padding: 0px 15px;
+        background: var(--ipas-light);
+        overflow: auto !important;
+        height: calc(100vh - 60px);
+        position: relative;
+    }
 
+    .asd {
+        position: absolute;
+        width: calc(100% - 15px);
+        object-fit: contain;
+        height: 100%;
+        opacity: 0.15;
+        z-index: 1;
+    }
+
+    .asd2 {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+    }
+/*     .banner-wraper-dashboard {
+    position: relative;
+    overflow: hidden;
+    background: #fefefe url('/assets/images/backgournd-banner.png') no-repeat top center;
+    background-size: cover;
+}
+
+.banner-wraper-dashboard:after {
+    width: 400px;
+    height: 100%;
+    top: 30px;
+    left: 120px;
+    content: '';
+    position: absolute;
+    background: url('/assets/images/ipas-logo-bg.png') no-repeat left bottom;
+    opacity: 0.1;
+} */
+    
+</style>
 <div class="content-body">
-
-    <div class="mb-2">
+    <img src="/assets/images/ipas-logo-bg.png" alt="Alternate Text" class="asd" />
+    <div class="asd2">
+    <div class="mb-2 mt-3">
         <h3 class="fw-bold" style="font-size: 1.2rem; margin-bottom: 0.3rem; color: var(--ipas-text-dark);">Welcome back, Team Rajasthan</h3>
         <p style="font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--ipas-text-muted);">Here is the latest data from the Vikalp initiative.</p>
     </div>
 
     <div class="row g-2 mb-2">
         <div class="col-md-6 col-lg-3">
-            <div class="glass-card">
+            <div class="glass-card ">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <div class="stat-label">Total Outreach</div>
@@ -74,50 +116,52 @@
 
     <div class="row g-2">
         <div class="col-lg-8">
-            <div class="glass-card">
-                <h5 class="mb-2" style="font-size: 1rem; color: var(--ipas-text-dark);">Recent Registrations (Rajasthan Zone)</h5>
-                <div class="table-responsive">
-                    <table class="table-glass">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>District</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>#VK-902</td>
-                                <td>Sunita Devi</td>
-                                <td>Jaipur</td>
-                                <td><span class="badge rounded-pill bg-success">Completed</span></td>
-                                <td>Oct 24, 2024</td>
-                            </tr>
-                            <tr>
-                                <td>#VK-903</td>
-                                <td>Priya Singh</td>
-                                <td>Udaipur</td>
-                                <td><span class="badge rounded-pill bg-warning text-dark">Pending</span></td>
-                                <td>Oct 24, 2024</td>
-                            </tr>
-                            <tr>
-                                <td>#VK-904</td>
-                                <td>Anjali Meena</td>
-                                <td>Jodhpur</td>
-                                <td><span class="badge rounded-pill bg-primary">In Progress</span></td>
-                                <td>Oct 23, 2024</td>
-                            </tr>
-                            <tr>
-                                <td>#VK-905</td>
-                                <td>Rekha Kumari</td>
-                                <td>Kota</td>
-                                <td><span class="badge rounded-pill bg-success">Completed</span></td>
-                                <td>Oct 23, 2024</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="banner-wraper-dashboard">
+                <div class="glass-card ">
+                    <h5 class="mb-2" style="font-size: 1rem; color: var(--ipas-text-dark);">Recent Registrations (Rajasthan Zone)</h5>
+                    <div class="table-responsive">
+                        <table class="table-glass">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>District</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#VK-902</td>
+                                    <td>Sunita Devi</td>
+                                    <td>Jaipur</td>
+                                    <td><span class="badge rounded-pill bg-success">Completed</span></td>
+                                    <td>Oct 24, 2024</td>
+                                </tr>
+                                <tr>
+                                    <td>#VK-903</td>
+                                    <td>Priya Singh</td>
+                                    <td>Udaipur</td>
+                                    <td><span class="badge rounded-pill bg-warning text-dark">Pending</span></td>
+                                    <td>Oct 24, 2024</td>
+                                </tr>
+                                <tr>
+                                    <td>#VK-904</td>
+                                    <td>Anjali Meena</td>
+                                    <td>Jodhpur</td>
+                                    <td><span class="badge rounded-pill bg-primary">In Progress</span></td>
+                                    <td>Oct 23, 2024</td>
+                                </tr>
+                                <tr>
+                                    <td>#VK-905</td>
+                                    <td>Rekha Kumari</td>
+                                    <td>Kota</td>
+                                    <td><span class="badge rounded-pill bg-success">Completed</span></td>
+                                    <td>Oct 23, 2024</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -161,4 +205,5 @@
         </div>
     </div>
 
+</div>
 </div>
