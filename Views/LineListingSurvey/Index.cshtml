@@ -1,0 +1,229 @@
+﻿@using Vikalp.Models.DTO
+@model IEnumerable<LineListingSurveyDto>
+@{
+    ViewData["Title"] = "Line List Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    #linelist-record {
+        padding: 10px;
+    }
+</style>
+
+<style>
+    .um-action {
+        white-space: nowrap;
+    }
+    /* Small, focused styles for the user management page */
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
+
+    .um-toolbar {
+        gap: .5rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .um-search {
+        max-width: 320px;
+    }
+
+    .um-table thead th {
+        /* background: linear-gradient(90deg,#0d6efd, #6610f2);
+                color: #fff;
+                border: 0; */
+        color: #fff;
+        border: 1px dotted;
+        background: var(--ipas-sidebar);
+    }
+
+    .um-table tbody tr:hover {
+        background: rgba(13,110,253,0.03);
+    }
+
+    .um-action .btn {
+        min-width: 44px;
+    }
+
+    .um-badge-role {
+        font-size: .8rem;
+        padding: .25rem .45rem;
+        border-radius: .25rem;
+    }
+
+    .um-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .um-action a,
+    .um-action button {
+        position: relative;
+        z-index: 10;
+        pointer-events: auto;
+    }
+
+    .um-action svg {
+        pointer-events: none;
+    }
+
+    .table-responsive {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-add {
+        background-color: #3F0C11;
+        color: white;
+    }
+
+    .umcard-header {
+        background: linear-gradient(135deg, #F15A29, #b10315b5);
+        color: #ffffff;
+        padding: 10px 20px;
+    }
+
+</style>
+
+<div class="container-fluid" id="linelist-record">
+            <!-- ===== HEADER BAR ===== -->
+            <div class="card um-card mb-3">
+                <div class="card-body">
+                    @* <div class="card-header">
+                <h5 class="mb-0">ASHA Orientation Records</h5>
+                <a href="@Url.Action("Create", "AshaOrientation")" asp-action="Create" class="btn btn-light">
+                    <i class="fa fa-plus"></i> Add New Entry
+                </a>
+            </div> *@
+                    <div class="umcard-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h3 class="mb-0">Line Listing</h3>
+                            </div>
+
+                            <div class="um-toolbar">
+                                <a href="@Url.Action("Create", "LineListingSurvey")" class="btn btn-add">
+                                    <i class="fa fa-plus"></i>
+                                    Add Member
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+
+            @if (!Model?.Any() ?? true)
+            {
+                <div class="um-empty">
+                    <p class="mb-1">No data found.</p>
+                    <a a href="@Url.Action("Create", "LineListingSurvey")" class="btn btn-outline-primary">Add your first Record</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table id="activitiesTable" class="table table-striped um-table align-middle">
+                        <thead>
+                            <tr>
+                                <th><i class="bi bi-person-fill me-2"></i>Woman Name</th>
+                                <th><i class="bi bi-person me-2"></i>Husband Name</th>
+                                <th><i class="bi bi-telephone me-2"></i>Mobile Number</th>
+                                <th><i class="bi bi-calendar-event me-2"></i>Line List Date</th>
+                                <th><i class="bi bi-building me-2"></i>Facility</th>
+                                <th><i class="bi bi-diagram-3 me-2"></i>Sub Center</th>
+                                <th class="text-end"><i class="bi bi-pencil-square me-2"></i>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.WomanName</td>
+                                    <td>@item.HusbandName</td>
+                                    <td>@item.MobileNumber</td>
+                                    <td>@item.CreatedOn</td>
+                                    <td>@item.FacilityName</td>
+                                    <td>@item.SubCenter</td>
+                                    <td class="text-end um-action">
+                                        <a class="btn btn-sm btn-outline-primary me-1"
+                                           asp-controller="HealthSystemActivity"
+                                           asp-action="Edit"
+                                           asp-route-id="@item.LineListId"
+                                           title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-warning @(item.IsConcent == 1 ? "disabled" : "")"
+                                           href="@(item.IsConcent == 1 ? "#" : Url.Action("Consent", "LineListingSurvey", new { guid = item.LineListGuid }))">
+                                            Consent
+                                        </a>
+
+                                        <form asp-controller="HealthSystemActivity"
+                                              asp-action="Delete"
+                                              asp-route-id="@item.LineListId"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this activity?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    function goToEdit(id) {
+        window.location.href = '/LineListing/Edit/' + id;
+    }
+
+
+        function deleteUser(userId) {
+        if (!confirm("Are you sure you want to delete this user?")) {
+            return;
+        }
+
+        fetch('/User/Delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken':
+                    document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(userId)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("User deleted successfully");
+                window.location.reload();
+            } else {
+                alert(data.message || "Delete failed");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error occurred while deleting user");
+        });
+    }
+
+            async function searchActivity() {
+        const term = document.getElementById("searchTerm").value;
+
+        const response = await fetch(`/LineListing/Search?q=${encodeURIComponent(term)}`);
+        const html = await response.text();
+
+        document.querySelector("#usersTable tbody").innerHTML = html;
+    }
+
+</script>

@@ -1,10 +1,12 @@
+using Humanizer;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Mono.TextTemplating;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Vikalp.Models;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
@@ -361,27 +363,32 @@ namespace Vikalp.Service
         }
 
 
-        public async Task<bool> UpdateOrientationAsync(string venueGuid, AshaOrientationCreateDto model)
+        public async Task<bool> UpdateOrientationAsync(int userId, AshaOrientationCreateDto model)
         {
             return await Task.Run(() =>
             {
                 var param = new SqlParameter[]
-                {
-                new SqlParameter("@VenueGuid", venueGuid),
+                {                    
+                new SqlParameter("@VenueGuid", model.VenueGuid),
+                new SqlParameter("@StateId", model.StateId),
+                new SqlParameter("@DistrictId", model.DistrictId),  
+                new SqlParameter("@BlockId", model.BlockId),
                 new SqlParameter("@FacilityId", (object?)model.FacilityId ?? DBNull.Value),
                 new SqlParameter("@FacilityName", model.FacilityName ?? (object)DBNull.Value),
                 new SqlParameter("@IsIntervention", model.IsIntervention),
                 new SqlParameter("@DateofOrientation", model.DateofOrientation),
-                new SqlParameter("@NIN", (object?)model.NIN ?? DBNull.Value)
+                new SqlParameter("@NIN", (object?)model.NIN ?? DBNull.Value),
+                new SqlParameter("@TopicsCovered", model.TopicsCovered != null && model.TopicsCovered.Any() ? string.Join(",", model.TopicsCovered) : (object)DBNull.Value),
+                new SqlParameter("@ModifiedBy", userId)
                 };
 
                 SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateOrientationVenue", param);
 
-                // Delete & re-insert attendees (simplest + safest)
+                // Delete & re-insert attendees (simplest + safest)';
                 var delParam = new SqlParameter[]
-{
-    new SqlParameter("@VenueGuid", venueGuid)
-};
+                {
+                    new SqlParameter("@VenueGuid",  model.VenueGuid)
+                };
 
 
                 SqlUtils.ExecuteSP(Conn(), "dbo.sp_DeleteOrientationAttendees", delParam);
@@ -390,7 +397,7 @@ namespace Vikalp.Service
                 {
                     var attendeeParam = new SqlParameter[]
                     {
-                    new SqlParameter("@VenueGuid", venueGuid),
+                    new SqlParameter("@VenueGuid",  model.VenueGuid),
                     new SqlParameter("@AshaId", (object?)a.AshaId ?? DBNull.Value),
                     new SqlParameter("@AshaName", a.AshaName),
                     new SqlParameter("@AshaMobile", (object?)a.AshaMobile ?? DBNull.Value),

@@ -1,0 +1,897 @@
+﻿@using Vikalp.Models.DTO
+@model Vikalp.Models.DTO.HomeVisitDTO
+
+@{
+    ViewData["Title"] = "Add Home Visit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    #linelistForm {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Facility Type Section */
+    .form-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+    }
+
+        .section-title i {
+            font-size: 24px;
+            color: #0d6efd;
+        }
+
+    .fh-header {
+        display: flex;
+        gap: 20px;
+        margin-left: auto;
+    }
+
+    .facility-type-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 19px;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+
+
+
+        .facility-type-card input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .facility-type-card label {
+            cursor: pointer;
+            margin: 0;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+    /* Card Header Section */
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .fh-cardHeader {
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+        .fh-cardHeader h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #F15A29;
+        }
+
+        .fh-cardHeader .col-md-4 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+            .fh-cardHeader .col-md-4 label {
+                white-space: nowrap;
+                margin: 0;
+                font-weight: 500;
+                min-width: 120px;
+            }
+
+            .fh-cardHeader .col-md-4 input {
+                flex: 1;
+            }
+
+
+    .btn {
+        padding: 8px;
+        font-weight: 500;
+    }
+
+    .btn-success {
+        margin: 0;
+    }
+
+
+
+    /* Hidden utility */
+    .d-none {
+        display: none !important;
+    }
+
+    .fh-section-title {
+        align-items: center;
+        gap: 15px;
+        /* margin-bottom: 20px; */
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .fh-cardBody {
+        padding: 1px 10px;
+        flex: 1 1 auto;
+    }
+
+    .btn-topics {
+        height: 32px;
+        line-height: 15px;
+    }
+
+    .table thead tr th, .table tbody tr th {
+        vertical-align: middle;
+    }
+
+    .fh-modal-header {
+        color: #F15A29;
+    }
+</style>
+
+<form asp-action="Create" method="post" id="linelistForm">
+    @Html.AntiForgeryToken()
+     <input type="hidden" id="hdnLineListGuid" value="@Model.LineListGuid" />
+    <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
+    <input type="hidden" id="hdnBlockId" value="@Model.BlockId" />
+    <input type="hidden" id="hdnFacilityId" value="@Model.FacilityId" />
+    <input type="hidden" id="isEditMode" value="@(Model != null && Model.LineListGuid != null ? "1" : "0")" />
+
+    <div class="card">
+        <div class="fh-cardBody">
+            <div class="fh-cardHeader d-flex gap-5">
+                <h2 class="mb-3">Add Member</h2>
+                @{
+                    var today = DateTime.Today;
+                    var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
+                    var maxDate = today.ToString("yyyy-MM-dd");
+                }
+                <div class="col-md-4 d-flex">
+                    <label>Visit Date</label>
+                    <input type="date"
+                           name="CreatedOn"
+                           value="@Model.CreatedOn?.ToString("yyyy-MM-dd")"
+                           class="form-control"
+                           min="@minDate" max="@maxDate" />
+                    <span asp-validation-for="CreatedOn" class="text-danger"></span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label>State</label>
+            <select name="StateId" class="form-control" id="StateId">
+                <option value="">-- Select State --</option>
+                @foreach (var s in ViewBag.States)
+                {
+                    <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label>District</label>
+            <select name="DistrictId" class="form-control" id="DistrictId">
+                <option value="">-- Select District --</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label>Block</label>
+            <select name="BlockId" class="form-control" id="BlockId">
+                <option value="">-- Select Block --</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label>Facility</label>
+            <select name="FacilityId" class="form-control" id="FacilityId">
+                <option value="">-- Select Facility --</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label>Sub Centre</label>
+            <select name="SubCenterId" class="form-control" id="SubCenterId">
+                <option value="">-- Select Sub-centre --</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label>ASHA Name</label>
+            <select name="AshaId" class="form-control" id="AshaId">
+                <option value="">-- Select ASHA --</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label>Anganwadi Worker</label>
+            <input type="text" name="AnganwadiWorkerName" value="@Model.AnganwadiWorkerName" class="form-control" placeholder="Enter AWC name" />
+        </div>
+
+        <div class="col-md-2">
+            <label>Village Name</label>
+            <input type="text" name="VillageName" value="@Model.VillageName" class="form-control" placeholder="Enter Village name" />
+        </div>
+
+    </div>
+    <div class="modal fade" id="memberModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Add Home Visit Member</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row align-items-center mb-2 d-none">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Name of Woman</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="WomanName" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2 d-none">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Husband’s Name</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="HusbandName" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2 d-none">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Mobile Number</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="MobileNumber" class="form-control">
+                        </div>
+                    </div>
+
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Client Parity</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="ClientParity" class="form-control" type="number" maxlength="1">
+                        </div>
+                    </div>
+
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Are you currently pregnant?</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="IsCurrentlyPregnant" class="form-control" id="IsCurrentlyPregnant">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.IsCurrentlyPregnant.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Are you Receiving IEC?</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="IsReceivingSocialBenefit" class="form-control" id="IsReceivingSocialBenefit">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.IsReceivingSocialBenefit.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Which IEC are you using?</label>
+                        </div>
+                        <div class="col-md-8">
+
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    Select Method
+                                </button>
+
+                                <ul class="dropdown-menu w-100 px-2" style="max-height: 200px; overflow-y: auto;">
+                                    @{
+                                        var socialbenifits =
+                                        ViewBag.socialbenifit as List<SelectListItem>;
+                                    }
+
+                                    @if (socialbenifits != null)
+                                    {
+                                        foreach (var s in socialbenifits)
+                                        {
+                                            <li>
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="SocialBenifits"
+                                                           value="@s.Value"
+                                                           id="fp_@s.Value"
+                                                           @(Model.SocialBenifits != null &&
+                                                         Model.SocialBenifits.Contains(int.Parse(s.Value)) ? "checked" : "") />
+                                            <label class="form-check-label" for="fp_@s.Value">
+                                                @s.Text
+                                            </label>
+                                        </div>
+                                    </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Are you using any family planning method?</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="IsUsingFamilyPlanning" class="form-control" id="IsUsingFamilyPlanning">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.IsUsingFamilyPlanning.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Which family planning method are you using?</label>
+                        </div>
+                        <div class="col-md-8">
+
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    Select Method
+                                </button>
+
+                                <ul class="dropdown-menu w-100 px-2" style="max-height: 200px; overflow-y: auto;">
+                                    @{
+                                        var familyPlanningList =
+                                        ViewBag.familyplanning as List<SelectListItem>;
+                                    }
+
+                                    @if (familyPlanningList != null)
+                                    {
+                                        foreach (var s in familyPlanningList)
+                                        {
+                                            <li>
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="FamilyPlanningMethod"
+                                                           value="@s.Value"
+                                                           id="fp_@s.Value"
+                                                           @(Model.FamilyPlanningMethod != null &&
+                                                           Model.FamilyPlanningMethod.Contains(int.Parse(s.Value)) ? "checked" : "") />
+                                            <label class="form-check-label" for="fp_@s.Value">
+                                                @s.Text
+                                            </label>
+                                        </div>
+                                    </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>If not, was mutual discussion / counseling done</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="IsCounsellingDone" class="form-control" id="IsCounsellingDone">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.IsCounsellingDone.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Referred to the health center to receive the required services?</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="IsReferredForServices" class="form-control" id="IsReferredForServices">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.IsReferredForServices.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Write the name of the referred health center</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input id="ReferredHealthCenterName" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modalOkBtn">Add Member</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered fh-table mt-3" id="memberTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Husband</th>
+                <th>Mobile</th>
+                <th>Pregnant</th>
+                <th>FP</th>
+                <th>Methods</th>
+                <th>
+                    <button type="button" class="btn btn-success px-2 py-1" id="addRowBtn">
+                        + Member
+                    </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="beneficiaryRows"></tbody>
+    </table>
+
+    <hr />
+
+    <button type="button" class="btn-save" onclick="saveMembers()">Save</button>
+    <a href="@Url.Action("Index", "HomeVisit")" class="btn-back">Back</a>
+
+
+</form>
+
+
+<script type="text/template" id="beneficiaryRowTemplate">
+       <tr>
+        <td class="slno"></td>
+
+        <td>
+            <span class="womanName"></span>
+            <input type="hidden" class="hdWomanName" />
+        </td>
+
+        <td>
+            <span class="husbandName"></span>
+            <input type="hidden" class="hdHusbandName" />
+        </td>
+
+        <td>
+            <span class="mobile"></span>
+            <input type="hidden" class="hdMobile" />
+        </td>
+
+        <td>
+            <span class="pregnant"></span>
+            <input type="hidden" class="hdPregnant" />
+        </td>
+
+        <td>
+            <span class="fp"></span>
+            <input type="hidden" class="hdFP" />
+        </td>
+
+        <td>
+            <span class="methods"></span>
+            <input type="hidden" class="hdMethods" />
+        </td>
+
+        <!-- EXTRA DTO FIELDS -->
+        <input type="hidden" class="hdClientParity" />
+        <input type="hidden" class="hdReceivingBenefit" />
+        <input type="hidden" class="hdCounselling" />
+        <input type="hidden" class="hdReferred" />
+        <input type="hidden" class="hdReferredCenter" />
+
+        <td>
+            <button type="button" class="btn btn-danger removeRow">Remove</button>
+        </td>
+    </tr>
+</script>
+
+
+@section Scripts {
+    <script>
+        // ---------------- CASCADING DROPDOWNS ----------------
+
+            document.getElementById("StateId").addEventListener("change", function () {
+                let stateId = this.value;
+                resetDropdown("DistrictId", "-- Select District --");
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!stateId) return;
+
+                fetch(`/HomeVisit/GetDistricts?stateId=${stateId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("DistrictId", data, "id", "name");
+         });
+            });
+
+            document.getElementById("DistrictId").addEventListener("change", function () {
+                let districtId = this.value;
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!districtId) return;
+
+                fetch(`/HomeVisit/GetBlocks?districtId=${districtId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("BlockId", data, "id", "name");
+         });
+            });
+
+            document.getElementById("BlockId").addEventListener("change", function () {
+                let blockId = this.value;
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!blockId) return;
+
+                fetch(`/HomeVisit/GetFacilities?blockId=${blockId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("FacilityId", data, "id", "name");
+         });
+            });
+
+             document.getElementById("FacilityId").addEventListener("change", function () {
+                let blockId = document.getElementById("BlockId").value;
+                resetDropdown("SubCenterId", "-- Select Sub-centre --");
+
+                if (!blockId) return;
+
+                fetch(`/HomeVisit/GetSubCentre?blockId=${blockId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("SubCenterId", data, "id", "name");
+         });
+            });
+
+        document.getElementById("SubCenterId").addEventListener("change", function () {
+                let subcentreId = this.value;
+                resetDropdown("AshaId", "-- Select ASHA --");
+
+                if (!subcentreId) return;
+
+                fetch(`/HomeVisit/GetAshabySubcentre?subcentreId=${subcentreId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("AshaId", data, "id", "name");
+         });
+            });
+
+            function resetDropdown(id, placeholder) {
+                let ddl = document.getElementById(id);
+                ddl.innerHTML = `
+               <option value="">${placeholder}</option>`;
+            }
+
+            function fillDropdown(id, data, valueField, textField) {
+                let ddl = document.getElementById(id);
+                data.forEach(x => {
+         let opt = document.createElement("option");
+         opt.value = x[valueField];
+         opt.text = x[textField];
+         ddl.appendChild(opt);
+                });
+            }
+
+        // ---------------- OPEN MODAL ----------------
+                        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("addRowBtn").addEventListener("click", function () {
+                resetMemberModal();
+                let modal = new bootstrap.Modal(
+                    document.getElementById("memberModal")
+                );
+                modal.show();
+            });
+        });
+
+                function resetMemberModal() {
+
+            // text inputs
+            document.querySelectorAll("#memberModal input").forEach(i => {
+                if (i.type !== "checkbox") i.value = "";
+            });
+
+            // selects
+            document.querySelectorAll("#memberModal select").forEach(s => {
+                s.selectedIndex = 0;
+            });
+
+            // uncheck FP checkboxes
+            document
+                .querySelectorAll('#memberModal input[name="FamilyPlanningMethod"]')
+                .forEach(cb => cb.checked = false);
+        }
+
+
+        //===================Add Row========================
+
+                let participantIndex = 0; // use consistent variable name
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("modalOkBtn").addEventListener("click", function () {
+
+                    // 🔁 DUPLICATE CHECK
+        let isDuplicate = false;
+
+        document.querySelectorAll("#beneficiaryRows tr").forEach(row => {
+            const existingName = row.querySelector(".hdWomanName")?.value;
+            const existingMobile = row.querySelector(".hdMobile")?.value;
+
+            if (
+                existingName?.toLowerCase() === womanName.toLowerCase() &&
+                existingMobile === mobile
+            ) {
+                isDuplicate = true;
+            }
+        });
+
+        if (isDuplicate) {
+            alert("This member is already added");
+            return; // ✅ LEGAL NOW
+        }
+
+
+                const womanName = document.getElementById("WomanName").value.trim();
+                const husbandName = document.getElementById("HusbandName").value.trim();
+                const mobile = document.getElementById("MobileNumber").value.trim();
+                const marriageDate = document.getElementById("MarriageDate").value;
+
+                const isChild = document.getElementById("IsChildAvailable").value;
+                const isPregnant = document.getElementById("IsCurrentlyPregnant").value;
+                const isFP = document.getElementById("IsUsingFamilyPlanning").value;
+                const isAntara = document.getElementById("IsAwareOfAntara").value;
+
+                const selectedMethod = document.getElementById("SelectedMethodName").value;
+                const reason = document.getElementById("ReasonForNonUsage").value;
+
+                const fpChecked = document.querySelectorAll('input[name="FamilyPlanningMethod"]:checked');
+                const fpIds = [];
+                const fpTexts = [];
+
+                fpChecked.forEach(cb => {
+                    fpIds.push(cb.value);
+                    fpTexts.push(cb.nextElementSibling.innerText);
+                });
+
+                if (!womanName) {
+                    alert("Please enter woman name");
+                    return;
+                }
+
+                // Parse template
+                let template = document.getElementById("beneficiaryRowTemplate").innerHTML;
+                template = template.replace(/__index__/g, participantIndex);
+
+                const temp = document.createElement("tbody");
+                temp.innerHTML = template.trim();
+                const row = temp.querySelector("tr");
+
+                // Fill visible fields
+                row.querySelector(".womanName").textContent = womanName;
+                row.querySelector(".husbandName").textContent = husbandName;
+                row.querySelector(".mobile").textContent = mobile;
+                row.querySelector(".pregnant").textContent = isPregnant === "1" ? "Yes" : "No";
+                row.querySelector(".fp").textContent = isFP === "1" ? "Yes" : "No";
+                row.querySelector(".methods").textContent = fpTexts.join(", ");
+
+                // Fill hidden fields
+                row.querySelector(".hdWomanName").value = womanName;
+                row.querySelector(".hdHusbandName").value = husbandName;
+                row.querySelector(".hdMobile").value = mobile;
+                row.querySelector(".hdMarriageDate").value = marriageDate;
+                row.querySelector(".hdChild").value = isChild;
+                row.querySelector(".hdPregnant").value = isPregnant;
+                row.querySelector(".hdFP").value = isFP;
+                row.querySelector(".hdAntara").value = isAntara;
+                row.querySelector(".hdSelectedMethod").value = selectedMethod;
+                row.querySelector(".hdReason").value = reason;
+                row.querySelector(".hdMethods").value = fpIds.join(",");
+
+                // Append row
+                document.querySelector("#memberTable tbody").appendChild(row);
+
+               participantIndex++;
+                updateSlNo();
+
+                bootstrap.Modal.getInstance(
+                    document.getElementById("memberModal")
+                ).hide();
+            });
+        });
+
+            document.getElementById("beneficiaryCount").innerText =
+        document.querySelectorAll("#beneficiaryRows tr").length;
+
+
+        function updateSlNo() {
+            document
+                .querySelectorAll("#memberTable tbody tr")
+                .forEach((row, index) => {
+                    row.querySelector(".slno").textContent = index + 1;
+                });
+        }
+
+        //=====================Romove and Reindex====================
+
+                document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("removeRow")) {
+                e.target.closest("tr").remove();
+                reIndexBeneficiaries();
+            }
+        });
+
+        function reIndexBeneficiaries() {
+            const rows = document.querySelectorAll("#beneficiaryRows tr");
+
+            rows.forEach((row, index) => {
+                row.querySelector(".slno").textContent = index + 1;
+
+                row.querySelectorAll("input[name]").forEach(input => {
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                });
+            });
+
+            beneficiaryIndex = rows.length;
+        }
+
+        //========================================saveMembers==============================
+
+                function saveMembers() {
+
+                         // ---------- HEADER VALIDATION ----------
+        const requiredFields = [
+            { id: "StateId", name: "State" },
+            { id: "DistrictId", name: "District" },
+            { id: "BlockId", name: "Block" },
+            { id: "FacilityId", name: "Facility" },
+            { id: "SubCenterId", name: "Sub Center" },
+            { id: "AshaId", name: "ASHA" }
+        ];
+
+        for (let f of requiredFields) {
+            if (!document.getElementById(f.id).value) {
+                alert(`Please select ${f.name}`);
+                return;
+            }
+        }
+
+        const village = document.querySelector('[name="VillageName"]').value.trim();
+        if (!village) {
+            alert("Please enter Village Name");
+            return;
+        }
+
+        // ---------- MEMBER VALIDATION ----------
+        const rows = document.querySelectorAll("#beneficiaryRows tr");
+        if (rows.length === 0) {
+            alert("Please add at least one beneficiary");
+            return;
+        }
+
+            const women = [];
+
+            document.querySelectorAll("#beneficiaryRows tr").forEach(row => {
+
+                women.push({
+                    WomanName: row.querySelector(".hdWomanName")?.value,
+                    HusbandName: row.querySelector(".hdHusbandName")?.value,
+                    MobileNumber: row.querySelector(".hdMobile")?.value,
+
+                    MarriageDate: row.querySelector(".hdMarriageDate")?.value || null,
+                    IsChildAvailable: row.querySelector(".hdChild")?.value || null,
+                    IsCurrentlyPregnant: row.querySelector(".hdPregnant")?.value || null,
+                    IsUsingFamilyPlanning: row.querySelector(".hdFP")?.value || null,
+
+                    IsAwareOfAntara: row.querySelector(".hdAntara")?.value || null,
+                    SelectedMethodName: row.querySelector(".hdSelectedMethod")?.value || null,
+                    ReasonForNonUsage: row.querySelector(".hdReason")?.value || null,
+
+                    FamilyPlanningMethod: row.querySelector(".hdMethods")?.value
+                        ? row.querySelector(".hdMethods").value.split(",").map(x => parseInt(x))
+                        : []
+                });
+            });
+
+            if (women.length === 0) {
+                alert("Please add at least one beneficiary");
+                return;
+            }
+
+            const model = {
+                StateId: document.getElementById("StateId").value || null,
+                DistrictId: document.getElementById("DistrictId").value || null,
+                BlockId: document.getElementById("BlockId").value || null,
+                FacilityId: document.getElementById("FacilityId").value || null,
+                SubCenterId: document.getElementById("SubCenterId").value || null,
+                ASHAId: document.getElementById("AshaId").value || null,
+                VillageName: document.querySelector('[name="VillageName"]').value || null,
+                AnganwadiWorkerName: document.querySelector('[name="AnganwadiWorkerName"]').value || null,
+                Women: women
+            };
+
+            fetch('/HomeVisit/Create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(model)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Saved successfully!");
+                    window.location.href = "/HomeVisit/Index";
+                } else {
+                    alert(data.message || "Save failed");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error while saving");
+            });
+        }
+    </script>
+}

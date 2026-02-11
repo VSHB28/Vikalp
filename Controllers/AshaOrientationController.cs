@@ -91,12 +91,12 @@ namespace Vikalp.Controllers
         // ===================== Edit (POST) =====================
 
         [HttpPost]
-        public async Task<IActionResult> UpdateJson(string venueGuid, [FromBody] AshaOrientationCreateDto model)
+        public async Task<IActionResult> UpdateJson([FromBody] AshaOrientationCreateDto model)
         {
             if (!ModelState.IsValid)
                 return Json(new { success = false });
-
-            var result = await _service.UpdateOrientationAsync(venueGuid, model);
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var result = await _service.UpdateOrientationAsync(userId, model);
 
             return Json(new { success = result });
         }

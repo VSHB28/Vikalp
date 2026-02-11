@@ -1,0 +1,586 @@
+﻿@using Vikalp.Models.DTO
+@model Vikalp.Models.DTO.LineListingConsentDto
+@{
+    ViewData["Title"] = "Consent";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    :root {
+        --primary-orange: #e65100;
+        --light-orange: #fff3e0;
+        --accent-orange: #ff9800;
+        --card-bg: #fff;
+        --text-dark: #333;
+        --border-color: #ddd;
+    }
+
+
+
+    .container-consent {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border-top: 5px solid var(--primary-orange);
+    }
+
+    /* --- Header --- */
+    .header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .header h2 {
+            margin: 0;
+            color: var(--primary-orange);
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    /* --- The New "Couple ID Card" (Replaces Inputs) --- */
+    .beneficiary-card {
+        background: linear-gradient(to right, #fff3e0, #fff);
+        margin: 20px 25px;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #ffe0b2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+    }
+
+    /* A small badge saying "Verified" or "Pre-filled" */
+    .status-badge {
+        position: absolute;
+        top: -10px;
+        right: 15px;
+        background: var(--primary-orange);
+        color: white;
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .person {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+
+    /* Icon Circle */
+    .p-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-orange);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        font-size: 18px;
+    }
+
+    .p-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .p-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .p-age {
+        font-size: 11px;
+        color: #777;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .p-age label {
+            font-weight: 500;
+        }
+
+        .p-age input {
+            width: 70px;
+            padding: 4px 6px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 11px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+            .p-age input:focus {
+                outline: none;
+                border-color: var(--primary-orange);
+                box-shadow: 0 0 0 2px rgba(230, 81, 0, 0.1);
+            }
+
+    /* Vertical Divider between husband and wife */
+    .divider {
+        width: 1px;
+        height: 35px;
+        background-color: #ffd8a8;
+        margin: 0 15px;
+    }
+
+    /* --- Collapsible Info Section --- */
+    .info-toggle {
+        margin: 0 25px 15px 25px;
+        font-size: 12px;
+        color: var(--primary-orange);
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .info-text {
+        background-color: #fafafa;
+        margin: 0 25px 20px 25px;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #555;
+        line-height: 1.5;
+        border-left: 3px solid #ccc;
+        display: block; /* Can toggle this with JS if needed */
+    }
+
+    .info-heading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--primary-orange);
+        margin-bottom: 6px;
+    }
+
+        .info-heading i {
+            font-size: 14px;
+        }
+
+    .info-text p {
+        margin: 4px 0;
+    }
+
+    .info-list {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0 0;
+    }
+
+        .info-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+            .info-list li i {
+                color: var(--accent-orange);
+                margin-top: 2px;
+            }
+
+    .pill {
+        display: inline-block;
+        background: #fff3e0;
+        color: var(--primary-orange);
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 11px;
+    }
+
+    /* --- Form Inputs --- */
+    .form-content {
+        padding: 0 25px 25px 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 15px;
+    }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 20px;
+        }
+
+    .inline-options {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+        .inline-options .option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #444;
+        }
+
+    .consent-section {
+        background: #fff3e0;
+        border: 1px solid #ffe0b2;
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+
+    .consent-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--primary-orange);
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+        .consent-title i {
+            font-size: 14px;
+        }
+
+    .consent-text {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #444;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box; /* Important for padding */
+        font-family: 'Poppins', sans-serif;
+        background-color: #fff;
+    }
+
+        input[type="radio"] {
+            width: auto;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(230, 81, 0, 0.1);
+        }
+
+    /* Signature Area */
+    .signature-box {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 12px 15px; /* match input padding */
+        text-align: center;
+        color: #888;
+        cursor: pointer;
+        transition: 0.2s;
+        background: #fafafa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 48px; /* align with input height */
+        box-sizing: border-box;
+    }
+
+        .signature-box i,
+        .signature-box div {
+            display: block;
+            width: 100%;
+        }
+
+        .signature-box:hover {
+            border-color: var(--accent-orange);
+            background: #fff8e1;
+        }
+
+    /* Submit Button */
+    .btn-submit {
+        background: var(--primary-orange);
+        color: white;
+        border: none;
+        padding: 15px;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    @@media (max-width: 450px) {
+        .beneficiary-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+            margin: 0;
+        }
+
+        .person {
+            width: 100%;
+        }
+
+        .form-row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="container-consent m-3">
+
+    <div class="header">
+        <h2><i class="fa-solid fa-hands-holding-child"></i> Consent Form</h2>
+        <div style="font-size: 12px; color: #888;">#ID: VK-902</div>
+    </div>
+
+    <div class="beneficiary-card">
+        <span class="status-badge">Record Found</span>
+
+        <div class="person">
+            <div class="p-icon"><i class="fa-solid fa-person-dress"></i></div>
+            <div class="p-details">
+                <span class="p-name">@Model.WomanName</span>
+                <div class="p-age">
+                    <label>Age</label>
+                    <input type="number" min="15" max="60" value="24" placeholder="Enter">
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="person">
+            <div class="p-icon"><i class="fa-solid fa-person"></i></div>
+            <div class="p-details">
+                <span class="p-name">@Model.HusbandName</span>
+                <div class="p-age">
+                    <label>Age</label>
+                    <input type="number" min="15" max="60" value="28" placeholder="Enter">
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="person">
+            <div class="p-icon">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+            <div class="p-details">
+                <span class="p-name">@Model.MobileNumber</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-text">
+        <div class="info-heading">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Project Purpose & Helpline Details</span>
+        </div>
+        <p>
+            Under the Vikalp Project by I-PASS Development Foundation, a dedicated helpline has been established focusing on newly married couples to provide information and counseling on family planning and temporary contraceptive options.
+        </p>
+        <ul class="info-list">
+            <li>
+                <i class="fa-solid fa-phone-volume"></i>
+                <span>Toll-free helpline: <span class="pill">1800 202 5862</span> – call for confidential advice and counseling.</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-square-phone"></i>
+                <span>With your consent, follow-up contact can also be initiated from the helpline number <span class="pill">0522 452 3530</span> to provide detailed information on family planning services.</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-user-doctor"></i>
+                <span>Counselors and doctors assist couples in selecting the most suitable contraceptive method and ensure continuity through regular follow-ups.</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-comments"></i>
+                <span>The Vikalp Project may also reach out to you on your provided phone number through various planned communication channels to share information and messages on family planning.</span>
+            </li>
+        </ul>
+    </div>
+
+    <form class="form-content" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="LineListGuid" value="@Model.LineListGuid" />
+
+        <div class="form-group">
+            <div class="consent-section">
+                <div class="consent-title">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Consent Confirmation</span>
+                </div>
+                <div class="consent-text">Do you give your consent to be contacted and receive information under the Vikalp Project?</div>
+                <select name="IsConcent" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value" @(Model.IsConcent.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div id="restControls">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Working Mobile Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-phone" style="color:#999;"></i>
+                        </span>
+                        <input class="form-control" name="MobileNumber" maxlength="10" pattern="\d{10}" placeholder="Enter Mobile Number" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Who operates this mobile?</label>
+                    <select name="MobileHandledBy" class="form-control">
+                        <option value="">-- Select --</option>
+                        @foreach (var s in ViewBag.whoattandcall)
+                        {
+                            <option value="@s.Value" @(Model.MobileHandledBy.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                @{
+                    var today = DateTime.Today;
+                    var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
+                    var maxDate = today.ToString("yyyy-MM-dd");
+                }
+                <div class="form-group">
+                    <label>Date</label>
+                    <input name="ConcentDate" type="date" max="@maxDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Upload Signature</label>
+                    <div class="signature-box">
+                        <i class="fa-solid fa-camera"></i>
+                        <div style="font-size: 10px; margin-top: 5px;">Tap to Upload</div>
+                        <input name="Signature" type="file" style="display: none;" id="sig-upload">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn-save" onclick="saveconsent()">Save</button>
+        <a href="@Url.Action("Index", "LineListingSurvey")" class="btn-back">Back</a>
+
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function saveconsent() {
+
+            const isConsentEl = document.querySelector('[name="IsConcent"]');
+            if (!isConsentEl || !isConsentEl.value) {
+                alert("Please select Consent Given");
+                return;
+            }
+
+            const model = {
+                LineListGuid: document.getElementById("LineListGuid").value,
+                IsConcent: isConsentEl.value,
+                ConcentDate: document.querySelector('[name="ConcentDate"]').value || null,
+                Signature: document.querySelector('[name="Signature"]').value || null,
+                MobileNumber : document.querySelector('[name="MobileNumber"]').value || null,
+                MobileHandledBy : document.querySelector('[name="MobileHandledBy"]').value || null
+
+            };
+
+            console.log("Posting consent:", model);
+
+                    fetch('/LineListingSurvey/SaveConsentJson', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken':
+                    document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(model)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Server error");
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert("Consent saved successfully!");
+                    window.location.href = "/LineListingSurvey/Index";
+                } else {
+                    alert(data.message || "Save failed");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error while saving consent");
+            });
+        }
+
+               document.addEventListener("DOMContentLoaded", function () {
+            const consentSelect = document.querySelector("select[name='IsConcent']");
+            const restControls = document.getElementById("restControls");
+
+            consentSelect.addEventListener("change", function () {
+                if (this.value === "2") { // assuming "0" means No
+                    // Hide the section
+                    restControls.classList.add("d-none");
+
+                    // Disable all inputs inside
+                    restControls.querySelectorAll("input, select, textarea, button").forEach(el => {
+                        el.disabled = true;
+                    });
+                } else {
+                    // Show the section
+                    restControls.classList.remove("d-none");
+
+                    // Re-enable inputs
+                    restControls.querySelectorAll("input, select, textarea, button").forEach(el => {
+                        el.disabled = false;
+                    });
+                }
+            });
+        });
+    </script>
+}

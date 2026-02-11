@@ -200,6 +200,15 @@
                 text-decoration: underline;
             }
 
+        .brand-logo {
+            max-width: 220px; /* control logo size */
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 0.5rem auto; /* center + spacing */
+        }
+
+
         /* Mobile Responsiveness */
         @@media (max-width: 768px) {
             .image-section {
@@ -239,7 +248,9 @@
             <div class="col-md-5 col-lg-4 form-section">
                 <div class="login-card">
                     <div class="mb-4">
-                        <h1 class="brand-title">Vikalp</h1>
+                        <img src="~/assets/images/vikalp-logo.png"
+                             alt="Vikalp"
+                             class="brand-logo" />
                         <p class="brand-subtitle">Empowering Choices, Building Futures</p>
                     </div>
 

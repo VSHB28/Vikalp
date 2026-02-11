@@ -167,9 +167,9 @@ namespace Vikalp.Controllers
             return Json(data);
         }
 
-        public IActionResult GetBlocks(int districtId)
+        public IActionResult GetBlocks(string districtId)
         {
-            var data = _dropdownService.GetBlocks(districtId);
+            var data = _dropdownService.GetBlocks(25);
             return Json(data);
         }
 

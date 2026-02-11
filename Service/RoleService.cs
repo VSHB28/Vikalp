@@ -50,9 +50,9 @@ public class RoleService : IRoleService
         var parameters = new SqlParameter[]
         {
             new SqlParameter("@RoleName", SqlDbType.NVarChar) { Value = role.RoleName },
-            new SqlParameter("@RoleType", SqlDbType.Bit) { Value = role.RoleType },
+            new SqlParameter("@RoleType", SqlDbType.NVarChar) { Value = role.RoleType },
             new SqlParameter("@Description", SqlDbType.NVarChar) { Value = role.Description },
-            new SqlParameter("@IsActive", SqlDbType.Bit) { Value = role.IsActive }
+            new SqlParameter("@IsActive", SqlDbType.Int) { Value = role.IsActive }
         };
 
         var dt = SqlUtils.ExecuteSP(Conn(), "dbo.sp_CreateRole", parameters);
@@ -69,9 +69,9 @@ public class RoleService : IRoleService
         {
             new SqlParameter("@RoleId", SqlDbType.Int) { Value = role.RoleId },
             new SqlParameter("@RoleName", SqlDbType.NVarChar) { Value = role.RoleName },
-            new SqlParameter("@RoleType", SqlDbType.Bit) { Value = role.RoleType },
+            new SqlParameter("@RoleType", SqlDbType.NVarChar) { Value = role.RoleType },
             new SqlParameter("@Description", SqlDbType.NVarChar) { Value = role.Description },
-            new SqlParameter("@IsActive", SqlDbType.Bit) { Value = role.IsActive }
+            new SqlParameter("@IsActive", SqlDbType.Int) { Value = role.IsActive }
         };
 
         SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateRole", parameters);

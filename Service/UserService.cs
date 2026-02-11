@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using Newtonsoft.Json.Linq;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,7 +11,6 @@ using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
 using Vikalp.Services;
 using Vikalp.Utilities;
-using Microsoft.AspNetCore.Http;
 
 namespace Vikalp.Service;
 
@@ -91,7 +92,16 @@ public class UserService : IUserService
                         .Select(x => x.Value)
                         .ToList(),
             StateId = row.Field<int?>("StateId") ?? 0,
-            DistrictId = row.Field<int?>("DistrictId") ?? 0,
+            DistrictIds =
+                row["DistrictId"] == DBNull.Value
+                    ? new List<int>()
+                    : row["DistrictId"]
+                        .ToString()!
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => int.TryParse(s, out var id) ? id : (int?)null)
+                        .Where(x => x.HasValue)
+                        .Select(x => x.Value)
+                        .ToList(),
             BlockId = row.Field<int?>("BlockId") ?? 0,
         };
     }
@@ -133,6 +143,13 @@ public class UserService : IUserService
         new("@CreatedBy", SqlDbType.Int) { Value = createdByValue },
         new("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
         new("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
+        new("@DistrictId", SqlDbType.NVarChar)
+        {
+           Value = user.DistrictIds != null && user.DistrictIds.Any()
+           ? string.Join(",", user.DistrictIds)
+           : DBNull.Value
+        },
+        new("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value },
 
         new("@LanguageId", SqlDbType.NVarChar)
         {
@@ -148,30 +165,7 @@ public class UserService : IUserService
 
         int userid = Convert.ToInt32(dt.Rows[0]["UserId"]);
 
-        // ===== INSERT DISTRICTS (MULTIPLE ROWS) =====
-        if (user.DistrictIds != null && user.DistrictIds.Any())
-        {
-            SaveUserDistricts(userid, user.StateId, user.RoleId, user.DistrictIds, user.BlockId);
-        }
-
         return userid;
-    }
-
-    private void SaveUserDistricts(int userid, int stateid, int? roleid, List<int> districtIds, int? blockid)
-    {
-        foreach (var districtId in districtIds)
-        {
-            var parameters = new SqlParameter[]
-            {
-            new("@Userid", SqlDbType.Int) { Value = userid },
-            new("@StateId", SqlDbType.Int) { Value = stateid },
-            new("@RoleId", SqlDbType.Int) { Value = roleid },
-            new("@DistrictId", SqlDbType.Int) { Value = districtId },
-            new("@BlockId", SqlDbType.Int) { Value = blockid }
-            };
-            SqlUtils.ExecuteSP(Conn(), "sp_InsertUserDistrictMapping", parameters
-            );
-        }
     }
 
 
@@ -218,18 +212,24 @@ public class UserService : IUserService
             new SqlParameter("@GenderId", SqlDbType.Int) { Value = (object?)user.GenderId ?? DBNull.Value },
 
             new SqlParameter("@StateId", SqlDbType.Int) { Value = (object?)user.StateId ?? DBNull.Value },
-        new SqlParameter("@DistrictId", SqlDbType.Int) { Value = (object?)user.DistrictId ?? DBNull.Value },
+            new SqlParameter("@DistrictId", SqlDbType.NVarChar)
+                {
+                    Value = user.DistrictIds != null && user.DistrictIds.Any()
+                        ? string.Join(",", user.DistrictIds)
+                        : DBNull.Value
+                },
         new SqlParameter("@BlockId", SqlDbType.Int) { Value = (object?)user.BlockId ?? DBNull.Value },
         new SqlParameter("@LanguageId", SqlDbType.NVarChar)
-{
-    Value = user.LanguageId != null && user.LanguageId.Any()
-        ? string.Join(",", user.LanguageId)
-        : DBNull.Value
-}
+            {
+                Value = user.LanguageId != null && user.LanguageId.Any()
+                    ? string.Join(",", user.LanguageId)
+                    : DBNull.Value
+            }
 
-        };
+                    };
 
         SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateUser", parameters);
+
         return true;
     }
     public bool Delete(int id)

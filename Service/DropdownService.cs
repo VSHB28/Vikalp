@@ -117,6 +117,23 @@ public class DropdownService : IDropdownService
         }).ToList();
     }
 
+    public List<DropdownDto> GetSubCentre(int blockId, int UserId)
+    {
+        var param = new SqlParameter[]
+        {
+        new SqlParameter("@BlockId", blockId),
+        new SqlParameter("@UserId", UserId)
+        };
+
+        var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetsubcentresByBlock", param);
+
+        return dt.AsEnumerable().Select(r => new DropdownDto
+        {
+            Id = r.Field<int>("SubCentreId"),
+            Name = r.Field<string>("SubCentre")
+        }).ToList();
+    }
+
     public List<DropdownDto> GetAshas()
     {
         var param = new SqlParameter[]
@@ -146,6 +163,23 @@ public class DropdownService : IDropdownService
             AshaId = r.Field<int>("AshaId"),
             MobileNumber = r.Field<string>("MobileNumber")
         }).FirstOrDefault();
+    }
+
+    public List<DropdownDto> GetAshaDetailsbySubcentre(int subcentreId, int UserId)
+    {
+        var param = new SqlParameter[]
+        {
+        new SqlParameter("@Subcentreid", subcentreId),
+        new SqlParameter("@UserID", UserId)
+        };
+
+        var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetAshaBySubcentre", param);
+
+        return dt.AsEnumerable().Select(r => new DropdownDto
+        {
+            Id = r.Field<int>("AshaId"),
+            Name = r.Field<string>("AshaName")
+        }).ToList();
     }
 
     public List<DropdownDto> GetTopicsCovered(int userId, int flagId)
@@ -297,6 +331,76 @@ public class DropdownService : IDropdownService
                     });
                 }
                 result["YesNo"] = yesNo;
+            }
+        }
+
+        return result;
+    }
+
+    public async Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsfamilyplanningAsync(int userId, int languageId)
+    {
+        var result = new Dictionary<string, List<SelectListItem>>();
+
+        using (var conn = new SqlConnection(Conn()))
+        using (var cmd = new SqlCommand("dbo.sp_getCommonDataforLineListdropdown", conn))
+        {
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@LanguageId", languageId);
+
+            await conn.OpenAsync();
+            using (var reader = await cmd.ExecuteReaderAsync())
+            {
+                // Familyplanning
+                var familyplanning = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    familyplanning.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["Familyplanning"] = familyplanning;
+
+                await reader.NextResultAsync();
+
+                var yesNo = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    yesNo.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["YesNo"] = yesNo;
+
+                await reader.NextResultAsync();
+
+                var whoattandcall = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    whoattandcall.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["WhoAttandcall"] = whoattandcall;
+
+                await reader.NextResultAsync();
+
+                var socialbenifit = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    socialbenifit.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["SocialBenifit"] = socialbenifit;
             }
         }
 

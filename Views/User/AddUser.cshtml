@@ -11,7 +11,6 @@
             <div class="umcard-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Create User</h5>
-                    <a href="/User/Index" class="btn btn-secondary">← Back to List</a>
                 </div>
             </div>
             <form action="/User/Create" method="post" class="row mt-2 g-3">
@@ -39,7 +38,7 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Role</label>
-                    <select name="RoleId" class="form-control">
+                    <select id="RoleId" name="RoleId" class="form-control">
                         <option value="">-- Select Role --</option>
                         @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Roles)
                         {
@@ -117,16 +116,8 @@
                     </select>
                 </div>
 
-                <!-- DISTRICT -->
-                <div class="col-md-3 d-none">
-                    <label class="form-label">District <span class="text-danger">*</span></label>
-                    <select id="DistrictId" name="DistrictId" class="form-control">
-                        <option value="">-- Select District --</option>
-                    </select>
-                </div>
-
                 <!-- DISTRICT MULTISELECT -->
-                <div class="col-md-3">
+                <div class="col-md-3" id="districtContainer">
                     <label class="form-label">District <span class="text-danger">*</span></label>
 
                     <div class="dropdown">
@@ -155,9 +146,9 @@
 
                 <div class="col-12">
                     @* <button type="submit" class="btn btn-primary">Create</button> *@
-                    <button type="button" class="btn btn-create btn-primary" onclick="saveUser()">Create</button>
+                    <button type="button" class="btn-save" onclick="saveUser()">Create</button>
 
-                    <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
+                    <a href="/User/Index" class="btn-back">Cancel</a>
                 </div>
             </form>
         </div>
@@ -206,101 +197,46 @@
                 });
         });
 
-            document.getElementById("DistrictId").addEventListener("change", function () {
-                let districtId = this.value;
+        //================================rolchange============================
 
-                reset("BlockId", "-- Select Block --");
-                reset("FacilityId", "-- Select Facility --");
+                document.getElementById("RoleId").addEventListener("change", function () {
 
-                if (!districtId) return;
+            let roleId = this.value;
+            let districtContainer = document.getElementById("districtContainer");
 
-                fetch(`/User/GetBlocks?districtId=${districtId}`)
-                    .then(r => r.json())
-                    .then(data => fill("BlockId", data));
-            });
+            if (roleId === "1") {
 
-            document.getElementById("BlockId").addEventListener("change", function () {
-                let blockId = this.value;
+                // Hide district completely
+                districtContainer.classList.add("d-none");
 
-                reset("FacilityId", "-- Select Facility --");
+                // Clear selected districts
+                document.getElementById("DistrictDropdown").innerHTML = "";
 
-                if (!blockId) return;
+            } else {
 
-                fetch(`/User/GetFacilities?blockId=${blockId}`)
-                    .then(r => r.json())
-                    .then(data => fill("FacilityId", data));
-            });
+                // Show district
+                districtContainer.classList.remove("d-none");
 
-                    function reset(id, text) {
-            let ddl = document.getElementById(id);
-            if (!ddl) return;
+                // Reload districts if state already selected
+                let stateId = document.getElementById("StateId").value;
+                if (stateId) {
+                    document.getElementById("StateId").dispatchEvent(new Event("change"));
+                }
+            }
+        });
 
-            ddl.innerHTML = `<option value="">${text}</option>`;
+        let roleId = document.getElementById("RoleId").value;
+        let districtContainer = document.getElementById("districtContainer");
+
+        if (roleId === "1") {
+            districtContainer.classList.add("d-none");
+        } else {
+            districtContainer.classList.remove("d-none");
         }
 
 
-                    function fill(id, data) {
-            let ddl = document.getElementById(id);
-            if (!ddl) return;
-
-            data.forEach(x => {
-                let opt = document.createElement("option");
-                opt.value = x.id;
-                opt.textContent = x.name;
-                ddl.appendChild(opt);
-            });
-        }            
-
         });
 
-        //         function saveUser() {
-
-        //     // collect language ids
-        //             let languageIds = Array.from(
-        //     document.querySelectorAll(".lang-checkbox:checked")
-        // ).map(x => parseInt(x.value));
-
-        //     let model = {
-        //         FullName: document.querySelector('[name="FullName"]').value || null,
-        //         Email: document.querySelector('[name="Email"]').value || null,
-        //         MobileNumber: document.querySelector('[name="MobileNumber"]').value || null,
-        //         Password: document.querySelector('[name="Password"]').value || null,
-        //         RoleId: document.querySelector('[name="RoleId"]').value || null,
-        //         GenderId: document.querySelector('[name="GenderId"]').value || null,
-        //         IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
-
-        //         StateId: document.getElementById("StateId").value || null,
-        //         DistrictId: document.getElementById("DistrictId").value || null,
-        //         BlockId: document.getElementById("BlockId").value || null,
-
-        //         LanguageId: languageIds   // <-- IMPORTANT
-        //     };
-
-        //     console.log("Posting user:", model);
-
-        //     fetch('/User/CreateJson', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'RequestVerificationToken':
-        //                 document.querySelector('input[name="__RequestVerificationToken"]').value
-        //         },
-        //         body: JSON.stringify(model)
-        //     })
-        //     .then(res => res.json())
-        //     .then(data => {
-        //         if (data.success) {
-        //             alert("User saved successfully!");
-        //             window.location.href = "/User/Index";
-        //         } else {
-        //             alert(data.message || "Save failed");
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.error(err);
-        //         alert("Error occurred while saving user");
-        //     });
-        // }
 
                 function saveUser() {
 

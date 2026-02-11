@@ -4,42 +4,51 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card">
         <div class="card-body">
-            <h3>Edit Role</h3>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Create Role</h5>
+                </div>
+            </div>
 
-            <form asp-action="Edit" method="post">
+            <form asp-action="Edit" method="post" class="mt-2 g-3">
+                <input type="hidden" name="RoleId" asp-for="@Model.RoleId" value="@Model.RoleId" />
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <input asp-for="Id" type="hidden" />
-
-                <div class="mb-3">
-                    <label asp-for="RoleName" class="form-label">Role Name</label>
-                    <input asp-for="RoleName" class="form-control" />
-                    <span asp-validation-for="RoleName" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label>Role Name</label>
+                            <input name="RoleName" value="@Model.RoleName" class="form-control" />
+                            <span asp-validation-for="RoleName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label>Role Type</label>
+                            <input name="RoleType" value="@Model.RoleType" class="form-control" />
+                            <span asp-validation-for="RoleType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3">
+                            <label>Description</label>
+                            <textarea name="Description" class="form-control" rows="1">@Model.Description</textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label d-block">Is Active</label>
+                        <input type="checkbox"
+                               name="IsActive"
+                               value="1"
+                               @(Model.IsActive == 1 ? "checked" : "") />
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="RoleType" class="form-label">Role Type</label>
-                    <input asp-for="RoleType" class="form-control" />
-                    <span asp-validation-for="RoleType" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <div class="form-check mb-3">
-                    <input asp-for="IsActive" class="form-check-input" />
-                    <label asp-for="IsActive" class="form-check-label">Is Active</label>
-                </div>
-
-                <button class="btn btn-primary" type="submit">Update</button>
-                <a class="btn btn-secondary" asp-action="Index" asp-controller="Role">Cancel</a>
+                <button class="btn-save" type="submit">Update</button>
+                <a href="/Role/Index" class="btn-back">Cancel</a>
             </form>
         </div>
     </div>

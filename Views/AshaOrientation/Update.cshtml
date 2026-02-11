@@ -148,18 +148,30 @@
     .fh-modal-header {
         color: #F15A29;
     }
+    .btn-update{
+        border: 2px solid #f57b20;
+        border-radius: 0;
+        color: #f57b20;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 15px 45px;
+        padding: 12px 45px;
+    }
+    .btn-update:hover{
+            background: #f57b20;
+            color: #fff;
+    }
 </style>
 
 <form asp-action="Create" method="post" id="orientationForm">
     @Html.AntiForgeryToken()
-    <input type="hidden" id="VenueGuid" value="@Model.VenueGuid" />
+    <input type="hidden" id="hdnVenueGuid" value="@Model.VenueGuid" />
     <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
     <input type="hidden" id="hdnBlockId" value="@Model.BlockId" />
     <input type="hidden" id="hdnFacilityId" value="@Model.FacilityId" />
     <input type="hidden" id="hdnTopics" value='@System.Text.Json.JsonSerializer.Serialize(Model.TopicsCovered ?? new List<int>())' />
     <input type="hidden" id="isEditMode" value="@(Model != null && Model.VenueGuid != null ? "1" : "0")" />
-
-
 
     <div class="form-card">
         <div class="fh-section-title d-flex">
@@ -190,7 +202,7 @@
                     <input type="date"
                            name="DateofOrientation"
                            value="@Model.DateofOrientation.ToString("yyyy-MM-dd")"
-                           class="form-control-sm" />
+                           class="form-control" />
                     <span asp-validation-for="DateofOrientation" class="text-danger"></span>
 
                 </div>
@@ -201,7 +213,7 @@
     <div class="row">
         <div class="col-md-2">
             <label>State</label>
-            <select name="StateId" class="form-control-sm" id="StateId">
+            <select name="StateId" class="form-control" id="StateId">
                 <option value="">-- Select State --</option>
                 @foreach (var s in ViewBag.States)
                 {
@@ -212,38 +224,38 @@
 
         <div class="col-md-2">
             <label>District</label>
-            <select name="DistrictId" class="form-control-sm" id="DistrictId">
+            <select name="DistrictId" class="form-control" id="DistrictId">
                 <option value="">-- Select District --</option>
             </select>
         </div>
 
         <div class="col-md-2">
             <label>Block</label>
-            <select name="BlockId" class="form-control-sm" id="BlockId">
+            <select name="BlockId" class="form-control" id="BlockId">
                 <option value="">-- Select Block --</option>
             </select>
         </div>
 
         <div class="col-md-2" id="facilityDropdownDiv">
             <label>Facility</label>
-            <select name="FacilityId" class="form-control-sm" id="FacilityId">
+            <select name="FacilityId" class="form-control" id="FacilityId">
                 <option value="">-- Select Facility --</option>
             </select>
         </div>
 
         <div class="col-md-2 d-none" id="manualFacilityDiv">
             <label>Facility</label>
-            <input name="FacilityName" id="FacilityName" class="form-control-sm" placeholder="Enter Facility name" />
+            <input name="FacilityName" value="@Model.FacilityName" id="FacilityName" class="form-control" placeholder="Enter Facility name" />
         </div>
 
         <div class="col-md-2">
             <label>Facility NIN</label>
-            <input name="NIN" id="NinNumber" class="form-control-sm" placeholder="Enter NIN" />
+            <input name="NIN" id="NinNumber" value="@Model.NIN" class="form-control" placeholder="Enter NIN" />
         </div>
         <div class="col-md-2">
             <label>Topic Covered</label>
 
-            <div class="dropdown">
+            <div class="dropdown topics">
                 <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
                         type="button"
                         id="topicsDropdownBtn"
@@ -302,8 +314,8 @@
     <hr />
 
     @* <button type="submit" class="btn btn-primary">Save</button> *@
-    <button type="button" class="btn btn-primary btn-create btn-sm" onclick="saveOrientation()">Update</button>
-    <a href="@Url.Action("Index", "AshaOrientation")" class="btn btn-secondary btn-sm">Back</a>
+    <button type="button" class="btn btn-update " onclick="saveOrientation()">Update</button>
+    <a href="@Url.Action("Index", "AshaOrientation")" class="btn-back">Back</a>
 
 
     <div class="modal fade" id="ashaModal" tabindex="-1">
@@ -358,7 +370,7 @@
                     </div>
 
                     <div class="mb-3 d-none" id="modalfacilityTextDiv">
-                        <label>Venue Name</label>
+                        <label>Facility Name</label>
                         <input type="text" id="modalfacilityText" class="form-control" placeholder="Enter Facility name" />
                     </div>
 
@@ -368,12 +380,18 @@
                     </div>
                     <div class="mb-3 d-none" id="modalAshaMobDiv">
                         <label>Mobile Number</label>
-                        <input type="text" id="modelMobNumber" class="form-control" maxlength="10" pattern="\d{10}" placeholder="Enter Mobile Number" />
+                        <input type="text" id="modelMobNumber" class="form-control"
+                               maxlength="10"
+                               pattern="\d{10}"
+                               placeholder="Enter Mobile Number"
+                               required />
+                        <span id="mobError" class="text-danger"></span>
                     </div>
+
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="modalOkBtn">OK</button>
+                    <button type="button" class="btn btn-add" id="modalOkBtn">OK</button>
                 </div>
             </div>
         </div>
@@ -501,7 +519,7 @@
                         else if (type === "non-intervention") {
 
                             let ashaName = document.getElementById("modalAshaText").value;
-                            let Venue = document.getElementById("modalAshaText").value;
+                                let Venue = document.getElementById("modalfacilityText").value;
                             let mobile = document.getElementById("modelMobNumber").value;
 
                             if (!ashaName) {
@@ -748,6 +766,8 @@
                         }
                     });
 
+        //============================ Update Record =======================================
+
                             function saveOrientation() {
 
                                         let selectedTopicIds = Array.from(
@@ -761,7 +781,7 @@
                             : null;
 
                         let model = {
-                                            VenueGuid: document.getElementById("VenueGuid").value,
+                            VenueGuid: document.getElementById("hdnVenueGuid").value,
                             StateId: document.getElementById("StateId").value,
                             DistrictId: document.getElementById("DistrictId").value,
                             BlockId: document.getElementById("BlockId").value,
@@ -778,7 +798,7 @@
                         document.querySelectorAll("#ashaRows tr").forEach(row => {
                             let attendee = {
                                 AshaId: row.querySelector('.ashaIdHidden')?.value || null,
-                                        VenueGuid: row.querySelector('.VenueGuid')?.value || null,
+                                VenueGuid: row.querySelector('.hdnVenueGuid')?.value || null,
                                 AshaName: row.querySelector('.ashaNameInput')?.value || null,
                                 VenueName: row.querySelector('.venueInput')?.value || null,
                                 AshaMobile: row.querySelector('.mobileInput')?.value || null,
@@ -813,6 +833,8 @@
                         });
                     }
 
+            ///================ Modal reset ==============================
+
                                 function resetAshaModal() {
 
                         document.getElementById("modalFacilityType").value = "";
@@ -832,8 +854,7 @@
 
                     // ---------- LOAD EXISTING DATA (UPDATE MODE) ----------
                     const existingAttendees = @Html.Raw(
-                                                                                                                                                                                            System.Text.Json.JsonSerializer.Serialize(Model.Attendees ?? new List<AshaOrientationRowDto>())
-                                                                                                                            );
+                    System.Text.Json.JsonSerializer.Serialize(Model.Attendees ?? new List<AshaOrientationRowDto>()));
 
     document.addEventListener("DOMContentLoaded", function () {
         if (existingAttendees.length > 0) {
@@ -846,8 +867,8 @@
                     a.AshaMobile
                 );
 
-                                // set scores + checkbox
-                                const lastRow = document.querySelector("#ashaRows tr:last-child");
+             // set scores + checkbox
+             const lastRow = document.querySelector("#ashaRows tr:last-child");
                                 lastRow.querySelector('[name*="VCAT_PreTest"]').value = a.VCAT_PreTest ?? "";
                                 lastRow.querySelector('[name*="VCAT_PostTest"]').value = a.VCAT_PostTest ?? "";
                                 lastRow.querySelector('[type="checkbox"]').checked = a.IsOrientation === 1;

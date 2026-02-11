@@ -120,19 +120,18 @@
                                        title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <input type="hidden" asp-for="UserId" />
-                                    <a class="btn btn-sm btn-outline-success me-1"
-                                       asp-controller="Role"
-                                       onclick="goToDetails(@role.r.RoleId)"
-                                       asp-route-id="@role.r.RoleId"
-                                       title="Details">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
 
-                                <form asp-action="Delete" asp-controller="Role" asp-route-id="@role.r.RoleId" method="post" class="d-inline" onsubmit="return confirm('Delete role \"' + '@role.r.RoleName' + '\"?');">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </form>
+                                    <form asp-controller="Role"
+                                          asp-action="Delete"
+                                          asp-route-id="@role.r.RoleId"
+                                          method="post"
+                                          class="d-inline"
+                                          onclick="deleteUser(@role.r.RoleId)">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                             </td>
                         </tr>
                     }
@@ -145,8 +144,5 @@
 <script>
     function goToEdit(id) {
         window.location.href = '/Role/Edit/' + id;
-    }
-    function goToDetails(id) {
-        window.location.href = '/Role/Details/' + id;
     }
 </script>

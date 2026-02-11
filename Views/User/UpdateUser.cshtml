@@ -5,15 +5,16 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">Edit User</h3>
-                <a href="/User/Index" class="btn btn-secondary">← Back to List</a>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0">Edit User</h3>
+                </div>
             </div>
 
-            <form action="/User/Edit" method="post" class="row g-3">
+            <form action="/User/Edit" method="post" class="row mt-2 g-3">
                 @Html.AntiForgeryToken()
 
                 <input type="hidden" name="UserId" value="@Model.UserId" />
@@ -30,7 +31,7 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Mobile</label>
-                    <input name="MobileNumber" value="@Model.MobileNumber" class="form-control" />
+                    <input name="MobileNumber" value="@Model.MobileNumber" class="form-control" maxlength="10" pattern="\d{10}" />
                 </div>
 
                 <div class="col-md-3">
@@ -40,7 +41,7 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Role</label>
-                    <select name="RoleId" class="form-control">
+                    <select id ="RoleId" name="RoleId" class="form-control">
                         <option value="">-- Select Role --</option>
                         @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Roles)
                         {
@@ -49,19 +50,23 @@
                         }
                     </select>
                 </div>
-
                 <div class="col-md-3">
-                    <input type="checkbox"
-                           name="IsActive"
-                           value="1"
-                           @(Model.IsActive == 1 ? "checked" : "") />
+                    <label class="form-label">Gender</label>
+                    <select name="GenderId" class="form-control">
+                        <option value="">-- Select Gender --</option>
+                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
+                        {
+                            var selected = Model.GenderId == r.Id ? "selected" : "";
+                            <option value="@r.Id" @selected>@r.Name</option>
+                        }
+                    </select>
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Language</label>
 
                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                        <button class="btn form-control dropdown-toggle w-100 text-start"
                                 type="button"
                                 data-bs-toggle="dropdown">
                             Select Language
@@ -93,15 +98,11 @@
 
 
                 <div class="col-md-3">
-                    <label class="form-label">Gender</label>
-                    <select name="GenderId" class="form-control">
-                        <option value="">-- Select Gender --</option>
-                        @foreach (var r in (IEnumerable<DropdownDto>)ViewBag.Genders)
-                        {
-                            var selected = Model.GenderId == r.Id ? "selected" : "";
-                            <option value="@r.Id" @selected>@r.Name</option>
-                        }
-                    </select>
+                    <label class="form-label d-block">Is Active</label>
+                    <input type="checkbox"
+                           name="IsActive"
+                           value="1"
+                           @(Model.IsActive == 1 ? "checked" : "") />
                 </div>
 
                 <hr class="mt-4" />
@@ -110,7 +111,8 @@
                 <h5>Location Mapping</h5>
 
                 <input type="hidden" id="hdnStateId" value="@Model.StateId" />
-                <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
+                <input type="hidden" id="hdnDistrictId"
+                       value="@(Model.DistrictIds != null ? string.Join(",", Model.DistrictIds) : "")" />
                 <input type="hidden" id="hdnBlockId" value="@Model.BlockId" />
 
                 <!-- STATE -->
@@ -126,16 +128,28 @@
                     </select>
                 </div>
 
-                <!-- DISTRICT -->
-                <div class="col-md-3">
+
+                <!-- DISTRICT MULTISELECT -->
+                <div class="col-md-3" id="districtContainer">
                     <label class="form-label">District <span class="text-danger">*</span></label>
-                    <select id="DistrictId" name="DistrictId" class="form-control">
-                        <option value="">-- Select District --</option>
-                    </select>
+
+                    <div class="dropdown">
+                        <button class="btn form-control dropdown-toggle w-100 text-start"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                            Select District
+                        </button>
+
+                        <ul class="dropdown-menu w-100 p-2"
+                            id="DistrictDropdown"
+                            style="max-height:250px; overflow-y:auto;">
+                            <!-- districts will be loaded dynamically -->
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- BLOCK -->
-                <div class="col-md-3">
+                <div class="col-md-3 d-none">
                     <label class="form-label">Block</label>
                     <select id="BlockId" name="BlockId" class="form-control">
                         <option value="">-- Select Block --</option>
@@ -143,8 +157,8 @@
                 </div>
 
                 <div class="col-12">
-                    <button type="button" class="btn btn-primary" onclick="updateuser()">Update</button>
-                    <a href="/User/Index" class="btn btn-secondary ms-2">Cancel</a>
+                    <button type="button" class="btn-save" onclick="updateuser()">Update</button>
+                    <a href="/User/Index" class="btn-back">Cancel</a>
                 </div>
             </form>
         </div>
@@ -157,124 +171,166 @@
         let districtId = document.getElementById("hdnDistrictId").value;
         let blockId = document.getElementById("hdnBlockId").value;
 
-        if (stateId) {
-            loadDistricts(stateId, districtId);
-        }
+            if (stateId) {
+        // convert districtId string into array
+        let selectedDistrictIds = districtId
+    ? districtId.split(",").map(id => id.trim())
+    : [];
+    loadDistricts(stateId, selectedDistrictIds);
+    }
 
-        if (districtId) {
-            loadBlocks(districtId, blockId);
-        }
 
         document.getElementById("StateId").addEventListener("change", function () {
             let stateId = this.value;
-            reset("DistrictId", "-- Select District --");
-            reset("BlockId", "-- Select Block --");
+            let roleId = document.getElementById("RoleId").value;
 
+            let ddl = document.getElementById("DistrictDropdown");
+            let districtBtn = document.querySelector('[data-bs-toggle="dropdown"]');
+
+            ddl.innerHTML = "";
+
+            // 🚫 If role 1 → do not enable district
+            if (roleId === "1") {
+                districtBtn.setAttribute("disabled", "disabled");
+                return;
+            }
             if (!stateId) return;
-            loadDistricts(stateId, null);
-        });
 
-        document.getElementById("DistrictId").addEventListener("change", function () {
-            let districtId = this.value;
-            reset("BlockId", "-- Select Block --");
-
-            if (!districtId) return;
-            loadBlocks(districtId, null);
-        });
-
-        function loadDistricts(stateId, selectedDistrictId) {
             fetch(`/User/GetDistricts?stateId=${stateId}`)
                 .then(r => r.json())
                 .then(data => {
-                    let ddl = document.getElementById("DistrictId");
-                    reset("DistrictId", "-- Select District --");
-
-                    data.forEach(x => {
-                        let opt = document.createElement("option");
-                        opt.value = x.id;
-                        opt.textContent = x.name;
-                        if (selectedDistrictId && x.id == selectedDistrictId) {
-                            opt.selected = true;
-                        }
-                        ddl.appendChild(opt);
+                    data.forEach(d => {
+                        ddl.insertAdjacentHTML("beforeend", `
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input district-checkbox"
+                                           type="checkbox"
+                                           value="${d.id}"
+                                           id="dist_${d.id}">
+                                    <label class="form-check-label" for="dist_${d.id}">
+                                        ${d.name}
+                                    </label>
+                                </div>
+                            </li>
+                        `);
                     });
                 });
-        }
+        });
 
-        function loadBlocks(districtId, selectedBlockId) {
-            fetch(`/User/GetBlocks?districtId=${districtId}`)
-                .then(r => r.json())
-                .then(data => {
-                    let ddl = document.getElementById("BlockId");
-                    reset("BlockId", "-- Select Block --");
+          function loadDistricts(stateId, selectedDistrictIds = []) {
+        fetch(`/User/GetDistricts?stateId=${stateId}`)
+            .then(r => r.json())
+            .then(data => {
+                let ddl = document.getElementById("DistrictDropdown");
+                if (!ddl) {
+                    console.error("DistrictDropdown element not found");
+                    return;
+                }
+                ddl.innerHTML = "";
 
-                    data.forEach(x => {
-                        let opt = document.createElement("option");
-                        opt.value = x.id;
-                        opt.textContent = x.name;
-                        if (selectedBlockId && x.id == selectedBlockId) {
-                            opt.selected = true;
-                        }
-                        ddl.appendChild(opt);
-                    });
+                data.forEach(x => {
+                    let li = document.createElement("li");
+                    li.innerHTML = `
+                        <div class="form-check">
+                            <input class="form-check-input district-checkbox"
+                                   type="checkbox"
+                                   value="${x.id}"
+                                   id="dist_${x.id}"
+                                       ${selectedDistrictIds.includes(x.id.toString()) ? "checked" : ""}>
+                            <label class="form-check-label" for="dist_${x.id}">
+                                ${x.name}
+                            </label>
+                        </div>
+                    `;
+                    ddl.appendChild(li);
                 });
-        }
+            });
+    }
 
-        function reset(id, text) {
-            let ddl = document.getElementById(id);
-            ddl.innerHTML = `<option value="">${text}</option>`;
+        let roleId = document.getElementById("RoleId").value;
+    let districtContainer = document.getElementById("districtContainer");
+
+    if (roleId === "1") {
+        districtContainer.classList.add("d-none");
+    } else {
+        districtContainer.classList.remove("d-none");
+    }
+
+        document.getElementById("RoleId").addEventListener("change", function () {
+
+        let roleId = this.value;
+        let districtContainer = document.getElementById("districtContainer");
+
+        if (roleId === "1") {
+
+            // Hide district completely
+            districtContainer.classList.add("d-none");
+
+            // Clear selected districts
+            document.getElementById("DistrictDropdown").innerHTML = "";
+
+        } else {
+
+            // Show district
+            districtContainer.classList.remove("d-none");
+
+            // Reload districts if state already selected
+            let stateId = document.getElementById("StateId").value;
+            if (stateId) {
+                document.getElementById("StateId").dispatchEvent(new Event("change"));
+            }
         }
+    });
 
     });
 
-    function updateuser() {
+        function updateuser() {
+        let languageIds = Array.from(
+            document.querySelectorAll(".lang-checkbox:checked")
+        ).map(x => parseInt(x.value));
 
-            // collect language ids
-                       let languageIds = Array.from(
-        document.querySelectorAll(".lang-checkbox:checked")
-    ).map(x => parseInt(x.value));
+        let districtIds = Array.from(
+            document.querySelectorAll(".district-checkbox:checked")
+        ).map(x => parseInt(x.value));
 
+        let model = {
+            UserId: document.querySelector('[name="UserId"]').value || null,
+            FullName: document.querySelector('[name="FullName"]').value || null,
+            Email: document.querySelector('[name="Email"]').value || null,
+            MobileNumber: document.querySelector('[name="MobileNumber"]').value || null,
+            Password: document.querySelector('[name="Password"]').value || null,
+            RoleId: document.querySelector('[name="RoleId"]').value || null,
+            GenderId: document.querySelector('[name="GenderId"]').value || null,
+            IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
 
-            let model = {
-                UserId: document.querySelector('[name="UserId"]').value || null,
-                FullName: document.querySelector('[name="FullName"]').value || null,
-                Email: document.querySelector('[name="Email"]').value || null,
-                MobileNumber: document.querySelector('[name="MobileNumber"]').value || null,
-                Password: document.querySelector('[name="Password"]').value || null,
-                RoleId: document.querySelector('[name="RoleId"]').value || null,
-                GenderId: document.querySelector('[name="GenderId"]').value || null,
-                IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
+            StateId: document.getElementById("StateId").value || null,
+            DistrictIds: districtIds,   // now an array
+            LanguageId: languageIds
+        };
 
-                StateId: document.getElementById("StateId").value || null,
-                DistrictId: document.getElementById("DistrictId").value || null,
-                BlockId: document.getElementById("BlockId").value || null,
+        console.log("Posting user:", model);
 
-                LanguageId: languageIds   // <-- IMPORTANT
-            };
-
-            console.log("Posting user:", model);
-
-            fetch('/User/Edit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken':
-                        document.querySelector('input[name="__RequestVerificationToken"]').value
-                },
-                body: JSON.stringify(model)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert("User Update successfully!");
-                    window.location.href = "/User/Index";
-                } else {
-                    alert(data.message || "Update failed");
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Error occurred while updating user");
-            });
-        }
+        fetch('/User/Edit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken':
+                    document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify(model)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("User Update successfully!");
+                window.location.href = "/User/Index";
+            } else {
+                alert(data.message || "Update failed");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error occurred while updating user");
+        });
+    }
 </script>

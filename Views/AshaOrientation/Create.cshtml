@@ -188,11 +188,16 @@
             <div class="fh-cardHeader d-flex gap-5">
                 <h2>ASHA Orientation Entry</h2>
 
+                @{
+                    var today = DateTime.Today;
+                    var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
+                    var maxDate = today.ToString("yyyy-MM-dd");
+                }
                 <div class="col-md-4 d-flex">
                     <label>Orientation Date</label>
-                    <input name="DateofOrientation" type="date" class="form-control" />
+                    <input name="DateofOrientation" type="date" class="form-control"
+                           min="@minDate" max="@maxDate" />
                     <span asp-validation-for="DateofOrientation" class="text-danger"></span>
-
                 </div>
             </div>
         </div>
@@ -358,7 +363,7 @@
                     </div>
 
                     <div class="mb-3 d-none" id="modalfacilityTextDiv">
-                        <label>Venue Name</label>
+                        <label>Facility Name</label>
                         <input type="text" id="modalfacilityText" class="form-control" placeholder="Enter Facility name" />
                     </div>
 
@@ -483,7 +488,7 @@
             else if (type === "non-intervention") {
 
                 let ashaName = document.getElementById("modalAshaText").value;
-                let Venue = document.getElementById("modalAshaText").value;
+                  let Venue = document.getElementById("modalfacilityText").value;
                 let mobile = document.getElementById("modelMobNumber").value;
 
                 if (!ashaName) {
