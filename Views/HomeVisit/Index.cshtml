@@ -123,45 +123,49 @@
                 <table id="activitiesTable" class="table table-striped um-table align-middle">
                     <thead>
                         <tr>
+                            <th><i class="bi bi-hash me-2"></i>S.No</th>
                             <th><i class="bi bi-person-fill me-2"></i>Woman Name</th>
                             <th><i class="bi bi-person me-2"></i>Husband Name</th>
                             <th><i class="bi bi-telephone me-2"></i>Mobile Number</th>
-                            <th><i class="bi bi-calendar-event me-2"></i>Line List Date</th>
                             <th><i class="bi bi-building me-2"></i>Facility</th>
-                            <th><i class="bi bi-diagram-3 me-2"></i>Sub Center</th>
+                            <th><i class="bi bi-house-door me-2"></i>Visit Status</th>
                             <th><i class="bi bi-pencil-square me-2"></i>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @{
+                            int i = 1;
+                        }
                         @foreach (var item in Model)
                         {
                             <tr>
+                                <td>@i</td>
                                 <td>@item.WomanName</td>
                                 <td>@item.HusbandName</td>
                                 <td>@item.MobileNumber</td>
-                                <td>@item.CreatedOn</td>
                                 <td>@item.FacilityName</td>
-                                <td>@item.SubCenterName</td>
+                                <td>@(item.VisitGuid != "" ? "Visited" : "Not Visited")</td>
                                 <td class="text-end um-action">
-                                    <a class="btn btn-sm btn-outline-primary me-1"
-                                       asp-controller="HealthSystemActivity"
+                                    <a class="btn btn-sm btn-outline-primary me-1 @(item.VisitGuid != "" ? "disabled" : "")"
+                                       asp-controller="HomeVisit"
                                        asp-action="Edit"
                                        onclick="goToEdit('@item.LineListGuid')"
                                        asp-route-id="@item.LineListGuid"
-                                       title="Home Visit">
+                                       title="Home Visit"
+                                       @(item.VisitGuid != null ? "tabindex='-1' aria-disabled='true'" : "")>
                                         <i class="bi bi-house-door"></i>
                                     </a>
 
                                     <a class="btn btn-sm btn-outline-success me-1"
-                                       asp-controller="HealthSystemActivity"
-                                       asp-action="Edit"
-                                       onclick="goToEdit('@item.LineListGuid')"
+                                       asp-controller="HomeVisit"
+                                       asp-action="Followup"
+                                       onclick="goTofollowup('@item.LineListGuid')"
                                        asp-route-id="@item.LineListGuid"
                                        title="Follow‑up">
                                         <i class="bi bi-house-door"></i>
                                     </a>
 
-                                    <form asp-controller="HealthSystemActivity"
+                                    <form asp-controller="HomeVisit"
                                           asp-action="Delete"
                                           asp-route-id="'@item.LineListGuid'"
                                           method="post"
@@ -174,6 +178,7 @@
                                     </form>
                                 </td>
                             </tr>
+                            i++;
                         }
                     </tbody>
                 </table>
@@ -183,7 +188,10 @@
     </div>
 </div>
 <script>
-    function goToEdit(guid) {
+        function goToEdit(guid) {
         window.location.href = '/HomeVisit/Create/' + guid;
+    }
+        function goTofollowup(guid) {
+        window.location.href = '/HomeVisit/Followup/' + guid;
     }
 </script>

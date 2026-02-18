@@ -19,32 +19,43 @@ namespace Vikalp.Service
 
         private string Conn() => _config.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("No connection string");
 
-        public async Task<List<HealthSystemActivityDto>> GetAllAsync()
+        public async Task<(List<HealthSystemActivityDto> Data, int TotalCount)> GetPagedAsync(int userId, int pageNumber, int pageSize)
         {
-            var parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@UserId", SqlDbType.Int) { Value = 1 },
-                };
-            // Run the synchronous DB call on thread-pool to avoid blocking
-            var dt = await Task.Run(() => SqlUtils.ExecuteSP(Conn(), "dbo.sp_getHealthSystemActivtyAll", parameters));
-
-            var list = dt.AsEnumerable().Select(r => new HealthSystemActivityDto
+            var parameters = new[]
             {
-                ActivityName = r.Field<string>("ActivityName"),
-                OtherActivity = r.Field<string?>("OtherActivity"),
-                StateId = r.Field<int?>("StateId"),
-                DistrictId = r.Field<int?>("DistrictId"),
-                TrainingVenue = r.Field<string?>("TrainingVenue"),
-                ActivityTypeId = r.Field<int?>("ActivityTypeId"),
-                ActivityFormatId = r.Field<int?>("ActivityFormatId"),
-                NoOfParticipants = r.Field<int?>("NoofParticipants"),
-                StartDate = r.Field<DateTime?>("StartDate"),
-                EndDate = r.Field<DateTime?>("EndDate"),
-                Remarks = r.Field<string?>("Remarks")
+        new SqlParameter("@UserId", userId),
+        new SqlParameter("@PageNumber", pageNumber),
+        new SqlParameter("@PageSize", pageSize),
+        new SqlParameter("@StateId", DBNull.Value),
+        new SqlParameter("@DistrictId", DBNull.Value),
+        new SqlParameter("@ActivityId", DBNull.Value)
+    };
+
+            var dt = await Task.Run(() =>
+                SqlUtils.ExecuteSP(Conn(), "dbo.sp_getHealthSystemActivtyAllNew", parameters));
+
+            int totalRecords = 0;
+
+            var list = dt.AsEnumerable().Select(r =>
+            {
+                totalRecords = Convert.ToInt32(r["TotalRecords"]);
+
+                return new HealthSystemActivityDto
+                {
+                    ActivityId = Convert.ToInt32(r["ActivityId"]),
+                    ActivityName = r["ActivityName"]?.ToString(),
+                    TrainingVenue = r["TrainingVenue"]?.ToString(),
+                    NoOfParticipants = r["NoofParticipants"] != DBNull.Value
+                                        ? Convert.ToInt32(r["NoofParticipants"])
+                                        : 0,
+                    StartDate = r.Field<DateTime?>("StartDate"),
+                    EndDate = r.Field<DateTime?>("EndDate")
+                };
             }).ToList();
 
-            return list;
+            return (list, totalRecords);
         }
+
 
         public async Task<bool> SaveHealthSystemActivityJsonAsync(HealthSystemActivityDto model, int userId)
         {
@@ -71,7 +82,6 @@ namespace Vikalp.Service
                 new SqlParameter("@ActivityTypeId", (object?)model.ActivityTypeId ?? DBNull.Value),
                 new SqlParameter("@Activities", (object?)activitiesCsv ?? DBNull.Value),
                 new SqlParameter("@ActivityFormatId", (object?)model.ActivityFormatId ?? DBNull.Value),
-                new SqlParameter("@NoOfParticipants", (object?)model.NoOfParticipants ?? DBNull.Value),
                 new SqlParameter("@StartDate", (object?)model.StartDate ?? DBNull.Value),
                 new SqlParameter("@EndDate", (object?)model.EndDate ?? DBNull.Value),
                 new SqlParameter("@Remarks", (object?)model.Remarks ?? DBNull.Value),
@@ -219,6 +229,7 @@ namespace Vikalp.Service
                 cmd.Parameters.AddWithValue("@GenderId", (object?)p.GenderId ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Mobile", (object?)p.Mobile ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@ProviderTypeId", (object?)p.ProviderTypeId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ActivityNameId", (object?)p.ActivityNameId ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@VCATScorePreTest", (object?)p.VCATScorePreTest ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@VCATScorePostTest", (object?)p.VCATScorePostTest ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@RefresherTraining", (object?)p.RefresherTraining ?? DBNull.Value);

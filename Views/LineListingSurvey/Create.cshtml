@@ -261,7 +261,7 @@
                             <label>Mobile Number</label>
                         </div>
                         <div class="col-md-8">
-                            <input id="MobileNumber" class="form-control">
+                            <input id="MobileNumber" class="form-control" maxlength="10" placeholder="Enter Mobile Number" required pattern="[0-9]{10}">
                         </div>
                     </div>
 
@@ -289,6 +289,15 @@
                                     <option value="@s.Value" @(Model.IsChildAvailable.ToString() == s.Value ? "selected" : "")>@s.Text</option>
                                 }
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-4 fw-semibold">
+                            <label>Age of the youngest child.</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input name="ChildAge" id="ChildAge" type="number" class="form-control" maxlength="1">
                         </div>
                     </div>
 
@@ -327,43 +336,13 @@
                             <label>Which family planning method are you using?</label>
                         </div>
                         <div class="col-md-8">
-
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
-                                        type="button"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                    Select Method
-                                </button>
-
-                                <ul class="dropdown-menu w-100 px-2" style="max-height: 200px; overflow-y: auto;">
-                                    @{
-                                        var familyPlanningList =
-                                        ViewBag.familyplanning as List<SelectListItem>;
-                                    }
-
-                                    @if (familyPlanningList != null)
-                                    {
-                                        foreach (var s in familyPlanningList)
-                                        {
-                                            <li>
-                                                <div class="form-check">
-                                                    <input class="form-check-input"
-                                                           type="checkbox"
-                                                           name="FamilyPlanningMethod"
-                                                           value="@s.Value"
-                                                           id="fp_@s.Value"
-                                                           @(Model.FamilyPlanningMethod != null &&
-                                                           Model.FamilyPlanningMethod.Contains(int.Parse(s.Value)) ? "checked" : "") />
-                                            <label class="form-check-label" for="fp_@s.Value">
-                                                @s.Text
-                                            </label>
-                                        </div>
-                                    </li>
-                                        }
-                                    }
-                                </ul>
-                            </div>
+                            <select name="FamilyPlanningMethod" class="form-control" id="FamilyPlanningMethod">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.familyplanning)
+                                {
+                                    <option value="@s.Value" @(Model.FamilyPlanningMethod.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
                         </div>
                     </div>
 
@@ -484,6 +463,7 @@
         <!-- HIDDEN EXTRA FIELDS -->
         <input type="hidden" name="Beneficiaries[__index__].MarriageDate" class="hdMarriageDate" />
         <input type="hidden" name="Beneficiaries[__index__].IsChildAvailable" class="hdChild" />
+        <input type="hidden" name="Beneficiaries[__index__].ChildAge" class="hdChildAge" />
         <input type="hidden" name="Beneficiaries[__index__].IsAwareOfAntara" class="hdAntara" />
         <input type="hidden" name="Beneficiaries[__index__].SelectedMethodName" class="hdSelectedMethod" />
         <input type="hidden" name="Beneficiaries[__index__].ReasonForNonUsage" class="hdReason" />
@@ -607,11 +587,6 @@
             document.querySelectorAll("#memberModal select").forEach(s => {
                 s.selectedIndex = 0;
             });
-
-            // uncheck FP checkboxes
-            document
-                .querySelectorAll('#memberModal input[name="FamilyPlanningMethod"]')
-                .forEach(cb => cb.checked = false);
         }
 
 
@@ -628,7 +603,7 @@
         document.querySelectorAll("#beneficiaryRows tr").forEach(row => {
             const existingName = row.querySelector(".hdWomanName")?.value;
             const existingMobile = row.querySelector(".hdMobile")?.value;
-
+            const womanName = document.getElementById("WomanName").value.trim();
             if (
                 existingName?.toLowerCase() === womanName.toLowerCase() &&
                 existingMobile === mobile
@@ -649,6 +624,7 @@
                 const marriageDate = document.getElementById("MarriageDate").value;
 
                 const isChild = document.getElementById("IsChildAvailable").value;
+                const childAge = document.getElementById("ChildAge").value;
                 const isPregnant = document.getElementById("IsCurrentlyPregnant").value;
                 const isFP = document.getElementById("IsUsingFamilyPlanning").value;
                 const isAntara = document.getElementById("IsAwareOfAntara").value;
@@ -656,14 +632,7 @@
                 const selectedMethod = document.getElementById("SelectedMethodName").value;
                 const reason = document.getElementById("ReasonForNonUsage").value;
 
-                const fpChecked = document.querySelectorAll('input[name="FamilyPlanningMethod"]:checked');
-                const fpIds = [];
-                const fpTexts = [];
-
-                fpChecked.forEach(cb => {
-                    fpIds.push(cb.value);
-                    fpTexts.push(cb.nextElementSibling.innerText);
-                });
+                const fpChecked = document.getElementById("FamilyPlanningMethod").value;
 
                 if (!womanName) {
                     alert("Please enter woman name");
@@ -684,7 +653,7 @@
                 row.querySelector(".mobile").textContent = mobile;
                 row.querySelector(".pregnant").textContent = isPregnant === "1" ? "Yes" : "No";
                 row.querySelector(".fp").textContent = isFP === "1" ? "Yes" : "No";
-                row.querySelector(".methods").textContent = fpTexts.join(", ");
+                row.querySelector(".methods").textContent = fpChecked.text;
 
                 // Fill hidden fields
                 row.querySelector(".hdWomanName").value = womanName;
@@ -692,12 +661,13 @@
                 row.querySelector(".hdMobile").value = mobile;
                 row.querySelector(".hdMarriageDate").value = marriageDate;
                 row.querySelector(".hdChild").value = isChild;
+                row.querySelector(".hdChildAge").value = childAge
                 row.querySelector(".hdPregnant").value = isPregnant;
                 row.querySelector(".hdFP").value = isFP;
                 row.querySelector(".hdAntara").value = isAntara;
                 row.querySelector(".hdSelectedMethod").value = selectedMethod;
                 row.querySelector(".hdReason").value = reason;
-                row.querySelector(".hdMethods").value = fpIds.join(",");
+                row.querySelector(".hdMethods").value = fpChecked;
 
                 // Append row
                 document.querySelector("#memberTable tbody").appendChild(row);
@@ -710,9 +680,6 @@
                 ).hide();
             });
         });
-
-            document.getElementById("beneficiaryCount").innerText =
-        document.querySelectorAll("#beneficiaryRows tr").length;
 
 
         function updateSlNo() {
@@ -791,6 +758,7 @@
 
                     MarriageDate: row.querySelector(".hdMarriageDate")?.value || null,
                     IsChildAvailable: row.querySelector(".hdChild")?.value || null,
+                    ChildAge: row.querySelector(".hdChildAge")?.value || null,
                     IsCurrentlyPregnant: row.querySelector(".hdPregnant")?.value || null,
                     IsUsingFamilyPlanning: row.querySelector(".hdFP")?.value || null,
 
@@ -798,9 +766,7 @@
                     SelectedMethodName: row.querySelector(".hdSelectedMethod")?.value || null,
                     ReasonForNonUsage: row.querySelector(".hdReason")?.value || null,
 
-                    FamilyPlanningMethod: row.querySelector(".hdMethods")?.value
-                        ? row.querySelector(".hdMethods").value.split(",").map(x => parseInt(x))
-                        : []
+                    FamilyPlanningMethod: row.querySelector(".hdMethods")?.value || null
                 });
             });
 

@@ -17,14 +17,14 @@ public class HomeVisitService : IHomeVisitService
     private SqlConnection GetConnection()
         => new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-    public async Task<List<HomeVisitDTO>> GetAllAsync()
+    public async Task<List<HomeVisitDTO>> GetAllAsync(int userId)
     {
         var list = new List<HomeVisitDTO>();
 
         using var con = GetConnection();
-        using var cmd = new SqlCommand("USP_HomeVisit_CRUD", con);
+        using var cmd = new SqlCommand("sp_getHomeVisitalldata", con);
         cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.AddWithValue("@Action", "GETALL");
+        cmd.Parameters.AddWithValue("@UserId", userId);
 
         await con.OpenAsync();
         using var dr = await cmd.ExecuteReaderAsync();
@@ -70,15 +70,10 @@ public class HomeVisitService : IHomeVisitService
             IsReceivingSocialBenefit = dr["IsReceivingSocialBenefit"] != DBNull.Value ? Convert.ToInt32(dr["IsReceivingSocialBenefit"]) : (int?)null,
             SocialBenifits = dr["SocialBenifits"] != DBNull.Value ? dr["SocialBenifits"].ToString()!.Split(',').Select(int.Parse).ToList() : new List<int>(),
             IsUsingFamilyPlanning = dr["IsUsingFamilyPlanning"] != DBNull.Value ? Convert.ToInt32(dr["IsUsingFamilyPlanning"]) : (int?)null,
-            FamilyPlanningMethod = dr["FamilyPlanningMethod"] != DBNull.Value
-                    ? dr["FamilyPlanningMethod"].ToString()!
-                        .Split(',')
-                        .Select(int.Parse)
-                        .ToList()
-                    : new List<int>(),
+            FamilyPlanningMethod = dr["FamilyPlanningMethod"] != DBNull.Value ? Convert.ToInt32(dr["FamilyPlanningMethod"]) : (int?)null,
             IsCounsellingDone = dr["IsCounsellingDone"] != DBNull.Value ? Convert.ToInt32(dr["IsCounsellingDone"]) : (int?)null,
             IsReferredForServices = dr["IsReferredForServices"] != DBNull.Value ? Convert.ToInt32(dr["IsReferredForServices"]) : (int?)null,
-            ReferredHealthCenterType = dr["ReferredHealthCenterType"]?.ToString(),
+            ReferredHealthCenterType = dr["ReferredHealthCenterType"] != DBNull.Value ? Convert.ToInt32(dr["ReferredHealthCenterType"]) : (int?)null,
             ReferredHealthCenterName = dr["ReferredHealthCenterName"]?.ToString(),
             IsConsentTaken = dr["IsConsentTaken"] != DBNull.Value ? Convert.ToInt32(dr["IsConsentTaken"]) : (int?)null,
             IsCallInitiated = dr["IsCallInitiated"] != DBNull.Value ? Convert.ToInt32(dr["IsCallInitiated"]) : (int?)null,
@@ -113,45 +108,153 @@ public class HomeVisitService : IHomeVisitService
         return null;
     }
 
-    public async Task<bool> InsertAsync(HomeVisitDTO model)
+    public async Task<List<HomevisitFollowUpDto>> GetFollowUpHistoryAsync(Guid linelistguid, int userId)
     {
-        using var con = GetConnection();
-        using var cmd = new SqlCommand("USP_HomeVisit_CRUD", con);
+        try
+        {
+            var list = new List<HomevisitFollowUpDto>();
+
+            using var con = GetConnection();
+            using var cmd = new SqlCommand("sp_getfollowupHistory", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@linelistguid", linelistguid);
+
+            await con.OpenAsync();
+            using var dr = await cmd.ExecuteReaderAsync();
+
+            while (await dr.ReadAsync())
+            {
+                list.Add(new HomevisitFollowUpDto
+                {
+                    FollowupDate = dr["FollowupDate"] as DateTime?,
+                    Remark = dr["Remark"]?.ToString(),
+                    Status = dr["Status"]?.ToString(),
+                    IsEdited = dr["IsEdited"] as bool?
+                });
+            }
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        
+    }
+
+    public async Task<bool> InsertFollowUpAsync(HomevisitFollowUpDto model)
+    {
+        try
+        {
+            using var con = GetConnection();
+            using var cmd = new SqlCommand("sp_InsertFollowUp", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@LineListGuid", model.LineListGuid);
+            cmd.Parameters.AddWithValue("@HomVisitGuid", model.HomeVistGuid);
+            cmd.Parameters.AddWithValue("@FollowupDate", model.FollowupDate);
+            cmd.Parameters.AddWithValue("@FollowupStatus", model.FollowupStatus);
+            cmd.Parameters.AddWithValue("@Remark", model.Remark ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
+
+            await con.OpenAsync();
+
+            return await cmd.ExecuteNonQueryAsync() > 0;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        
+    }
+
+    // =====================================
+    // INSERT
+    // =====================================
+    public async Task<bool> SaveHomeVisitAsync(HomeVisitDTO model, int userId)
+    {
+        try
+        {
+            using var con = GetConnection();
+        using var cmd = new SqlCommand("sp_homevisitinsertUpdate", con);
         cmd.CommandType = CommandType.StoredProcedure;
 
         cmd.Parameters.AddWithValue("@Action", "INSERT");
-        cmd.Parameters.AddWithValue("@ASHAName", model.ASHAName ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@VillageName", model.VillageName ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@SubCenterId", model.SubCenterId);
-        cmd.Parameters.AddWithValue("@UserId", model.UserId);
+        cmd.Parameters.AddWithValue("@LineListGuid",model.LineListGuid);
+
+        AddCommonParameters(cmd, model, userId);
 
         await con.OpenAsync();
-
         int result = await cmd.ExecuteNonQueryAsync();
 
         return result > 0 || result == -1;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
     }
 
-    public async Task<bool> UpdateAsync(HomeVisitDTO model)
+    // =====================================
+    // UPDATE
+    // =====================================
+    public async Task<bool> UpdateHomeVisitAsync(HomeVisitDTO model, int userId)
     {
-        using var con = GetConnection();
-        using var cmd = new SqlCommand("USP_HomeVisit_CRUD", con);
-        cmd.CommandType = CommandType.StoredProcedure;
+        try
+        {
+            using var con = GetConnection();
+            using var cmd = new SqlCommand("sp_homevisitinsertUpdate", con);
+            cmd.CommandType = CommandType.StoredProcedure;
 
-        cmd.Parameters.AddWithValue("@Action", "UPDATE");
-        cmd.Parameters.AddWithValue("@VisitId", model.VisitId);
-        cmd.Parameters.AddWithValue("@ASHAId", model.ASHAId ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@ASHAName", model.ASHAName ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@VillageName", model.VillageName ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@ClientParity", model.ClientParity ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@IsCurrentlyPregnant", model.IsCurrentlyPregnant ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@SubCenterId", model.SubCenterId);
-        cmd.Parameters.AddWithValue("@UserId", model.UserId);
+            cmd.Parameters.AddWithValue("@Action", "UPDATE");
+            cmd.Parameters.AddWithValue("@LineListGuid", model.LineListGuid);
 
-        await con.OpenAsync();
-        return await cmd.ExecuteNonQueryAsync() > 0;
+            AddCommonParameters(cmd, model, userId);
+
+            await con.OpenAsync();
+            int result = await cmd.ExecuteNonQueryAsync();
+
+            return result > 0 || result == -1;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        
     }
 
+    private void AddCommonParameters(SqlCommand cmd, HomeVisitDTO model, int userId)
+    {
+        cmd.Parameters.AddWithValue("@SubCenterId", model.SubCenterId);
+        cmd.Parameters.AddWithValue("@VillageName", model.VillageName ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("@ASHAId", model.ASHAId);
+        cmd.Parameters.AddWithValue("@ASHAName", model.ASHAName ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("@ClientParity", model.ClientParity);
+
+        cmd.Parameters.AddWithValue("@IsCurrentlyPregnant", model.IsCurrentlyPregnant);
+        cmd.Parameters.AddWithValue("@IsReceivingSocialBenefit", model.IsReceivingSocialBenefit);
+        cmd.Parameters.AddWithValue("@IsUsingFamilyPlanning", model.IsUsingFamilyPlanning);
+        cmd.Parameters.AddWithValue("@IsCounsellingDone", model.IsCounsellingDone);
+        cmd.Parameters.AddWithValue("@IsReferredForServices", model.IsReferredForServices);
+        cmd.Parameters.AddWithValue("@ReferredHealthCenterType", model.ReferredHealthCenterType ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("@ReferredHealthCenterName", model.ReferredHealthCenterName ?? (object)DBNull.Value);
+        cmd.Parameters.AddWithValue("@IsConsentTaken", model.IsConsentTaken);
+        cmd.Parameters.AddWithValue("@IsCallInitiated", model.IsCallInitiated);
+
+        cmd.Parameters.AddWithValue("@SocialBenifits",
+            model.SocialBenifits != null
+            ? string.Join(",", model.SocialBenifits)
+            : (object)DBNull.Value);
+
+        cmd.Parameters.AddWithValue("@FamilyPlanningMethod",
+            model.FamilyPlanningMethod != null
+            ? string.Join(",", model.FamilyPlanningMethod)
+            : (object)DBNull.Value);
+
+        cmd.Parameters.AddWithValue("@UserId", userId);
+    }
 
     public async Task<bool> DeleteAsync(int visitId, int userId)
     {

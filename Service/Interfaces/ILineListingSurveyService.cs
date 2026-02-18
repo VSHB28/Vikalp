@@ -8,11 +8,12 @@ namespace Vikalp.Service.Interfaces
         LineListingSurveyDto? GetSurveyById(int id);
 
         Task<bool> InsertLineListingAsync(LineListingSurveyCreateDto model, int userId);
-        void UpdateSurvey(LineListingSurveyDto survey);
+        Task<bool> UpdateSurvey(LineListingSurveyUpdateDto model, int userId);
         void DeleteSurvey(int id, int userid);
 
         Task<LineListingConsentDto?> GetConsentPrefillAsync(string guid);
         Task<bool> SaveConsentAsync(LineListingConsentDto dto, int userid);
+        Task<LineListingSurveyDto> GetLineListingByIdAsync(int id);
 
     }
 }

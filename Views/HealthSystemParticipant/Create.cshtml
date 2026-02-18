@@ -271,7 +271,18 @@
                 }
             </select>
         </div>
-
+        <div class="col-md-2">
+            <label>Activity</label>
+            <select name="ActivityNameId" class="form-control" id="ActivityNameId">
+                <option value="">-- Select --</option>
+                @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityTypeName)
+                {
+                    <option value="@s.Value" @(Model.ActivityNameId.ToString() == s.Value ? "selected" : "")>
+                        @s.Text
+                    </option>
+                }
+            </select>
+        </div>
         <div class="col-md-2">
             <label>Remarks</label>
             <textarea name="Remarks" class="form-control"></textarea>
@@ -376,8 +387,8 @@
     </table>
     <hr />
 
-    <button type="button" class="btn-save  btn" onclick="saveParticipants()">Save</button>
-    <a href="@Url.Action("Index", "HealthSystemParticipant")" class="btn btn-back btn">Back</a>
+    <button type="button" class="btn-save" onclick="saveParticipants()">Save</button>
+    <a href="@Url.Action("Index", "HealthSystemParticipant")" class="btn-back">Back</a>
 
 
 </form>
@@ -417,6 +428,7 @@
 
             <input type="hidden" name="Participants[__index__].GenderId" class="hdGenderId" />
             <input type="hidden" name="Participants[__index__].ProviderTypeId" class="hdProviderTypeId" />
+            <input type="hidden" name="Participants[__index__].ActivityNameId" class="hdActivityNameId" />
             <input type="hidden" name="Participants[__index__].FacilityTypeId" class="hdFacilityTypeId" />
             <input type="hidden" name="Participants[__index__].FacilityTypeOther" class="hdFacilityTypeOther" />
             <input type="hidden" name="Participants[__index__].InterventionFacility" class="hdInterventionFacility" />
@@ -498,6 +510,7 @@
                 const stateId = document.getElementById("StateId").value;
                 const districtId = document.getElementById("DistrictId").value;
                 const providerTypeId = document.getElementById("ProviderTypeId").value;
+                const activityNameId = document.getElementById("ActivityNameId").value;
                 const facilityTypeId = document.getElementById("FacilityTypeId").value;
                 const facilityTypeOther = document.querySelector('[name="FacilityTypeOther"]').value;
 
@@ -511,6 +524,7 @@
                 row.querySelector(".hdStateId").value = stateId;
                 row.querySelector(".hdDistrictId").value = districtId;
                 row.querySelector(".hdProviderTypeId").value = providerTypeId;
+                row.querySelector(".hdActivityNameId").value = activityNameId;
                 row.querySelector(".hdFacilityTypeId").value = facilityTypeId;
                 row.querySelector(".hdFacilityTypeOther").value = facilityTypeOther;
 
@@ -882,6 +896,7 @@
                     FacilityName: row.querySelector(".hdFacilityName")?.value || null,
                     GenderId: row.querySelector(".hdGenderId")?.value || null,
                     ProviderTypeId: row.querySelector(".hdProviderTypeId")?.value || null,
+                    ActivityNameId: row.querySelector(".hdActivityNameId")?.value || null,
                     FacilityTypeId: row.querySelector(".hdFacilityTypeId")?.value || null,
                     FacilityTypeOther: row.querySelector(".hdFacilityTypeOther")?.value || null,
                     InterventionFacility: row.querySelector(".hdInterventionFacility")?.value || null,

@@ -22,11 +22,12 @@
         public int? IsChildAvailable { get; set; }
         public int? ChildGender { get; set; }
         public DateTime? ChildDOB { get; set; }
+        public int? ChildAge { get; set; }
         public DateTime? MarriageDate { get; set; }
 
         public int? IsCurrentlyPregnant { get; set; }
         public int? IsUsingFamilyPlanning { get; set; }
-        public List<int>? FamilyPlanningMethod { get; set; } // comma-separated
+        public int? FamilyPlanningMethod { get; set; } // comma-separated
 
         public int? IsAwareOfAntara { get; set; }
         public string? SelectedMethodName { get; set; }
@@ -56,6 +57,7 @@
 
         // State details
         public string? StateName { get; set; }
+        public List<LineListingWomanDto> Women { get; set; } = new();
     }
 
     public class LineListingSurveyCreateDto
@@ -103,12 +105,12 @@
         public int? ChildGender { get; set; }
         public DateTime? ChildDOB { get; set; }
         public DateTime? MarriageDate { get; set; }
-
+        public int? ChildAge { get; set; }
         public int? IsCurrentlyPregnant { get; set; }
         public int? IsUsingFamilyPlanning { get; set; }
 
         // From popup checkboxes
-        public List<int>? FamilyPlanningMethod { get; set; }
+        public int? FamilyPlanningMethod { get; set; }
 
         public int? IsAwareOfAntara { get; set; }
         public string? SelectedMethodName { get; set; }
@@ -142,5 +144,41 @@
         public int? ASHAId { get; set; }
         public string? VillageName { get; set; }
         public int GenderId { get; set; }
+    }
+
+    public class LineListingSurveyUpdateDto
+    {
+        public string LineListGuid { get; set; } = Guid.NewGuid().ToString();
+        public int LineListId { get; set; }
+
+        public int? StateId { get; set; }
+        public int? DistrictId { get; set; }
+        public int? BlockId { get; set; }
+        public string? VillageName { get; set; }
+
+        public int? FacilityId { get; set; }
+        public int? SubCenterId { get; set; }
+        public int? ASHAId { get; set; }
+        public string? AnganwadiWorkerName { get; set; }
+
+        public List<LineListingWomanDto> Women { get; set; } = new();
+
+        public int? CreatedBy { get; set; }
+
+        // SubCenter details
+
+        public string? SubCenterName { get; set; }
+
+        // Facility details
+        public string? FacilityName { get; set; }
+
+        // Block details
+        public string? BlockName { get; set; }
+
+        // District details
+        public string? DistrictName { get; set; }
+
+        // State details
+        public string? StateName { get; set; }
     }
 }

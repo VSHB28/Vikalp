@@ -12,6 +12,8 @@
 
         public int RegionId { get; set; }   
         public int DistrictId { get; set; }
+        public int? ProfileId { get; set; }
+        public int? HrId { get; set; }
     }
 
 }

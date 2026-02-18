@@ -74,7 +74,7 @@
                     </div>
 
                     <div class="um-toolbar">
-                        <div class="d-flex um-search">
+                        <div class="d-flex um-search d-none">
                             <input id="searchTerm" class="form-control form-control-sm" placeholder="Search by activity name" />
                             <button type="button" class="btn btn-sm btn-secondary ms-2" onclick="searchActivity()">Search</button>
                         </div>
@@ -100,24 +100,29 @@
                     <table id="activitiesTable" class="table table-striped  um-table align-middle">
                         <thead>
                             <tr>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Activity Name</th>
-                                <th>Venue</th>
-                                <th>Type</th>
-                                <th>No. of Participants</th>
-                                <th class="text-end">Actions</th>
+                                <th><i class="bi bi-hash me-2"></i>S.No</th>
+                                <th><i class="bi bi-calendar-event me-2"></i>Start Date</th>
+                                <th><i class="bi bi-calendar-check me-2"></i>End Date</th>
+                                <th><i class="bi bi-card-text me-2"></i>Activity Name</th>
+                                <th><i class="bi bi-geo-alt-fill me-2"></i>Venue</th>
+                                <th><i class="bi bi-people-fill me-2"></i>No. of Participants</th>
+                                <th><i class="bi bi-gear-fill me-2"></i>Actions</th>
+
                             </tr>
                         </thead>
                         <tbody>
+                            @{
+                                //int i = 1;
+                                int i = ((ViewBag.CurrentPage - 1) * ViewBag.PageSize) + 1;
+                            }
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td>@i</td>
                                     <td>@item.StartDate?.ToString("yyyy-MM-dd")</td>
                                     <td>@item.EndDate?.ToString("yyyy-MM-dd")</td>
                                     <td>@item.ActivityName</td>
                                     <td>@item.TrainingVenue</td>
-                                    <td>@item.ActivityTypeId</td>
                                     <td>@item.NoOfParticipants</td>
                                     <td class="text-end um-action">
                                         <a class="btn btn-sm btn-outline-primary me-1"
@@ -140,9 +145,46 @@
                                         </form>
                                     </td>
                                 </tr>
+                                i++;
                             }
                         </tbody>
                     </table>
+                    <nav>
+                        <ul class="pagination justify-content-end">
+
+                            @if (ViewBag.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page=@(ViewBag.CurrentPage - 1)&pageSize=@ViewBag.PageSize">
+                                        Previous
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int p = 1; p <= ViewBag.TotalPages; p++)
+                            {
+                                <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link"
+                                       href="?page=@p&pageSize=@ViewBag.PageSize">
+                                        @p
+                                    </a>
+                                </li>
+                            }
+
+                            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page=@(ViewBag.CurrentPage + 1)&pageSize=@ViewBag.PageSize">
+                                        Next
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    </nav>
+
                 </div>
             }
         </div>

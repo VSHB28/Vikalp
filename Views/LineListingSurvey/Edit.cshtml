@@ -1,0 +1,384 @@
+﻿@model Vikalp.Models.DTO.LineListingSurveyDto
+
+@{
+    ViewData["Title"] = "Edit Line List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    #linelistForm {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    
+
+
+    .fw-bold {
+        font-weight: bold;
+    }
+
+
+    .btn-update {
+        border: 2px solid #f57b20;
+        border-radius: 0;
+        color: #f57b20;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 15px 45px;
+        padding: 12px 45px;
+    }
+
+        .btn-update:hover {
+            background: #f57b20;
+            color: #fff;
+        }
+
+    .btn-back {
+        border: 2px solid #6c757d;
+        border-radius: 0;
+        color: #6c757d;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 15px 45px;
+        padding: 12px 45px;
+    }
+</style>
+<form id="linelistForm" method="post">
+
+
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="LineListId" value="@Model.LineListId" />
+    <input type="hidden" id="LineListGuid" value="@Model.LineListGuid" />
+
+    <input type="hidden" id="hdStateId" value="@Model.StateId" />
+    <input type="hidden" id="hdDistrictId" value="@Model.DistrictId" />
+    <input type="hidden" id="hdBlockId" value="@Model.BlockId" />
+    <input type="hidden" id="hdFacilityId" value="@Model.FacilityId" />
+    <input type="hidden" id="hdSubCenterId" value="@Model.SubCenterId" />
+    <input type="hidden" id="hdASHAId" value="@Model.ASHAId" />
+    <input type="hidden" asp-for="LineListGuid" />
+
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 style="color: #F15A29;">Edit Details</h2>
+                <div class="col-md-3">
+                    <label class="fw-bold">Survey Date</label>
+                    <input type="date" class="form-control" id="CreatedOn" value="@(Model.CreatedOn.HasValue? Model.CreatedOn.Value.ToString("yyyy-MM-dd") : "")" />
+                </div>
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-md-2">
+                    <label class="fw-bold">State</label>
+                    <select id="StateId" class="form-control">
+                        <option value="">-- Select State --</option>
+                        @foreach (var item in (IEnumerable<dynamic>)ViewBag.States)
+                        {
+                            var isSelected = Model.StateId == item.Id ? "selected" : "";
+                            <option value="@item.Id" @isSelected>@item.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="fw-bold">District</label>
+                    <select id="DistrictId" class="form-control">
+                        <option value="">-- Select District --</option>
+                        @if (ViewBag.Districts != null)
+                        {
+                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Districts)
+                            {
+                                var isSelected = Model.DistrictId == item.Id ? "selected" : "";
+                                <option value="@item.Id" @isSelected>@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="fw-bold">Block</label>
+                    <select id="BlockId" class="form-control">
+                        <option value="">-- Select Block --</option>
+                        @if (ViewBag.Blocks != null)
+                        {
+                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Blocks)
+                            {
+                                var isSelected = Model.BlockId == item.Id ? "selected" : "";
+                                <option value="@item.Id" @isSelected>@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+                <div class="col-md-2">
+                    <label>Facility</label>
+                    <select name="FacilityId" class="form-control" id="FacilityId">
+                        <option value="">-- Select Facility --</option>
+                        @if (ViewBag.Facilities != null)
+                        {
+                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Facilities)
+                            {
+                                var isSelected = Model.FacilityId == item.Id ? "selected" : "";
+                                <option value="@item.Id" @isSelected>@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+                <div class="col-md-2">
+                    <label class="fw-bold">Sub Centre</label>
+                    <select id="SubCenterId" class="form-control">
+                        <option value="">-- Select Sub-centre --</option>
+                        @if (ViewBag.SubCentres != null)
+                        {
+                            foreach (var item in (IEnumerable<dynamic>)ViewBag.SubCentres)
+                            {
+                                var isSelected = Model.SubCenterId == item.Id ? "selected" : "";
+                                <option value="@item.Id" @isSelected>@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="fw-bold">ASHA Name</label>
+                    <select id="ASHAId" class="form-control">
+                        <option value="">-- Select ASHA --</option>
+                        @if (ViewBag.Ashas != null)
+                        {
+                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Ashas)
+                            {
+                                var isSelected = Model.ASHAId == item.Id ? "selected" : "";
+                                <option value="@item.Id" @isSelected>@item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3 mt-3">
+                    <label class="fw-bold">Village Name</label>
+                    <input type="text" id="VillageName" class="form-control" value="@Model.VillageName" />
+                </div>
+                <div class="col-md-3 mt-3">
+                    <label class="fw-bold">Anganwadi Worker</label>
+                    <input type="text" id="AnganwadiWorkerName" class="form-control" value="@Model.AnganwadiWorkerName" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5>Beneficiaries List</h5>
+            <table class="table table-bordered mt-3" id="memberTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Woman Name</th>
+                        <th>Husband Name</th>
+                        <th>Mobile</th>
+                        <th>Pregnant</th>
+                        <th>FP Using</th>
+                    </tr>
+                </thead>
+                <tbody id="beneficiaryRows">
+                    @if (Model.Women != null)
+                    {
+                        foreach (var woman in Model.Women)
+                        {
+                            <tr>
+                                <td><input type="text" class="form-control txtWomanName" value="@woman.WomanName" /></td>
+                                <td><input type="text" class="form-control txtHusbandName" value="@woman.HusbandName" /></td>
+                                <td><input type="text" class="form-control txtMobile" value="@woman.MobileNumber" /></td>
+                                <td>
+                                    <select class="form-select selPregnant">
+                                        @{
+                                            var pregnantYesSelected = woman.IsCurrentlyPregnant == 1 ? "selected" : "";
+                                            var pregnantNoSelected = woman.IsCurrentlyPregnant == 0 ? "selected" : "";
+                                        }
+                                        <option value="1" @pregnantYesSelected>Yes</option>
+                                        <option value="0" @pregnantNoSelected>No</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select selFP">
+                                        @{
+                                            var fpYesSelected = woman.IsUsingFamilyPlanning == 1 ? "selected" : "";
+                                            var fpNoSelected = woman.IsUsingFamilyPlanning == 0 ? "selected" : "";
+                                        }
+                                        <option value="1" @fpYesSelected>Yes</option>
+                                        <option value="0" @fpNoSelected>No</option>
+                                    </select>
+
+
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        
+
+   
+
+        <button type="button" class="btn- btn-update" onclick="updateSurvey()">Update </button>
+        <a href="@Url.Action("Index", "LineListingSurvey")" class="btn-back">Back</a>
+
+
+    </div>
+</form>
+
+
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+       
+            const prefill = {
+                state: document.getElementById("hdStateId").value,
+                district: document.getElementById("hdDistrictId").value,
+                block: document.getElementById("hdBlockId").value,
+                facility: document.getElementById("hdFacilityId").value,
+                subCenter: document.getElementById("hdSubCenterId").value,
+                asha: document.getElementById("hdASHAId").value
+            };
+
+          
+            if (prefill.state) {
+                await loadDistricts(prefill.state, prefill.district);
+            }
+            if (prefill.district) {
+                await loadBlocks(prefill.district, prefill.block);
+            }
+            if (prefill.block) {
+               
+                await Promise.all([
+                    loadFacilities(prefill.block, prefill.facility),
+                    loadSubCenters(prefill.block, prefill.subCenter)
+                ]);
+            }
+            if (prefill.subCenter) {
+                await loadASHAs(prefill.subCenter, prefill.asha);
+            }
+
+      
+
+            async function loadDistricts(sId, selectedVal) {
+                const data = await fetch(`/LineListingSurvey/GetDistricts?stateId=${sId}`).then(r => r.json());
+                fill("DistrictId", data, "-- Select District --");
+                if (selectedVal) document.getElementById("DistrictId").value = selectedVal;
+            }
+
+            async function loadBlocks(dId, selectedVal) {
+                const data = await fetch(`/LineListingSurvey/GetBlocks?districtId=${dId}`).then(r => r.json());
+                fill("BlockId", data, "-- Select Block --");
+                if (selectedVal) document.getElementById("BlockId").value = selectedVal;
+            }
+
+            async function loadFacilities(bId, selectedVal) {
+                const data = await fetch(`/LineListingSurvey/GetFacilities?blockId=${bId}`).then(r => r.json());
+                fill("FacilityId", data, "-- Select Facility --");
+                if (selectedVal) {
+                    document.getElementById("FacilityId").value = selectedVal;
+                }
+            }
+
+            async function loadSubCenters(bId, selectedVal) {
+                const data = await fetch(`/LineListingSurvey/GetSubCentre?blockId=${bId}`).then(r => r.json());
+                fill("SubCenterId", data, "-- Select Sub-centre --");
+                if (selectedVal) document.getElementById("SubCenterId").value = selectedVal;
+            }
+
+            async function loadASHAs(scId, selectedVal) {
+                const data = await fetch(`/LineListingSurvey/GetAshabySubcentre?subcentreId=${scId}`).then(r => r.json());
+                fill("ASHAId", data, "-- Select ASHA --");
+                if (selectedVal) document.getElementById("ASHAId").value = selectedVal;
+            }
+
+
+            document.getElementById("StateId").onchange = (e) => loadDistricts(e.target.value);
+            document.getElementById("DistrictId").onchange = (e) => loadBlocks(e.target.value);
+            document.getElementById("BlockId").onchange = (e) => {
+                loadFacilities(e.target.value);
+                loadSubCenters(e.target.value);
+            };
+            document.getElementById("SubCenterId").onchange = (e) => loadASHAs(e.target.value);
+        });
+
+        
+        function fill(id, data, placeholder) {
+            const ddl = document.getElementById(id);
+            if (!ddl) return;
+            ddl.innerHTML = `<option value="">${placeholder}</option>`;
+            data.forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item.id;
+                opt.text = item.name;
+                ddl.appendChild(opt);
+            });
+        }
+
+        async function updateSurvey() {
+          
+            const rows = document.querySelectorAll("#beneficiaryRows tr");
+            const women = Array.from(rows).map(row => ({
+                WomanName: row.querySelector(".txtWomanName").value,
+                HusbandName: row.querySelector(".txtHusbandName").value,
+                MobileNumber: row.querySelector(".txtMobile").value,
+                IsCurrentlyPregnant: parseInt(row.querySelector(".selPregnant").value) || 0,
+                IsUsingFamilyPlanning: parseInt(row.querySelector(".selFP").value) || 0
+            }));
+
+            const model = {
+                LineListId: parseInt(document.getElementById("LineListId").value),
+                LineListGuid: document.getElementById("LineListGuid").value,
+                VillageName: document.getElementById("VillageName").value,
+                AnganwadiWorkerName: document.getElementById("AnganwadiWorkerName").value,
+                StateId: parseInt(document.getElementById("StateId").value) || 0,
+                DistrictId: parseInt(document.getElementById("DistrictId").value) || 0,
+                BlockId: parseInt(document.getElementById("BlockId").value) || 0,
+                FacilityId: parseInt(document.getElementById("FacilityId").value) || 0,
+                SubCenterId: parseInt(document.getElementById("SubCenterId").value) || 0,
+                ASHAId: parseInt(document.getElementById("ASHAId").value) || 0,
+                Women: women
+            };
+
+            const response = await fetch('/LineListingSurvey/Edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(model)
+            });
+
+            const res = await response.json();
+            if (res.success) {
+                alert("Updated!");
+                window.location.href = '@Url.Action("Index")';
+            } else {
+                alert("Error: " + res.message);
+            }
+        }
+    </script>
+}

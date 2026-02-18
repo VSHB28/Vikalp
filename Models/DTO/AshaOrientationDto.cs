@@ -64,6 +64,7 @@ namespace Vikalp.Models.DTO
     {
         // Location
         public string? VenueGuid { get; set; }
+        public string? OrientationGuid { get; set; }
         public int StateId { get; set; }
         public int DistrictId { get; set; }
         public int BlockId { get; set; }

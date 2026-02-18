@@ -25,13 +25,18 @@ public class MenuService
         var user = _httpContextAccessor.HttpContext?.User;
         _logger.LogInformation("GetMenusByRole called for user {User}", user?.Identity?.Name ?? "anonymous");
 
-        var roleClaim = user?.FindFirst(ClaimTypes.Role);
-
+        var roleClaim = user?.FindFirst("RoleId");
         int? roleId = null;
         if (roleClaim != null && int.TryParse(roleClaim.Value, out var parsed))
         {
             roleId = parsed;
         }
+
+        //int? roleId = null;
+        //if (roleClaim != null && int.TryParse(roleClaim.Value, out var parsed))
+        //{
+        //    roleId = parsed;
+        //}
 
         _logger.LogInformation("Resolved roleId = {RoleId}", roleId?.ToString() ?? "null");
 

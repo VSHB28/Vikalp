@@ -129,29 +129,30 @@
                     <table id="activitiesTable" class="table table-striped um-table align-middle">
                         <thead>
                             <tr>
+                                <th><i class="bi bi-hash me-2"></i>S.No</th>
                                 <th><i class="bi bi-person-fill me-2"></i>Woman Name</th>
                                 <th><i class="bi bi-person me-2"></i>Husband Name</th>
                                 <th><i class="bi bi-telephone me-2"></i>Mobile Number</th>
-                                <th><i class="bi bi-calendar-event me-2"></i>Line List Date</th>
                                 <th><i class="bi bi-building me-2"></i>Facility</th>
-                                <th><i class="bi bi-diagram-3 me-2"></i>Sub Center</th>
-                                <th class="text-end"><i class="bi bi-pencil-square me-2"></i>Actions</th>
+                                <th><i class="bi bi-pencil-square me-2"></i>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @{
+                                int i = 1;
+                            }
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td>@i</td>
                                     <td>@item.WomanName</td>
                                     <td>@item.HusbandName</td>
                                     <td>@item.MobileNumber</td>
-                                    <td>@item.CreatedOn</td>
                                     <td>@item.FacilityName</td>
-                                    <td>@item.SubCenter</td>
                                     <td class="text-end um-action">
                                         <a class="btn btn-sm btn-outline-primary me-1"
                                            asp-controller="HealthSystemActivity"
-                                           asp-action="Edit"
+                                           onclick="goToEdit(@item.LineListId)"
                                            asp-route-id="@item.LineListId"
                                            title="Edit">
                                             <i class="bi bi-pencil"></i>
@@ -174,6 +175,7 @@
                                         </form>
                                     </td>
                                 </tr>
+                                i++;
                             }
                         </tbody>
                     </table>
@@ -184,7 +186,7 @@
 </div>
 <script>
     function goToEdit(id) {
-        window.location.href = '/LineListing/Edit/' + id;
+        window.location.href = '/LineListingSurvey/Edit/' + id;
     }
 
 

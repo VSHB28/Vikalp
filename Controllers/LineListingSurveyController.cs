@@ -59,37 +59,73 @@ namespace Vikalp.Controllers
 
 
         // ===================== EDIT =====================
+
+        // 1. GET: View Details
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var survey = _service.GetSurveyById(id);
-            if (survey == null) return NotFound();
-            return View(survey);
+            var data = await _service.GetLineListingByIdAsync(id);
+            if (data == null) return NotFound();
+
+            return View(data);
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = await _service.GetLineListingByIdAsync(id);
+            if (model == null) return NotFound();
+
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+
+
+            ViewBag.States = _dropdownService.GetStates();
+
+
+            if (model.StateId > 0)
+                ViewBag.Districts = _dropdownService.GetDistricts(model.StateId.Value);
+
+            if (model.DistrictId > 0)
+                ViewBag.Blocks = _dropdownService.GetBlocks(model.DistrictId.Value);
+
+            if (model.BlockId > 0)
+            {
+
+                ViewBag.Facilities = _dropdownService.GetFacilities(model.BlockId.Value);
+                ViewBag.SubCentres = _dropdownService.GetSubCentre(model.BlockId.Value, userId);
+            }
+
+            if (model.SubCenterId > 0)
+            {
+
+                ViewBag.Ashas = _dropdownService.GetAshaDetailsbySubcentre(model.SubCenterId.Value, userId);
+            }
+
+
+            var dropdowns = await _dropdownService.GetCommonDropdownsfamilyplanningAsync(userId: 1, languageId: 1);
+            ViewBag.familyplanning = dropdowns["Familyplanning"];
+            ViewBag.yesNo = dropdowns["YesNo"];
+
+            return View("Edit", model);
+        }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, LineListingSurveyDto model)
+        public async Task<IActionResult> Edit([FromBody] LineListingSurveyUpdateDto model)
         {
-            if (id != model.LineListId) return NotFound();
-
-            if (ModelState.IsValid)
+            if (model == null || model.Women == null)
             {
-                try
-                {
-                    model.UpdatedBy = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    model.UpdatedOn = DateTime.Now;
-
-                    _service.UpdateSurvey(model);   // calls SP
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error updating survey");
-                    ModelState.AddModelError("", "Unable to save changes.");
-                }
+                return Json(new { success = false, message = "Invalid data" });
             }
-            return View(model);
+
+
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            bool result = await _service.UpdateSurvey(model, userId);
+
+            return Json(new { success = result, message = result ? "Updated successfully" : "Update failed" });
         }
 
 

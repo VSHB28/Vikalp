@@ -9,5 +9,10 @@ namespace Vikalp.Service.Interfaces
         Task AddAsync(FacilityDto dto);
         Task UpdateAsync(FacilityDto dto);
         Task DeleteAsync(int id);
+        Task SaveFacilityProfileAsync(FacilityProfileDto model);
+        Task<FacilityProfileDto> GetFacilityProfileAsync(int profileId);
+        Task SaveHrStatusAsync(HrStatusDto model);
+        Task<HrStatusDto> GetHrStatusAsync(int hrId);
+
     }
 }

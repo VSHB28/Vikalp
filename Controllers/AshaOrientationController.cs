@@ -21,11 +21,33 @@ namespace Vikalp.Controllers
         }
 
         // ===================== LIST =====================
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
+            LoadMasters();
             var list = await _service.GetAllAsync();
             return View(list);
         }
+        //public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        //{
+        //    LoadMasters();
+        //    var list = await _service.GetAllAsync();
+
+        //    var totalRecords = list.Count();
+
+        //    var pagedData = list
+        //        .Skip((page - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .ToList();
+
+        //    ViewBag.CurrentPage = page;
+        //    ViewBag.PageSize = pageSize;
+        //    ViewBag.TotalRecords = totalRecords;
+        //    ViewBag.TotalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+        //    return View(pagedData);
+        //}
+
 
         // ===================== CREATE (GET) =====================
         [HttpGet]
