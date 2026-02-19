@@ -1,7 +1,7 @@
 ﻿@using Vikalp.Models.DTO
-@model Vikalp.Models.DTO.LineListingConsentDto
+@model Vikalp.Models.DTO.HomeVisitDTO
 @{
-    ViewData["Title"] = "Consent";
+    ViewData["Title"] = "Tellecalling Follow‑up";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 <style>
@@ -368,7 +368,7 @@
 <div class="container-consent m-3">
 
     <div class="header">
-        <h2><i class="fa-solid fa-hands-holding-child"></i> Consent Form</h2>
+        <h2><i class="fa-solid fa-hands-holding-child"></i> Telecaling Followup Record</h2>
         <div style="font-size: 12px; color: #888;"></div>
     </div>
 
@@ -414,173 +414,149 @@
     <div class="info-text">
         <div class="info-heading">
             <i class="fa-solid fa-circle-info"></i>
-            <span>Project Purpose & Helpline Details</span>
+            <span>Telecalling Followup Details</span>
         </div>
-        <p>
-            Under the Vikalp Project by I-PASS Development Foundation, a dedicated helpline has been established focusing on newly married couples to provide information and counseling on family planning and temporary contraceptive options.
-        </p>
-        <ul class="info-list">
-            <li>
-                <i class="fa-solid fa-phone-volume"></i>
-                <span>Toll-free helpline: <span class="pill">1800 202 5862</span> – call for confidential advice and counseling.</span>
-            </li>
-            <li>
-                <i class="fa-solid fa-square-phone"></i>
-                <span>With your consent, follow-up contact can also be initiated from the helpline number <span class="pill">0522 452 3530</span> to provide detailed information on family planning services.</span>
-            </li>
-            <li>
-                <i class="fa-solid fa-user-doctor"></i>
-                <span>Counselors and doctors assist couples in selecting the most suitable contraceptive method and ensure continuity through regular follow-ups.</span>
-            </li>
-            <li>
-                <i class="fa-solid fa-comments"></i>
-                <span>The Vikalp Project may also reach out to you on your provided phone number through various planned communication channels to share information and messages on family planning.</span>
-            </li>
-        </ul>
+        <table id="followupTableBody" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Remark</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var f in Model.FollowUpHistory)
+                {
+                    <tr>
+                        <td>@f.FollowupDate?.ToString("yyyy-MM-dd")</td>
+                        <td>@f.Remark</td>
+                        <td>@f.Status</td>
+                </tr>
+                                }
+            </tbody>
+        </table>
     </div>
 
-    <form class="form-content" asp-action="Create" method="post">
+    <form class="form-content" asp-action="SaveFollowup" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" id="LineListGuid" value="@Model.LineListGuid" />
+        <input type="hidden" id="HomeVistGuid" value="@Model.VisitGuid" />
 
-        <div class="form-group">
-            <div class="consent-section">
-                <div class="consent-title">
-                    <i class="fa-solid fa-file-signature"></i>
-                    <span>Consent Confirmation</span>
-                </div>
-                <div class="consent-text">Do you give your consent to be contacted and receive information under the Vikalp Project?</div>
-                <select name="IsConcent" class="form-control">
+        <div class="form-row">
+            @{
+                var today = DateTime.Today;
+
+                var latestFollowupDate = Model.FollowUpHistory?
+                .Where(x => x.FollowupDate != null)
+                .Max(x => x.FollowupDate);
+
+                DateTime? minAllowedDate = null;
+
+                if (latestFollowupDate != null)
+                {
+                    minAllowedDate = latestFollowupDate.Value.AddDays(1);
+                }
+                else
+                {
+                    // If no followup exists, allow last 5 days
+                    minAllowedDate = today.AddDays(-5);
+                }
+
+                var minDate = minAllowedDate?.ToString("yyyy-MM-dd");
+                var maxDate = today.ToString("yyyy-MM-dd");
+            }
+
+            <div class="col-md-3">
+                <label>Date</label>
+                <input name="FollowupDate" id="followupDate" type="date" min="@minDate" max="@maxDate" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label>Followup Status</label>
+                <select name="FollowupStatus" id="followupStatus" class="form-control">
                     <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.yesNo)
+                    @foreach (var s in ViewBag.callstatus)
                     {
-                        <option value="@s.Value" @(Model.IsConcent.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                        <option value="@s.Value">@s.Text</option>
                     }
                 </select>
             </div>
-        </div>
-        <div id="restControls">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Working Mobile Number</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="fa-solid fa-phone" style="color:#999;"></i>
-                        </span>
-                        <input class="form-control" name="MobileNumber" maxlength="10" pattern="\d{10}" placeholder="Enter Mobile Number" />
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Who operates this mobile?</label>
-                    <select name="MobileHandledBy" class="form-control">
-                        <option value="">-- Select --</option>
-                        @foreach (var s in ViewBag.whoattandcall)
-                        {
-                            <option value="@s.Value" @(Model.MobileHandledBy.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                        }
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                @{
-                    var today = DateTime.Today;
-                    var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
-                    var maxDate = today.ToString("yyyy-MM-dd");
-                }
-                <div class="form-group">
-                    <label>Date</label>
-                    <input name="ConcentDate" type="date" max="@maxDate" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Upload Signature</label>
-                    <div class="signature-box">
-                        <i class="fa-solid fa-camera"></i>
-                        <div style="font-size: 10px; margin-top: 5px;">Tap to Upload</div>
-                        <input name="Signature" type="file" style="display: none;" id="sig-upload">
-                    </div>
-                </div>
+            <div class="col-md-3">
+                <label>Remarks</label>
+                <textarea name="Remark" id="remark" class="form-control"></textarea>
+                <span asp-validation-for="Remark" class="text-danger"></span>
             </div>
         </div>
-        <button type="button" class="btn-save" onclick="saveconsent()">Save</button>
-        <a href="@Url.Action("Index", "LineListingSurvey")" class="btn-back">Back</a>
+        <button type="button" id="btnSave" class="btn-save" onclick="saveconsent()">Save</button>
+        <a href="@Url.Action("Index", "HomeVisit")" class="btn-back">Back</a>
 
     </form>
 </div>
 
 @section Scripts {
     <script>
+                document.addEventListener("DOMContentLoaded", function () {
+
+            const tableBody = document.getElementById("followupTableBody");
+            const rows = tableBody ? tableBody.querySelectorAll("tr") : [];
+
+            const followupCount = rows.length;
+
+            console.log("Followup count:", followupCount);
+
+            if (followupCount >= 4) {
+
+                document.getElementById("followupDate").disabled = true;
+                document.getElementById("followupStatus").disabled = true;
+                document.getElementById("remark").disabled = true;
+                document.getElementById("btnSave").disabled = true;
+
+                alert("Maximum 3 followups already completed.");
+            }
+        });
+
         function saveconsent() {
 
-            const isConsentEl = document.querySelector('[name="IsConcent"]');
-            if (!isConsentEl || !isConsentEl.value) {
-                alert("Please select Consent Given");
-                return;
-            }
-
             const model = {
-                LineListGuid: document.getElementById("LineListGuid").value,
-                IsConcent: isConsentEl.value,
-                ConcentDate: document.querySelector('[name="ConcentDate"]').value || null,
-                Signature: document.querySelector('[name="Signature"]').value || null,
-                MobileNumber : document.querySelector('[name="MobileNumber"]').value || null,
-                MobileHandledBy : document.querySelector('[name="MobileHandledBy"]').value || null
+                LineListGuid: document.getElementById("LineListGuid")?.value,
 
+                HomeVistGuid : document.getElementById("HomeVistGuid")?.value,
+
+                FollowupStatus: document.querySelector('[name="FollowupStatus"]')?.value || null,
+
+                FollowupDate: document.querySelector('[name="FollowupDate"]')?.value || null,
+
+                Remark: document.querySelector('[name="Remark"]')?.value || null
             };
 
-            console.log("Posting consent:", model);
+            console.log("Posting followup:", model);
 
-                    fetch('/LineListingSurvey/SaveConsentJson', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken':
-                    document.querySelector('input[name="__RequestVerificationToken"]').value
-            },
-            body: JSON.stringify(model)
-        })
+            fetch('/HomeVisit/SaveFollowup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken':
+                        document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                },
+                body: JSON.stringify(model)
+            })
             .then(res => {
                 if (!res.ok) throw new Error("Server error");
                 return res.json();
             })
             .then(data => {
                 if (data.success) {
-                    alert("Consent saved successfully!");
-                    window.location.href = "/LineListingSurvey/Index";
+                    alert("Followup saved successfully!");
+                    window.location.href = "/HomeVisit/Index";
                 } else {
                     alert(data.message || "Save failed");
                 }
             })
             .catch(err => {
-                console.error(err);
-                alert("Error while saving consent");
+                console.error("Error:", err);
+                alert("Error while saving followup");
             });
         }
-
-               document.addEventListener("DOMContentLoaded", function () {
-            const consentSelect = document.querySelector("select[name='IsConcent']");
-            const restControls = document.getElementById("restControls");
-
-            consentSelect.addEventListener("change", function () {
-                if (this.value === "2") { // assuming "0" means No
-                    // Hide the section
-                    restControls.classList.add("d-none");
-
-                    // Disable all inputs inside
-                    restControls.querySelectorAll("input, select, textarea, button").forEach(el => {
-                        el.disabled = true;
-                    });
-                } else {
-                    // Show the section
-                    restControls.classList.remove("d-none");
-
-                    // Re-enable inputs
-                    restControls.querySelectorAll("input, select, textarea, button").forEach(el => {
-                        el.disabled = false;
-                    });
-                }
-            });
-        });
     </script>
+
 }

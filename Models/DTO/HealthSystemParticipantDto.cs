@@ -14,6 +14,7 @@
         public int? InterventionFacility { get; set; }
         public int? DistrictId { get; set; }
         public int? GenderId { get; set; }
+        public int ActivityNameId { get; set; }
 
         public string? Mobile { get; set; }
         public int? VCATScorePreTest { get; set; }

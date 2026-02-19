@@ -69,12 +69,7 @@ namespace Vikalp.Service
                 IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] as int?,
                 IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] as int?,
 
-                FamilyPlanningMethod = reader["FamilyPlanningMethod"] != DBNull.Value
-                    ? reader["FamilyPlanningMethod"].ToString()!
-                        .Split(',')
-                        .Select(int.Parse)
-                        .ToList()
-                    : new List<int>(),
+                FamilyPlanningMethod = reader["FamilyPlanningMethod"] as int? ,
 
                 IsAwareOfAntara = reader["IsAwareOfAntara"] as int?,
                 SelectedMethodName = reader["SelectedMethodName"] as string,
@@ -133,65 +128,135 @@ namespace Vikalp.Service
 
         public async Task<bool> InsertLineListingAsync(LineListingSurveyCreateDto model, int userId)
         {
-            using var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            try
+            {
+                using var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 
-            using var cmd = new SqlCommand(
-                "dbo.sp_InsertLineListingSurvey_Json",
-                conn);
+                using var cmd = new SqlCommand(
+                    "dbo.sp_InsertLineListingSurvey_Json",
+                    conn);
 
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                // Convert full model to JSON
+                string json = JsonSerializer.Serialize(model);
+
+                cmd.Parameters.Add("@Json", SqlDbType.NVarChar).Value = json;
+                cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }            
+        }
+
+        // ===================== UPDATE =====================
+        public async Task<LineListingSurveyDto> GetLineListingByIdAsync(int id)
+        {
+            LineListingSurveyDto survey = null;
+
+            using (var conn = new SqlConnection(Conn()))
+            using (var cmd = new SqlCommand("usp_GetLineListingById", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                await conn.OpenAsync();
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    survey = new LineListingSurveyDto
+                    {
+                        Women = new List<LineListingWomanDto>()
+                    };
+
+                    while (await reader.ReadAsync())
+                    {
+                        // ================= HEADER (repeat ok) =================
+                        survey.LineListId = Convert.ToInt32(reader["Id"]);
+                        survey.StateId = reader["StateId"] != DBNull.Value ? Convert.ToInt32(reader["StateId"]) : 0;
+                        survey.DistrictId = reader["DistrictId"] != DBNull.Value ? Convert.ToInt32(reader["DistrictId"]) : 0;
+                        survey.BlockId = reader["BlockId"] != DBNull.Value ? Convert.ToInt32(reader["BlockId"]) : 0;
+                        survey.VillageName = reader["VillageName"]?.ToString();
+
+
+                        survey.FacilityId = reader["FacilityId"] != DBNull.Value
+     ? Convert.ToInt32(reader["FacilityId"]) : null;
+
+                        survey.SubCenterId = reader["SubCenterId"] != DBNull.Value
+                            ? Convert.ToInt32(reader["SubCenterId"]) : null;
+
+                        survey.ASHAId = reader["ASHAId"] != DBNull.Value
+                            ? Convert.ToInt32(reader["ASHAId"]) : null;
+
+
+
+                        survey.AnganwadiWorkerName = reader["AnganwadiWorkerName"]?.ToString();
+
+                        survey.IsChildAvailable = reader["IsChildAvailable"] != DBNull.Value
+                            ? Convert.ToInt32(reader["IsChildAvailable"])
+                            : null;
+
+                        survey.IsAwareOfAntara = reader["IsAwareOfAntara"] != DBNull.Value
+                            ? Convert.ToInt32(reader["IsAwareOfAntara"])
+                            : null;
+
+                        survey.ReasonForNonUsage = reader["ReasonForNonUsage"]?.ToString();
+
+                        // ================= WOMEN LIST =================
+                        survey.Women.Add(new LineListingWomanDto
+                        {
+                            WomanName = reader["WomanName"]?.ToString(),
+                            HusbandName = reader["HusbandName"]?.ToString(),
+                            MobileNumber = reader["MobileNumber"]?.ToString(),
+                            IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] != DBNull.Value
+    ? Convert.ToInt32(reader["IsCurrentlyPregnant"])
+    : null,
+
+                            IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] != DBNull.Value
+    ? Convert.ToInt32(reader["IsUsingFamilyPlanning"])
+    : null
+
+
+
+                        });
+                    }
+                }
+            }
+
+            return survey;
+        }
+
+        public async Task<bool> UpdateSurvey(LineListingSurveyUpdateDto model, int userId)
+        {
+            using var conn = new SqlConnection(Conn());
+            using var cmd = new SqlCommand("dbo.sp_UpdateLineListingSurvey_Json", conn);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            // Convert full model to JSON
             string json = JsonSerializer.Serialize(model);
 
             cmd.Parameters.Add("@Json", SqlDbType.NVarChar).Value = json;
             cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
 
+            Console.WriteLine("JSON being sent:");
+            Console.WriteLine(json);
+
             await conn.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
 
-            return true;
+
+            var result = await cmd.ExecuteScalarAsync();
+            int rowsAffected = Convert.ToInt32(result);
+
+            Console.WriteLine($"Rows affected: {rowsAffected}");
+
+            return rowsAffected > 0;
         }
 
-        // ===================== UPDATE =====================
-        public void UpdateSurvey(LineListingSurveyDto survey)
-        {
-            using var conn = new SqlConnection(Conn());
-            using var cmd = new SqlCommand("usp_UpdateLineListingSurvey", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@LineListGuid", survey.LineListGuid);
-
-            cmd.Parameters.AddWithValue("@WomanName", survey.WomanName);
-            cmd.Parameters.AddWithValue("@HusbandName", (object?)survey.HusbandName ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MobileNumber", (object?)survey.MobileNumber ?? DBNull.Value);
-
-            cmd.Parameters.AddWithValue("@IsChildAvailable", (object?)survey.IsChildAvailable ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ChildGender", (object?)survey.ChildGender ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ChildDOB", (object?)survey.ChildDOB ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MarriageDate", (object?)survey.MarriageDate ?? DBNull.Value);
-
-            cmd.Parameters.AddWithValue("@IsCurrentlyPregnant", (object?)survey.IsCurrentlyPregnant ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@IsUsingFamilyPlanning", (object?)survey.IsUsingFamilyPlanning ?? DBNull.Value);
-
-            cmd.Parameters.AddWithValue("@FamilyPlanningMethod",
-                survey.FamilyPlanningMethod != null
-                    ? string.Join(",", survey.FamilyPlanningMethod)
-                    : DBNull.Value);
-
-            cmd.Parameters.AddWithValue("@IsAwareOfAntara", (object?)survey.IsAwareOfAntara ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@SelectedMethodName", (object?)survey.SelectedMethodName ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ReasonForNonUsage", (object?)survey.ReasonForNonUsage ?? DBNull.Value);
-
-            cmd.Parameters.AddWithValue("@IsConcent", (object?)survey.IsConcent ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ConcentDate", (object?)survey.ConcentDate ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Signature", (object?)survey.Signature ?? DBNull.Value);
-
-            cmd.Parameters.AddWithValue("@UpdatedBy", survey.UpdatedBy);
-
-            conn.Open();
-            cmd.ExecuteNonQuery();
-        }
 
         // ===================== DELETE =====================
         public void DeleteSurvey(int id, int userId)

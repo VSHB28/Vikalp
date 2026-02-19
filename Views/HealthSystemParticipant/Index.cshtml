@@ -106,19 +106,25 @@
                     <table class="table table-hover table-striped um-table align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Full Name</th>
-                                <th>Facility Name</th>
-                                <th>District</th>
-                                <th>Mobile</th>
-                                <th>Pre-Test</th>
-                                <th>Post-Test</th>
-                                <th>Actions</th>
+                                <th><i class="bi bi-hash me-2"></i>S.No</th>
+                                <th><i class="bi bi-person-fill me-2"></i>Full Name</th>
+                                <th><i class="bi bi-building me-2"></i>Facility Name</th>
+                                <th><i class="bi bi-geo-alt-fill me-2"></i>District</th>
+                                <th><i class="bi bi-telephone-fill me-2"></i>Mobile</th>
+                                <th><i class="bi bi-clipboard-check me-2"></i>Pre-Test</th>
+                                <th><i class="bi bi-clipboard2-data-fill me-2"></i>Post-Test</th>
+                                <th><i class="bi bi-gear-fill me-2"></i>Actions</th>
+
                             </tr>
                         </thead>
                         <tbody id="dataTable">
+                            @{
+                                int i = 1;
+                            }
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td>@i</td>
                                     <td>@item.FullName</td>
                                     <td>@item.FacilityName</td>
                                     <td>@item.DistrictId</td> <!-- Replace with lookup name -->
@@ -147,6 +153,7 @@
                                         </form>
                                     </td>
                                 </tr>
+                                i++;
                             }
                         </tbody>
                     </table>

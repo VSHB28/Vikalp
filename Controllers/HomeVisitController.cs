@@ -21,13 +21,14 @@ public class HomeVisitController : Controller
     // ===================== LIST =====================
     public async Task<IActionResult> Index()
     {
-        var model = await _service.GetAllAsync(); // ✅ await resolves the task
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var model = await _service.GetAllAsync(userId); // ✅ await resolves the task
         return View(model);
     }
 
     // ===================== CREATE =====================
 
-    [HttpGet]
+    [HttpGet("HomeVisit/Create/{guid}")]
     public async Task<IActionResult> Create(Guid guid)
     {
         LoadMasters();
@@ -36,8 +37,10 @@ public class HomeVisitController : Controller
         ViewBag.familyplanning = dropdowns["Familyplanning"];
         ViewBag.yesNo = dropdowns["YesNo"];
         ViewBag.socialbenifit = dropdowns["SocialBenifit"];
+        ViewBag.FacilityType = dropdowns["FacilityType"];
+
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var survey = await _service.GetByIdAsync(Guid.Parse("6B737A2C-7F42-4302-BAE3-AA14F0E8C381"), userId);
+        var survey = await _service.GetByIdAsync(guid, userId);
 
         if (survey == null)
             return NotFound();
@@ -47,64 +50,28 @@ public class HomeVisitController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([FromBody] HomeVisitDTO model)
+    public async Task<IActionResult> Create(HomeVisitDTO model)
     {
-        if (model == null)
-        {
-            return Json(new { success = false, message = "No beneficiaries found" });
-        }
+        if (!ModelState.IsValid)
+            return Json(new { success = false, message = "Invalid data" });
 
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-        bool result = await _service.InsertAsync(model);
+        bool result;
+
+        result = await _service.SaveHomeVisitAsync(model, userId);
 
         return Json(new { success = result });
-    }
-
-
-    // ===================== EDIT =====================
-    [HttpGet]
-    public IActionResult Edit(int id)
-    {
-        //var survey = _service.GetByIdAsync(id);
-        //if (survey == null) return NotFound();
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, HomeVisitDTO model)
-    {
-        if (id != model.VisitId) return NotFound();
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                model.UpdatedBy = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                model.UpdatedOn = DateTime.Now;
-
-                _service.UpdateAsync(model);   // calls SP
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating survey");
-                ModelState.AddModelError("", "Unable to save changes.");
-            }
-        }
-        return View(model);
     }
 
     // ===================== DELETE =====================
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            _service.DeleteAsync(id);   // calls SP
+            await _service.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
@@ -112,6 +79,56 @@ public class HomeVisitController : Controller
             _logger.LogError(ex, "Error deleting survey");
             return BadRequest("Unable to delete record.");
         }
+    }
+
+    // ===================== Followup =====================
+    [HttpGet("HomeVisit/Followup/{guid}")]
+    public async Task<IActionResult> Followup(Guid guid)
+    {
+        LoadMasters();
+
+        var dropdowns = await _dropdownService
+            .GetCommonDropdownsfamilyplanningAsync(userId: 1, languageId: 1);
+
+        ViewBag.familyplanning = dropdowns["Familyplanning"];
+        ViewBag.yesNo = dropdowns["YesNo"];
+        ViewBag.socialbenifit = dropdowns["SocialBenifit"];
+        ViewBag.callstatus = dropdowns["CallStatus"];
+        ViewBag.FacilityType = dropdowns["FacilityType"];
+
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        // 🔹 Load main HomeVisit data
+        var homeVisit = await _service.GetByIdAsync(guid, userId);
+
+        if (homeVisit == null)
+            return NotFound();   // IMPORTANT
+
+        // 🔹 Load follow-up history
+        var followUps = await _service.GetFollowUpHistoryAsync(guid, userId);
+
+        homeVisit.FollowUpHistory = followUps ?? new List<HomevisitFollowUpDto>();
+
+        return View("Followup", homeVisit);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveFollowup([FromBody] HomevisitFollowUpDto model)
+    {
+        if (!ModelState.IsValid)
+            return Json(new { success = false, message = "Invalid data" });
+
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        model.CreatedBy = userId;
+
+        bool result = await _service.InsertFollowUpAsync(model);
+
+        return Json(new
+        {
+            success = result,
+            message = result ? "Followup saved successfully" : "Failed to save"
+        });
     }
 
 

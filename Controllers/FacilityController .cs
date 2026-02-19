@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
 
@@ -18,9 +20,24 @@ public class FacilityController : Controller
         _blockService = blockService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         ViewBag.States = _dropdownService.GetStates();
+
+        var dropdowns = await _dropdownService
+            .GetCommonDropdownsfamilyplanningAsync(userId: 1, languageId: 1);
+
+        ViewBag.designation = dropdowns.ContainsKey("Designation")
+            ? dropdowns["Designation"]
+            : new List<SelectListItem>();
+
+        ViewBag.gender = dropdowns.ContainsKey("Gender")
+            ? dropdowns["Gender"]
+            : new List<SelectListItem>();
+
+        ViewBag.yesNo = dropdowns.ContainsKey("YesNo")
+            ? dropdowns["YesNo"]
+            : new List<SelectListItem>();
         return View();
     }
 
@@ -38,9 +55,7 @@ public class FacilityController : Controller
 
     public async Task<JsonResult> GetFacilities(int blockId)
     {
-        var data = await _facilityService.GetByBlockAsync(blockId);
-
-       
+        var data = await _facilityService.GetByBlockAsync(blockId);       
         var types = _dropdownService.GetFacilityTypes()
                     .ToDictionary(t => t.Id.ToString(), t => t.Name); 
 
@@ -51,9 +66,14 @@ public class FacilityController : Controller
             facilityType = types.ContainsKey(f.FacilityType) ? types[f.FacilityType] : "", 
             f.NinNumber,
             f.IsActive,
-            f.IsIntervention
+            f.IsIntervention,
+            f.ProfileId,
+            f.HrId
         });
-
+        var dropdowns = await _dropdownService.GetCommonDropdownsfamilyplanningAsync(userId: 1, languageId: 1);
+        ViewBag.designation = dropdowns["Designation"];
+        ViewBag.gender = dropdowns["Gender"];
+        ViewBag.yesNo = dropdowns["YesNo"];
         return Json(result);
     }
 
@@ -161,6 +181,43 @@ public class FacilityController : Controller
 
         await _facilityService.DeleteAsync(id);
         return Json(new { success = true }); 
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SaveFacilityProfile([FromBody] FacilityProfileDto model)
+    {
+        if (model == null)
+            return BadRequest("Model is null");
+
+        await _facilityService.SaveFacilityProfileAsync(model);
+        return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetFacilityProfile(int profileId)
+    {
+        var result = await _facilityService.GetFacilityProfileAsync(profileId);
+
+        if (result == null)
+            return NotFound();
+
+        return Json(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SaveHrStatus([FromBody] HrStatusDto model)
+    {
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        model.CreatedBy = userId;
+        await _facilityService.SaveHrStatusAsync(model);
+        return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetHrStatus(int hrId)
+    {
+        var result = await _facilityService.GetHrStatusAsync(hrId);
+        return Json(result);
     }
 
 }

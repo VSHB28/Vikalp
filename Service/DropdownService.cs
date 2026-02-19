@@ -401,6 +401,55 @@ public class DropdownService : IDropdownService
                     });
                 }
                 result["SocialBenifit"] = socialbenifit;
+
+                await reader.NextResultAsync();
+
+                var callstatus = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    callstatus.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["CallStatus"] = callstatus;
+                await reader.NextResultAsync();
+
+                var mstfacilityType = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    mstfacilityType.Add(new SelectListItem
+                    {
+                        Value = reader["FacilityTypeID"].ToString(),
+                        Text = reader["FacilityType"].ToString()
+                    });
+                }
+                result["FacilityType"] = mstfacilityType;
+                await reader.NextResultAsync();
+
+                var designation = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    designation.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["Designation"] = designation;
+                await reader.NextResultAsync();
+
+                var gender = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    gender.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["Gender"] = gender;
             }
         }
 

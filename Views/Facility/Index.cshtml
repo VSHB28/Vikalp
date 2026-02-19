@@ -19,12 +19,11 @@
 
     .um-table thead th {
         /* background: linear-gradient(90deg,#0d6efd, #6610f2);
-        color: #fff;
-        border: 0; */
+            color: #fff;
+            border: 0; */
         color: #fff;
         border: 1px dotted;
         background: var(--ipas-sidebar);
-
     }
 
     .um-table tbody tr:hover {
@@ -40,6 +39,385 @@
         text-align: center;
         color: #6c757d;
     }
+
+
+    /* modal-header */
+    .modal-header{
+        background: #f5a20c40;
+        color: #000000;
+    }
+    .modal-footer{
+        background: #f5a20c40;
+    }
+    .modal-body{
+        background: #e7dddd6b;
+    }
+    #facilityprofileModal .modal-body .form-label {
+        font-size:12px;
+    }
+
+
+
+</style>
+
+@* new css *@
+<style>
+
+    <style >
+    /* ===== Facility Profile Modal Styles ===== */
+    #facilityprofileModal .modal-dialog {
+        max-width: 960px;
+    }
+
+    #facilityprofileModal .modal-content {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #facilityprofileModal .modal-header {
+        background-color: #FBD9A5;
+        border-bottom: none;
+        padding: 18px 24px;
+    }
+
+    #facilityprofileModal .modal-title.fh-modal-header {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2C2C2C;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #facilityprofileModal .btn-close {
+        color: #b08968;
+        opacity: 1;
+    }
+
+    #facilityprofileModal .modal-body {
+        background-color: #F8F6F3;
+        padding: 20px 24px 24px;
+    }
+
+    #facilityprofileModal .modal-footer {
+        background-color: #FBD9A5;
+        border-top: none;
+        padding: 14px 24px 18px;
+    }
+
+    /* Section Cards */
+    .fp-section-card {
+        background: #FFFFFF;
+        border-radius: 8px;
+        border: 1px solid #F0E0D2;
+        padding: 14px 16px 16px;
+        margin-bottom: 18px;
+    }
+
+        .fp-section-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .fp-section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .fp-section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(241, 90, 41, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #F15A29;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .fp-section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2C2C2C;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        line-height: 1.2;
+    }
+
+    .fp-section-subtitle {
+        font-size: 11px;
+        color: #666666;
+        margin-top: 2px;
+    }
+
+    /* Override Bootstrap form-label inside modal */
+    #facilityprofileModal .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #2C2C2C;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        #facilityprofileModal .form-label .fp-label-icon {
+            color: #F15A29;
+            font-size: 14px;
+        }
+
+    /* Override Bootstrap form-control / form-select inside modal */
+    #facilityprofileModal .form-control,
+    #facilityprofileModal .form-select {
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #F3D2B8;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+    }
+
+        #facilityprofileModal .form-control:focus,
+        #facilityprofileModal .form-select:focus {
+            border-color: #F15A29;
+            box-shadow: 0 0 0 2px rgba(241, 90, 41, 0.18);
+        }
+
+    .fp-help-text {
+        font-size: 11px;
+        color: #666666;
+        margin-top: 3px;
+    }
+
+    /* Save Button */
+    #facilityprofileModal .btn.btn-save {
+        min-width: 120px;
+        padding: 10px 26px;
+        border-radius: 4px;
+        border: 1px solid #f1a259;
+        background-color: #FFD8A6;
+        color: #e46b29;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        #facilityprofileModal .btn.btn-save:hover {
+            background-color: #ffc37a;
+        }
+
+    @@media (max-width: 640px) {
+        #facilityprofileModal .modal-dialog {
+            max-width: 100%;
+            margin: 12px;
+        }
+    }
+</style>
+<style>
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        background: rgba(0,0,0,0.1);
+    }
+
+    .modal-shell {
+        background: transparent;
+        padding: 24px;
+        width: 100%;
+        max-width: 960px;
+    }
+
+    .modal-container {
+        background-color: var(--ipas-white);
+        border-radius: 10px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-header {
+        background-color: #FBD9A5;
+        color: var(--ipas-text-dark);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+    .close-btn {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        color: #b08968;
+    }
+
+    .modal-body {
+        padding: 20px 24px 24px;
+        background-color: var(--ipas-light);
+    }
+
+    .section-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .section-card {
+        background: var(--ipas-white);
+        border-radius: 8px;
+        border: 1px solid #F0E0D2;
+        padding: 14px 16px 16px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(241, 90, 41, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 15px;
+    }
+
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .section-subtitle {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+        margin-top: 2px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .form-grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-select {
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241,90,41,0.18);
+        }
+
+    .modal-footer {
+        padding: 14px 24px 18px;
+        background-color: #FBD9A5;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    
+
+    .btn-cancel {
+        background-color: #FFEFD4;
+        color: #7c6a55;
+    }
+
+    .btn:hover {
+        background-color: #ffc37a;
+    }
+
+    @@media (max-width: 900px) {
+        .form-grid,
+        .form-grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .modal-shell {
+            padding: 12px;
+        }
+
+        .form-grid,
+        .form-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <div class="container py-2">
@@ -49,11 +427,7 @@
             @Html.AntiForgeryToken()
             <div class="umcard-header">
                 <div class="d-flex justify-content-between align-items-start ">
-                    <div>
                         <h3 class="mb-0">Facilities</h3>
-                    
-                    </div>
-
                     <div class="um-toolbar">
                         <a href="/Facility/Create" class="btn  btn-add btn-primary">
                             Add Facility
@@ -98,9 +472,9 @@
                             <th>Facility Name</th>
                             <th>Type</th>
                             <th>NIN</th>
-                            <th class="text-center">Active</th>
-                            <th class="text-center">Intervention</th>
-                            <th class="text-end" style="width:18%">Actions</th>
+                            <th>+ Info</th>
+                            <th>+ Profile</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="facilityList">
@@ -113,6 +487,380 @@
                 </table>
             </div>
 
+            <!-- FACILITY INFO MODAL -->
+            <div class="modal fade" id="facilityprofileModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title fh-modal-header" id="profileModalTitle">Add Information</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <!-- Catchment Population -->
+                            <div class="fp-section-card">
+                                <div class="fp-section-header">
+                                    <div class="fp-section-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                                    <div>
+                                        <div class="fp-section-title">Catchment Population</div>
+                                        <div class="fp-section-subtitle">Coverage of PHC and linked units</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="PopulationCoveredbyPHC" class="form-label">
+                                            <i class="bi bi-people-fill fp-label-icon"></i> Population Covered by the PHC
+                                        </label>
+                                        <input name="PopulationCoveredbyPHC" id="PopulationCoveredbyPHC" type="number" class="form-control" placeholder="Enter population" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="NumberofHSC" class="form-label">
+                                            <i class="bi bi-hospital fp-label-icon"></i> Number of HSC in the PHC
+                                        </label>
+                                        <input name="NumberofHSC" id="NumberofHSC" type="number" class="form-control" placeholder="Enter number" />
+                                    </div>
+                                    <div class="col-md-6 mb-0">
+                                        <label for="PopulationCoveredPHC_HWC" class="form-label">
+                                            <i class="bi bi-people fp-label-icon"></i> Population covered by PHC including HSCs
+                                        </label>
+                                        <input name="PopulationCoveredPHC_HWC" id="PopulationCoveredPHC_HWC" type="number" class="form-control" placeholder="Enter population" />
+                                    </div>
+                                    <div class="col-md-6 mb-0">
+                                        <label for="PopulationCoveredbyHWC" class="form-label">
+                                            <i class="bi bi-house-heart-fill fp-label-icon"></i> Population covered by HWC
+                                        </label>
+                                        <input name="PopulationCoveredbyHWC" id="PopulationCoveredbyHWC" type="number" class="form-control" placeholder="Enter population" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Facility Readiness -->
+                            <div class="fp-section-card">
+                                <div class="fp-section-header">
+                                    <div class="fp-section-icon"><i class="bi bi-check2-square"></i></div>
+                                    <div>
+                                        <div class="fp-section-title">Facility Readiness</div>
+                                        <div class="fp-section-subtitle">Delivery point &amp; FP space</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-0">
+                                        <label for="IsDeliveryPoint" class="form-label">
+                                            <i class="bi bi-hospital-fill fp-label-icon"></i> Is Delivery Point
+                                        </label>
+                                        <select name="IsDeliveryPoint" id="IsDeliveryPoint" class="form-select">
+                                            <option value="">-- Select --</option>
+                                            @foreach (var s in ViewBag.yesNo)
+                                            {
+                                                <option value="@s.Value">@s.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-0">
+                                        <label for="IsSeparateSpaceforFp" class="form-label">
+                                            <i class="bi bi-heart-pulse-fill fp-label-icon"></i> Is Separate Space for FP
+                                        </label>
+                                        <select name="IsSeparateSpaceforFp" id="IsSeparateSpaceforFp" class="form-select">
+                                            <option value="">-- Select --</option>
+                                            @foreach (var s in ViewBag.yesNo)
+                                            {
+                                                <option value="@s.Value">@s.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Service Utilization -->
+                            <div class="fp-section-card">
+                                <div class="fp-section-header">
+                                    <div class="fp-section-icon"><i class="bi bi-activity"></i></div>
+                                    <div>
+                                        <div class="fp-section-title">Service Utilization</div>
+                                        <div class="fp-section-subtitle">Daily OPD load &amp; deliveries</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-0">
+                                        <label for="AverageOPDperDay" class="form-label">
+                                            <i class="bi bi-clipboard2-pulse fp-label-icon"></i> Average OPD per day of the facility
+                                        </label>
+                                        <input name="AverageOPDperDay" id="AverageOPDperDay" type="number" class="form-control" placeholder="Enter average OPD" />
+                                    </div>
+                                    <div class="col-md-6 mb-0">
+                                        <label for="AvgdeliveryperMonth" class="form-label">
+                                            <i class="bi bi-baby fp-label-icon"></i> Average delivery per month
+                                        </label>
+                                        <input name="AvgdeliveryperMonth" id="AvgdeliveryperMonth" type="number" class="form-control" placeholder="Enter average" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Referral & Distance -->
+                            <div class="fp-section-card">
+                                <div class="fp-section-header">
+                                    <div class="fp-section-icon"><i class="bi bi-signpost-2-fill"></i></div>
+                                    <div>
+                                        <div class="fp-section-title">Referral &amp; Distance</div>
+                                        <div class="fp-section-subtitle">Linkages to higher facilities</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-0">
+                                        <label for="NearestFacilityReferral" class="form-label">
+                                            <i class="bi bi-building fp-label-icon"></i> Nearest Facility Referral
+                                        </label>
+                                        <input type="text" name="NearestFacilityReferral" id="NearestFacilityReferral" class="form-control" placeholder="Enter facility name" />
+                                    </div>
+                                    <div class="col-md-4 mb-0">
+                                        <label for="DistancefromPHC" class="form-label">
+                                            <i class="bi bi-arrow-left-right fp-label-icon"></i> Distance of referral facility from PHC
+                                        </label>
+                                        <input name="DistancefromPHC" id="DistancefromPHC" type="number" class="form-control" placeholder="Distance (in km)" />
+
+                                    </div>
+                                    <div class="col-md-4 mb-0">
+                                        <label for="DistancefromDH" class="form-label">
+                                            <i class="bi bi-signpost-split fp-label-icon"></i> Distance from DH
+                                        </label>
+                                        <input name="DistancefromDH" id="DistancefromDH" type="number" class="form-control" placeholder="Distance (in km)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div><!-- /.modal-body -->
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-save" id="modalOkBtn">SAVE</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- FACILITY HR STATUS MODAL -->
+            <div class="modal fade" id="hrStatusModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hrModalTitle">Add HR</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        @* <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label>Name</label>
+                                    <input name="Name" type="text" id="Name" class="form-control" required />
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Mobile</label>
+                                    <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Designation</label>
+                                    <select name="DesignationId" id="DesignationId" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.designation)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Gender</label>
+                                    <select name="GenderId" id="GenderId" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.gender)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Trained Antara Govt</label>
+                                    <select name="TrainedAntaraGovt" id="TrainedAntaraGovt" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.yesNo)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Trained Antara IDF</label>
+                                    <select name="TrainedAntaraIDF" id="TrainedAntaraIDF" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.yesNo)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Attended VCAT</label>
+                                    <select name="AttendentVCAT" id="AttendentVCAT" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.yesNo)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Trained In IUCD</label>
+                                    <select name="TrainedInIUCD" id="TrainedInIUCD" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.yesNo)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label>Trained In FPLMIS</label>
+                                    <select name="TrainedInFPLMIS" id="TrainedInFPLMIS" class="form-select">
+                                        <option value="">-- Select --</option>
+                                        @foreach (var s in ViewBag.yesNo)
+                                        {
+                                            <option value="@s.Value">@s.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div> *@
+                        <div class="modal-body">
+                            <form>
+                                <div class="section-wrapper">
+
+                                    <!-- Basic Information -->
+                                    <div class="section-card">
+                                        <div class="section-header">
+                                            <div class="section-icon"><i class="bi bi-person-badge"></i></div>
+                                            <div>
+                                                <div class="section-title">Basic Information</div>
+                                                <div class="section-subtitle">Key HR profile details</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-grid">
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
+                                                <input name="Name" type="text" id="Name" class="form-control" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
+                                                <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
+                                                <select name="DesignationId" id="DesignationId" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.designation)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-gender-ambiguous label-icon"></i><span>Gender</span></label>
+                                                <select name="GenderId" id="GenderId" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.gender)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Training Details -->
+                                    <div class="section-card">
+                                        <div class="section-header">
+                                            <div class="section-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                                            <div>
+                                                <div class="section-title">Training & Orientation</div>
+                                                <div class="section-subtitle">Antara, VCAT & FP trainings</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-grid form-grid-2">
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-buildings-fill label-icon"></i><span>Trained Antara Govt</span></label>
+                                                <select name="TrainedAntaraGovt" id="TrainedAntaraGovt" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-building-check label-icon"></i><span>Trained Antara IDF</span></label>
+                                                <select name="TrainedAntaraIDF" id="TrainedAntaraIDF" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-clipboard-pulse label-icon"></i><span>Trained In FPLMIS</span></label>
+                                                 <select name="TrainedInFPLMIS" id="TrainedInFPLMIS" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                 </select>
+                                            </div>
+                                           
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-capsule-pill label-icon"></i><span>Trained In IUCD</span></label>
+                                                <select name="TrainedInIUCD" id="TrainedInIUCD" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-clipboard-check label-icon"></i><span>Attended VCAT</span></label>
+                                                <select name="AttendentVCAT" id="AttendentVCAT" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-back" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-save" id="btnSaveHr">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -122,104 +870,323 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-      
-        $('#stateDropdown').change(function () {
-            let stateId = $(this).val();
-            $('#districtDropdown').html('<option value="">Select District</option>');
-            $('#blockDropdown').html('<option value="">Select Block</option>');
-            $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
 
-            if (!stateId) return;
+            $('#stateDropdown').change(function () {
+                let stateId = $(this).val();
+                $('#districtDropdown').html('<option value="">Select District</option>');
+                $('#blockDropdown').html('<option value="">Select Block</option>');
+                $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
 
-            $.getJSON('/Facility/GetDistricts', { stateId }, function (data) {
-                $.each(data, function (i, d) {
-                    $('#districtDropdown').append(`<option value="${d.id}">${d.name}</option>`);
-                });
-            });
-        });
+                if (!stateId) return;
 
-     
-        $('#districtDropdown').change(function () {
-            let districtId = $(this).val();
-            $('#blockDropdown').html('<option value="">Select Block</option>');
-            $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
-
-            if (!districtId) return;
-
-            $.getJSON('/Facility/GetBlocks', { districtId }, function (data) {
-                $.each(data, function (i, b) {
-                    $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
-                });
-            });
-        });
-
-      
-        $('#blockDropdown').change(function () {
-            let blockId = $(this).val();
-            $('#facilityList').html('');
-
-            if (!blockId) return;
-
-            $.getJSON('/Facility/GetFacilities', { blockId }, function (data) {
-                let html = '';
-                if (!data || data.length === 0) {
-                    html = `<tr><td colspan="7" class="text-center">No facilities found</td></tr>`;
-                } else {
-                    $.each(data, function (i, f) {
-                        html += `<tr>
-                            <td>${i + 1}</td>
-                            <td>${f.facilityName}</td>
-                            <td>${f.facilityType}</td>
-                            <td>${f.ninNumber ?? ''}</td>
-                            <td>${f.isActive ? 'Yes' : 'No'}</td>
-                            <td>${f.isIntervention ? 'Yes' : 'No'}</td>
-
-                            <td class="text-end um-action">
-                            <a href="/Facility/Edit/${f.facilityId}" class="btn btn-sm btn-outline-primary" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFacility(${f.facilityId})" title="Delete">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-
-                        </tr>`;
+                $.getJSON('/Facility/GetDistricts', { stateId }, function (data) {
+                    $.each(data, function (i, d) {
+                        $('#districtDropdown').append(`<option value="${d.id}">${d.name}</option>`);
                     });
-                }
-                $('#facilityList').html(html);
+                });
             });
+
+
+            $('#districtDropdown').change(function () {
+                let districtId = $(this).val();
+                $('#blockDropdown').html('<option value="">Select Block</option>');
+                $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
+
+                if (!districtId) return;
+
+                $.getJSON('/Facility/GetBlocks', { districtId }, function (data) {
+                    $.each(data, function (i, b) {
+                        $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
+                    });
+                });
+            });
+
+
+            $('#blockDropdown').change(function () {
+                let blockId = $(this).val();
+                $('#facilityList').html('');
+
+                if (!blockId) return;
+
+                $.getJSON('/Facility/GetFacilities', { blockId }, function (data) {
+                    let html = '';
+                    if (!data || data.length === 0) {
+                        html = `<tr><td colspan="7" class="text-center">No facilities found</td></tr>`;
+                    } else {
+                        $.each(data, function (i, f) {
+                            html += `<tr>
+                                <td>${i + 1}</td>
+                                <td>${f.facilityName}</td>
+                                <td>${f.facilityType}</td>
+                                <td>${f.ninNumber ?? ''}</td>
+                                <td>
+
+
+                             <button class="btn btn-sm btn-outline-primary addfacility"
+                                    data-facility-id="${f.facilityId}"
+                                    data-profile-id="${f.profileId ?? 0}">
+                                <i class="bi bi-plus-circle"></i>
+                            </button>
+                            </td>
+                                <td>
+                            <button class="btn btn-sm btn-outline-primary addhrstatus"
+                                    data-facility-id="${f.facilityId}"
+                                    data-hr-id="${f.hrId ?? 0}">
+                                <i class="bi bi-person-plus"></i>
+                            </button>
+
+
+                                </td>
+
+                                <td class="text-end um-action">
+                                <a href="/Facility/Edit/${f.facilityId}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFacility(${f.facilityId})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+
+                            </tr>`;
+                        });
+                    }
+                    $('#facilityList').html(html);
+                });
+            });
+
         });
 
-    });
+         // ---------------- OPEN MODAL ----------------
 
+        let selectedFacilityId = 0;
+        let selectedProfileId = 0;
+        let selectedHrId = 0;
 
-    function deleteFacility(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This facility will be deleted',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/Facility/DeleteConfirmed', 
-                    type: 'POST',
-                    data: {
-                        id: id,
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function () {
-                        Swal.fire('Deleted!', 'Facility deleted.', 'success');
-                        $('#blockDropdown').change();
-                    },
-                    error: function () {
-                        Swal.fire('Error!', 'Could not delete facility.', 'error');
-                    }
-                });
+        $(document).on("click", ".addfacility", function () {
+
+            selectedFacilityId = $(this).data("facility-id");
+            selectedProfileId = $(this).data("profile-id");
+
+            if (selectedProfileId && selectedProfileId > 0) {
+
+                // EDIT MODE
+                $.getJSON('/Facility/GetFacilityProfile',
+                    { profileId: selectedProfileId },
+                    function (data) {
+
+                        $("#PopulationCoveredbyPHC").val(data.populationCoveredbyPHC);
+                        $("#NumberofHSC").val(data.numberofHSC);
+                        $("#PopulationCoveredPHC_HWC").val(data.populationCoveredPHC_HWC);
+                        $("#PopulationCoveredbyHWC").val(data.populationCoveredbyHWC);
+                        $("#AverageOPDperDay").val(data.averageOPDperDay);
+                        $("#NearestFacilityReferral").val(data.nearestFacilityReferral);
+                        $("#DistancefromPHC").val(data.distancefromPHC);
+                        $("#IsDeliveryPoint").val(data.isDeliveryPoint);
+                        $("#AvgdeliveryperMonth").val(data.avgdeliveryperMonth);
+                        $("#DistancefromDH").val(data.distancefromDH);
+                        $("#IsSeparateSpaceforFp").val(data.isSeparateSpaceforFp);
+
+                        $("#facilityprofileModal").modal("show");
+                    });
+            }
+            else {
+                // ADD MODE
+                clearModal();
+                $("#facilityprofileModal").modal("show");
             }
         });
-    }
+
+            function clearModal() {
+            $("#facilityprofileModal").find("input, select").val('');
+            selectedProfileId = 0;
+        }
+
+
+
+        $(document).on("click", ".addhrstatus", function () {
+
+            selectedFacilityId = $(this).data("facility-id");
+            selectedHrId = $(this).data("hr-id");
+
+            if (selectedHrId && selectedHrId > 0) {
+
+                // EDIT MODE
+                $.getJSON('/Facility/GetHrStatus',
+                    { hrId: selectedHrId },
+                    function (data) {
+
+                        $("#HrId").val(data.hrId);
+                        $("#FacilityId").val(data.facilityId);
+                        $("#Name").val(data.name);
+                        $("#Mobile").val(data.mobile);
+                        $("#DesignationId").val(data.designationId);
+                        $("#GenderId").val(data.genderId);
+
+                        $("#TrainedAntaraGovt").val(data.trainedAntaraGovt);
+                        $("#TrainedAntaraIDF").val(data.trainedAntaraIDF);
+                        $("#AttendentVCAT").val(data.attendentVCAT);
+                        $("#TrainedInIUCD").val(data.trainedInIUCD);
+                        $("#TrainedInFPLMIS").val(data.trainedInFPLMIS);
+
+                        $("#hrStatusModal").modal("show");
+                    });
+            }
+            else {
+                // ADD MODE
+                clearhrModal();
+                $("#hrStatusModal").modal("show");
+            }
+        });
+
+        function clearhrModal() {
+            $("#hrStatusModal").find("input, select").val('');
+            selectedHrId = 0;
+        }
+
+    $(document).on("click", ".addhrstatus", function () {
+
+        let facilityId = $(this).data("facility-id");
+        let hrId = $(this).data("hr-id");
+
+        //clearhrModal();
+
+        $("#FacilityId").val(facilityId);
+
+        if (hrId && hrId > 0) {
+            // EDIT MODE
+            $("#hrModalTitle").text("Edit HR");
+        }
+        else {
+            // ADD MODE
+            $("#hrModalTitle").text("Add HR");
+            $("#HrId").val(0);
+        }
+
+        $("#hrStatusModal").modal("show");
+    });
+
+                $(document).on("click", ".addfacility", function () {
+
+                let facilityId = $(this).data("facility-id");
+                let ptofileId = $(this).data("profile-id");
+
+                $("#FacilityId").val(facilityId);
+
+                if (ptofileId && ptofileId > 0) {
+                    // EDIT MODE
+                    $("#profileModalTitle").text("Edit Information");
+                }
+                else {
+                   // ADD MODE
+                   $("#profileModalTitle").text("Add Information");
+                   $("#profileId").val(0);
+                }
+
+                    $("#facilityprofileModal").modal("show");
+            });
+
+
+        //      $(document).ready(function () {
+        //     // ... your existing dropdown change code ...
+
+        //     // Event delegation for dynamically added buttons
+
+        // $(document).on("click", ".addfacility", function () {
+        //     selectedFacilityId = $(this).data("facility-id");
+        //     let modal = new bootstrap.Modal(document.getElementById("facilityprofileModal"));
+        //     modal.show();
+        // });
+        // });
+
+        function deleteFacility(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This facility will be deleted',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Facility/DeleteConfirmed',
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function () {
+                            Swal.fire('Deleted!', 'Facility deleted.', 'success');
+                            $('#blockDropdown').change();
+                        },
+                        error: function () {
+                            Swal.fire('Error!', 'Could not delete facility.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        $(document).on("click", "#modalOkBtn", function () {
+
+                let model = {
+        ProfileId: selectedProfileId || null,
+        FacilityId: selectedFacilityId,
+        PopulationCoveredbyPHC: parseInt($("#PopulationCoveredbyPHC").val()) || 0,
+        NumberofHSC: parseInt($("#NumberofHSC").val()) || 0,
+        PopulationCoveredPHC_HWC: parseInt($("#PopulationCoveredPHC_HWC").val()) || null,
+        PopulationCoveredbyHWC: parseInt($("#PopulationCoveredbyHWC").val()) || null,
+        AverageOPDperDay: parseInt($("#AverageOPDperDay").val()) || null,
+        NearestFacilityReferral: $("#NearestFacilityReferral").val() || "",
+        DistancefromPHC: parseFloat($("#DistancefromPHC").val()) || null,
+        IsDeliveryPoint:  parseInt($("#IsDeliveryPoint").val()) || null,
+        AvgdeliveryperMonth: parseInt($("#AvgdeliveryperMonth").val()) || null,
+        DistancefromDH: parseFloat($("#DistancefromDH").val()) || null,
+        IsSeparateSpaceforFp:parseInt($("#IsSeparateSpaceforFp").val()) || null
+    };
+
+            $.ajax({
+                url: '/Facility/SaveFacilityProfile',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(model),
+                success: function () {
+                    Swal.fire('Success', 'Saved successfully!', 'success');
+                    $("#facilityprofileModal").modal('hide');
+                    $('#blockDropdown').change();
+                }
+            });
+        });
+
+
+        $(document).on("click", "#btnSaveHr", function () {
+
+            let modelhr = {
+                HrId: selectedHrId || null,
+                FacilityId: selectedFacilityId,
+                Name: $("#Name").val(),
+                Mobile: $("#Mobile").val(),
+                DesignationId: $("#DesignationId").val(),
+                GenderId: $("#GenderId").val(),
+                TrainedAntaraGovt: $("#TrainedAntaraGovt").val(),
+                TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
+                AttendentVCAT: $("#AttendentVCAT").val(),
+                TrainedInIUCD: $("#TrainedInIUCD").val(),
+                TrainedInFPLMIS: $("#TrainedInFPLMIS").val()
+            };
+
+            $.ajax({
+                url: '/Facility/SaveHrStatus',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(modelhr),
+                success: function () {
+                    Swal.fire('Success', 'Saved successfully!', 'success');
+                    $("#hrStatusModal").modal('hide');
+                    $('#blockDropdown').change();
+                }
+            });
+        });            
+
 </script>

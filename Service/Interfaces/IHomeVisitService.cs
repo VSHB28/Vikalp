@@ -6,14 +6,16 @@ namespace Vikalp.Service.Interfaces
 {
     public interface IHomeVisitService
     {
-        Task<List<HomeVisitDTO>> GetAllAsync();
+        Task<List<HomeVisitDTO>> GetAllAsync(int userId);
         Task<HomeVisitDTO?> GetByIdAsync(Guid linelistguid, int userId);
-        Task<bool> InsertAsync(HomeVisitDTO model);
-        Task<bool> UpdateAsync(HomeVisitDTO model);
         Task<bool> DeleteAsync(int visitId);
 
         Task<List<dynamic>> GetSubCentersAsync();
-    }
+        Task<List<HomevisitFollowUpDto>> GetFollowUpHistoryAsync(Guid linelistguid, int userId);
+        Task<bool> InsertFollowUpAsync(HomevisitFollowUpDto model);
+        Task<bool> SaveHomeVisitAsync(HomeVisitDTO model, int userId);
+        Task<bool> UpdateHomeVisitAsync(HomeVisitDTO model, int userId);
 
+    }
 
 }

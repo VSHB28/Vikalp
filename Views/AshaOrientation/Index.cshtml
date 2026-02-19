@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<Vikalp.Models.DTO.AshaOrientationDto>
-
 @{
     ViewData["Title"] = "ASHA Orientation Records";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -33,8 +32,8 @@
 
     .um-table thead th {
         /* background: linear-gradient(90deg,#0d6efd, #6610f2);
-        color: #fff;
-        border: 0; */
+            color: #fff;
+            border: 0; */
         color: #fff;
         border: 1px dotted;
         background: var(--ipas-sidebar);
@@ -75,18 +74,18 @@
         position: relative;
         z-index: 1;
     }
-    .btn-add{
+
+    .btn-add {
         background-color: #3F0C11;
-        color:white;
+        color: white;
     }
 
-    .umcard-header{
+    .umcard-header {
         background: linear-gradient(135deg, #F15A29, #b10315b5);
-        color:#ffffff;
-        padding:10px 20px;
+        color: #ffffff;
+        padding: 10px 20px;
     }
 
-    
 </style>
 
 <div class="container-fluid" id="orientation-record">
@@ -114,6 +113,53 @@
                 </div>
             </div>
             <hr />
+            <div class="row mb-3 d-none">
+                <div class="col-md-2">
+                    <label>State</label>
+                    <select name="StateId" class="form-control" id="StateId">
+                        <option value="">-- Select State --</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id" @(ViewBag.SelectedStateId == s.Id ? "selected" : "")>@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label>District</label>
+                    <select name="DistrictId" class="form-control" id="DistrictId">
+                        <option value="">-- Select District --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label>Block</label>
+                    <select name="BlockId" class="form-control" id="BlockId">
+                        <option value="">-- Select Block --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label>Facility</label>
+                    <select name="FacilityId" class="form-control" id="FacilityId">
+                        <option value="">-- Select Facility --</option>
+                    </select>
+                </div>
+                @{
+                    var today = DateTime.Today;
+                    var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
+                    var maxDate = today.ToString("yyyy-MM-dd");
+                }
+                <div class="col-md-2">
+                    <label>Orientation Date</label>
+                    <input name="DateofOrientation" type="date" class="form-control" max="@maxDate" />
+                    <span asp-validation-for="DateofOrientation" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-add" id="searchBtn">Search</button>
+                </div>
+            </div>
 
             <!-- ===== TABLE ===== -->
             <div class="table-responsive">
@@ -136,7 +182,7 @@
                         {
                             <tr>
                                 <td>@i</td>
-                            <td>@item.DateofOrientation.ToString("dd-MM-yyyy")</td>
+                                <td>@item.DateofOrientation.ToString("dd-MM-yyyy")</td>
                                 <td>@item.FacilityName</td>
                                 <td>@item.InterventionCount</td>
                                 <td>@item.NonInterventionCount</td>
@@ -154,7 +200,7 @@
                                           asp-route-id="'@item.VenueGuid'"
                                           method="post"
                                           class="d-inline"
-                                      onclick="deleteOrientation(@item.VenueId)">
+                                          onclick="deleteOrientation(@item.VenueId)">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                             <i class="bi bi-trash"></i>
@@ -167,8 +213,42 @@
                     </tbody>
                 </table>
             </div>
+            <nav class="d-none">
+                <ul class="pagination justify-content-end">
 
-            </div>
+                    @if (ViewBag.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page=@(ViewBag.CurrentPage - 1)&pageSize=@ViewBag.PageSize">
+                                Previous
+                            </a>
+                        </li>
+                    }
+
+                    @for (int p = 1; p <= ViewBag.TotalPages; p++)
+                    {
+                        <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link"
+                               href="?page=@p&pageSize=@ViewBag.PageSize">
+                                @p
+                            </a>
+                        </li>
+                    }
+
+                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page=@(ViewBag.CurrentPage + 1)&pageSize=@ViewBag.PageSize">
+                                Next
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+            </nav>
+
         </div>
     </div>
 </div>
@@ -212,6 +292,65 @@
             .catch(err => {
                 console.error(err);
                 alert("Error occurred while deleting Orientation");
+            });
+        }
+
+        // ---------------- CASCADING DROPDOWNS ----------------
+
+        document.getElementById("StateId").addEventListener("change", function () {
+            let stateId = this.value;
+            resetDropdown("DistrictId", "-- Select District --");
+            resetDropdown("BlockId", "-- Select Block --");
+            resetDropdown("FacilityId", "-- Select Facility --");
+
+            if (!stateId) return;
+
+            fetch(`/AshaOrientation/GetDistricts?stateId=${stateId}`)
+                .then(res => res.json())
+                .then(data => {
+                    fillDropdown("DistrictId", data, "id", "name");
+                });
+        });
+
+        document.getElementById("DistrictId").addEventListener("change", function () {
+            let districtId = this.value;
+            resetDropdown("BlockId", "-- Select Block --");
+            resetDropdown("FacilityId", "-- Select Facility --");
+
+            if (!districtId) return;
+
+            fetch(`/AshaOrientation/GetBlocks?districtId=${districtId}`)
+                .then(res => res.json())
+                .then(data => {
+                    fillDropdown("BlockId", data, "id", "name");
+                });
+        });
+
+        document.getElementById("BlockId").addEventListener("change", function () {
+            let blockId = this.value;
+            resetDropdown("FacilityId", "-- Select Facility --");
+
+            if (!blockId) return;
+
+            fetch(`/AshaOrientation/GetFacilities?blockId=${blockId}`)
+                .then(res => res.json())
+                .then(data => {
+                    fillDropdown("FacilityId", data, "id", "name");
+                });
+        });
+
+         function resetDropdown(id, placeholder) {
+            let ddl = document.getElementById(id);
+            ddl.innerHTML = `<option value="">${placeholder}</option>`;
+        }
+
+        function fillDropdown(id, data, valueField, textField) {
+            let ddl = document.getElementById(id);
+            data.forEach(x => {
+                let opt = document.createElement("option");
+                opt.value = x[valueField];
+                opt.text = x[textField];
+                ddl.appendChild(opt);
             });
         }
 

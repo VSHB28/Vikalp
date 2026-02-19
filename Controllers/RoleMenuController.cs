@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Security.Claims;
 using Vikalp.DTO;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
@@ -10,90 +11,61 @@ using Vikalp.Service.Interfaces;
 public class RoleMenuController : Controller
 {
     private readonly IRoleMenuService _roleMenuService;
-    private readonly IDropdownService _dropdownService;  
+    private readonly IDropdownService _dropdownService;
 
     public RoleMenuController(IRoleMenuService roleMenuService, IDropdownService dropdownService)
     {
         _roleMenuService = roleMenuService;
-        _dropdownService = dropdownService;  
+        _dropdownService = dropdownService;
     }
 
     public IActionResult Index()
     {
-       
-        var roleList = _dropdownService.GetRoles();
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
 
-        ViewBag.RoleList = new SelectList(roleList, "Id", "Name");
-        ViewBag.MenuList = new SelectList(new List<SelectListItem>());
+        if (claim == null)
+            return RedirectToAction("Login", "Account");
+
+        int userId = int.Parse(claim.Value);
+
+        var roleList = _roleMenuService.GetAll(userId);
+
+        return View(roleList);
+    }
+
+    public IActionResult Index1()
+    {
+        
 
         return View();
     }
 
-
-    [HttpGet]
-    public IActionResult GetMenusByRole(int roleId)
+    public JsonResult GetMenusByRole(int roleId)
     {
-        var menus = _roleMenuService.GetParentMenusByRole(roleId);
-        return Json(menus);
-    }
-
-    public IActionResult GetChildMenus(int parentMenuId, int roleId)
-    {
-        var menus = _roleMenuService.GetChildMenus(parentMenuId, roleId);
-        return Json(menus);
-    }
-
-
-    [HttpGet]
-    public IActionResult GetAllMenus()
-    {
-        var menus = _roleMenuService.GetAllParentMenus();
-        return Json(menus);
-    }
-
-    [HttpGet]
-    public IActionResult GetAllChildMenus(int parentMenuId)
-    {
-        var menus = _roleMenuService.GetAllChildMenus(parentMenuId);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var menus = _roleMenuService.GetParentMenusByRole(roleId, userId);
         return Json(menus);
     }
 
     [HttpPost]
-    public IActionResult SaveRoleMenuMapping( RoleMenuSaveDTO model)
+    public IActionResult SaveRoleMenuMapping([FromBody] RoleMenuSaveDTO model)
     {
-        if (model == null || model.RoleId == 0)
-            return Json(new { success = false });
+        if (model == null)
+            return Json(new { success = false, message = "Model is null" });
 
-        List<int> menuIds = new();
+        var result = _roleMenuService.SaveRoleMenuMapping(model);
 
-        foreach (var item in model.Mappings)
-        {
-            menuIds.Add(item.ParentMenuId);
-
-            if (item.ChildMenuIds != null)
-                menuIds.AddRange(item.ChildMenuIds);
-        }
-
-        string csv = string.Join(",", menuIds.Distinct());
-
-        using (var con = new SqlConnection(
-            HttpContext.RequestServices
-            .GetRequiredService<IConfiguration>()
-            .GetConnectionString("DefaultConnection")))
-        {
-            var command = con.CreateCommand();
-            command.CommandText = "USP_RoleMenu_Master";
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@Action", "SAVE_MAPPING");
-            command.Parameters.AddWithValue("@RoleId", model.RoleId);
-            command.Parameters.AddWithValue("@MenuIds", csv);
-
-            con.Open();
-            command.ExecuteNonQuery();
-        }
-
-        return Json(new { success = true });
+        return Json(new { success = result });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UnassignMenu([FromBody] UnassignRoleMenuDTO model)
+    {
+        var result = await _roleMenuService
+            .UnassignMenuAsync(model.RoleId, model.MenuId);
+
+        return Json(new { success = result });
+    }
 
 }

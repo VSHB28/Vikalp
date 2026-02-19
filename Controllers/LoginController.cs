@@ -30,15 +30,16 @@ namespace Vikalp.Controllers
             return View();
         }
 
-        // Web login (cookie)
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginRequest model)
         {
-            if (model == null)
-                return View();
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            // Authenticate by mobile number now
             var result = await _authService.AuthenticateAsync(model.MobileNumber ?? string.Empty, model.Password ?? string.Empty);
             if (!result.Success)
             {
@@ -47,24 +48,21 @@ namespace Vikalp.Controllers
             }
 
             var claims = new List<Claim>
-{
-    // Standard identity
-    new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
-    new Claim(ClaimTypes.Name, result.FullName),
-    new Claim(ClaimTypes.Role, result.RoleName),
-
-    // Custom claims
-    new Claim("Username", result.Username),
-    new Claim("RoleId", result.RoleId.ToString()),
-    new Claim("Avatar", result.FullName.Substring(0, 1).ToUpper())
-};
-
+    {
+        new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
+        new Claim(ClaimTypes.Name, result.FullName),
+        new Claim(ClaimTypes.Role, result.RoleName),
+        new Claim("Username", result.Username),
+        new Claim("RoleId", result.RoleId.ToString()),
+        new Claim("Avatar", result.FullName.Substring(0, 1).ToUpper())
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+            //TempData["SuccessMessage"] = "Login successful! Welcome, " + result.FullName;
             return RedirectToAction("Index", "Home");
         }
 

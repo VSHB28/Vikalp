@@ -1,8 +1,9 @@
-﻿using System.Data;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using Vikalp.Models.DTO;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Data.SqlTypes;
-using Dapper;
+using Vikalp.Models.DTO;
 
 
 
@@ -17,69 +18,102 @@ public class RoleMenuService : IRoleMenuService
 
     private SqlConnection GetConnection()
     {
-        return new SqlConnection(
-            _configuration.GetConnectionString("DefaultConnection"));
+        return new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
     }
 
 
-    public List<RoleMenuDTO> GetAll()
+    public List<RoleMenuDTO> GetAll(int userId)
     {
         using (var connection = GetConnection())
         {
             return connection.Query<RoleMenuDTO>(
-                "USP_RoleMenu_Master",
-                new { Action = "SELECT" },
+                "sp_GetRolesMenuList",
+                new { UserId = userId },
                 commandType: CommandType.StoredProcedure
             ).ToList();
         }
     }
 
-    public List<MenuDropdownDTO> GetParentMenusByRole(int roleId)
+    public List<MenuDropdownDTO> GetParentMenusByRole(int roleId, int userId)
     {
         using var con = GetConnection();
         return con.Query<MenuDropdownDTO>(
-            "USP_RoleMenu_Master",
-            new { Action = "GET_PARENT_MENUS", RoleId = roleId },
+            "sp_GetRolesMenuListbyrolid",
+            new { UserId = userId, RoleId = roleId },
             commandType: CommandType.StoredProcedure
         ).ToList();
     }
 
-    public List<MenuDropdownDTO> GetChildMenus(int parentMenuId, int roleId)
+    public bool SaveRoleMenuMapping(RoleMenuSaveDTO model)
     {
         using var con = GetConnection();
-        return con.Query<MenuDropdownDTO>(
-            "USP_RoleMenu_Master",
-            new
+        con.Open();
+
+        using var transaction = con.BeginTransaction();
+
+        try
+        {
+            // Delete old mappings
+            con.Execute(
+                "sp_SaveRoleMenuMapping",
+                new { Action = "DELETE_BY_ROLE", RoleId = model.RoleId },
+                commandType: CommandType.StoredProcedure,
+                transaction: transaction
+            );
+
+            // Insert new mappings
+            if (model.MenuIds != null && model.MenuIds.Any())
             {
-                Action = "GET_CHILD_MENUS",
-                ParentMenuId = parentMenuId,
-                RoleId = roleId
-            },
-            commandType: CommandType.StoredProcedure
-        ).ToList();
+                foreach (var menuId in model.MenuIds)
+                {
+                    con.Execute(
+                        "sp_SaveRoleMenuMapping",
+                        new
+                        {
+                            Action = "INSERT",
+                            RoleId = model.RoleId,
+                            MenuId = menuId
+                        },
+                        commandType: CommandType.StoredProcedure,
+                        transaction: transaction
+                    );
+                }
+            }
+
+            transaction.Commit();
+            return true;
+        }
+        catch
+        {
+            transaction.Rollback();
+            return false;
+        }
     }
 
-    public List<MenuDropdownDTO> GetAllParentMenus()
+    public async Task<bool> UnassignMenuAsync(int roleId, int menuId)
     {
-        using var con = GetConnection();
-        return con.Query<MenuDropdownDTO>(
-            @"SELECT MenuId, MenuName 
-          FROM Menus 
-          WHERE ParentMenuId IS NULL 
-          ORDER BY SortOrder"
-        ).ToList();
-    }
+        try
+        {
+            using var con = GetConnection();
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_UnassignRoleMenu", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-    public List<MenuDropdownDTO> GetAllChildMenus(int parentMenuId)
-    {
-        using var con = GetConnection();
-        return con.Query<MenuDropdownDTO>(
-            @"SELECT MenuId, MenuName 
-          FROM Menus 
-          WHERE ParentMenuId = @ParentMenuId 
-          ORDER BY SortOrder",
-            new { ParentMenuId = parentMenuId }
-        ).ToList();
-    }
+                    cmd.Parameters.AddWithValue("@RoleId", roleId);
+                    cmd.Parameters.AddWithValue("@MenuId", menuId);
 
+                    await con.OpenAsync();
+
+                    var result = await cmd.ExecuteScalarAsync();
+
+                    return Convert.ToInt32(result) == 1;
+                }
+            }
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

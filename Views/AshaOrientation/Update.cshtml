@@ -256,7 +256,7 @@
             <label>Topic Covered</label>
 
             <div class="dropdown topics">
-                <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start"
+                <button class="form-control dropdown-toggle w-100 text-start"
                         type="button"
                         id="topicsDropdownBtn"
                         data-bs-toggle="dropdown"
@@ -538,6 +538,27 @@
                     });
 
                     function addRowWithData(ashaId, facilityId, Venue, ashaName, mobile) {
+
+                            for (let row of document.querySelectorAll("#ashaRows tr")) {
+
+                  const existingId = row.querySelector(".ashaIdHidden")?.value;
+                  const existingMobile = row.querySelector(".mobileInput")?.value;
+                      const existingname = row.querySelector(".ashaNameInput")?.value;
+
+                  // If adding from modal (ID available)
+                  if (ashaId && existingId && existingId == ashaId) {
+                          alert(existingname + " is already added.");
+                      return;
+                  }
+
+                  // If adding manually (check by mobile)
+                        if (existingname?.toLowerCase() === ashaName.toLowerCase() &&
+                      existingMobile === mobile) {
+                          alert(existingname + " is already added.");
+                      return;
+                  }
+              }
+
                         let template = document.getElementById("ashaRowTemplate").innerHTML;
                         template = template.replaceAll("__index__", rowIndex);
 

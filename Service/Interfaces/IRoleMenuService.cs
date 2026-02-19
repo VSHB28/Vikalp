@@ -3,11 +3,8 @@ using Vikalp.Models.DTO;
 
 public interface IRoleMenuService
 {
-    List<RoleMenuDTO> GetAll();
-    List<MenuDropdownDTO> GetParentMenusByRole(int roleId);
-    List<MenuDropdownDTO> GetChildMenus(int parentMenuId, int roleId);
-    List<MenuDropdownDTO> GetAllParentMenus();
-    List<MenuDropdownDTO> GetAllChildMenus(int parentMenuId);
-
-
+    List<RoleMenuDTO> GetAll(int userId);
+    List<MenuDropdownDTO> GetParentMenusByRole(int roleId, int userId);
+    bool SaveRoleMenuMapping(RoleMenuSaveDTO model);
+    Task<bool> UnassignMenuAsync(int roleId, int menuId);
 }

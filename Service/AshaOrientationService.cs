@@ -395,18 +395,25 @@ namespace Vikalp.Service
 
                 foreach (var a in model.Attendees)
                 {
+                    var orientationGuid = Guid.NewGuid().ToString();
                     var attendeeParam = new SqlParameter[]
-                    {
-                    new SqlParameter("@VenueGuid",  model.VenueGuid),
+                        {
+                    new SqlParameter("@VenueGuid", model.VenueGuid),
+                    new SqlParameter("@OrientationGuid", orientationGuid),
+                    new SqlParameter("@IsIntervention", model.IsIntervention),
                     new SqlParameter("@AshaId", (object?)a.AshaId ?? DBNull.Value),
-                    new SqlParameter("@AshaName", a.AshaName),
+                    new SqlParameter("@AshaName", a.AshaName ?? ""),
                     new SqlParameter("@AshaMobile", (object?)a.AshaMobile ?? DBNull.Value),
+                    new SqlParameter("@FacilityId", (object?)a.VenueId ?? DBNull.Value),
+                    new SqlParameter("@FacilityName", a.VenueName),
+                    new SqlParameter("@NIN", (object?)model.NIN ?? DBNull.Value),
                     new SqlParameter("@VCAT_PreTest", (object?)a.VCAT_PreTest ?? DBNull.Value),
                     new SqlParameter("@VCAT_PostTest", (object?)a.VCAT_PostTest ?? DBNull.Value),
-                    new SqlParameter("@IsOrientation", a.IsOrientation)
-                    };
+                    new SqlParameter("@IsOrientation", a.IsOrientation),
+                    new SqlParameter("@CreatedBy", userId)
+                        };
 
-                    SqlUtils.ExecuteSP(Conn(), "dbo.sp_InsertOrientationAttendee", attendeeParam);
+                    SqlUtils.ExecuteSP(Conn(), "sp_InsertAshaOrientation", attendeeParam);
                 }
 
                 return true;

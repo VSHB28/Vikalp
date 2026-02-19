@@ -20,11 +20,28 @@ namespace Vikalp.Controllers
         }
 
         // ===================== LIST =====================
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        //public async Task<IActionResult> Index()
+        //{
+        //    var activities = await _service.GetAllAsync();
+        //    return View(activities);
+        //}
+
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var activities = await _service.GetAllAsync();
-            return View(activities);
+            int userId = 1; // from session
+
+            var result = await _service.GetPagedAsync(userId, page, pageSize);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = result.TotalCount;
+            ViewBag.TotalPages =
+                (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+            return View(result.Data);
         }
+
 
         // ===================== CREATE (GET) =====================
         [HttpGet]

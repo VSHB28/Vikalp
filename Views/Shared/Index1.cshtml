@@ -1,0 +1,603 @@
+﻿@model IEnumerable<Vikalp.Models.DTO.RoleDto>
+@{
+    ViewData["Title"] = "Roles";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #E8E4E0;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--ipas-light);
+    }
+
+    .page-shell {
+        width: 100%;
+        max-width: 1100px;
+        padding: 24px;
+    }
+
+    .card {
+        background: var(--ipas-white);
+        border-radius: 12px;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        padding: 20px 22px 18px;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .title-block {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .title-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(241,90,41,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 20px;
+    }
+
+    .card-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+    }
+
+    .card-subtitle {
+        font-size: 12px;
+        color: var(--ipas-text-muted);
+    }
+
+    .role-select-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #f0e4da;
+        padding-bottom: 12px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+    }
+
+    .select,
+    .search-input {
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        min-width: 220px;
+    }
+
+        .select:focus,
+        .search-input:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241,90,41,0.16);
+        }
+
+    .search-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .search-input {
+        min-width: 200px;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2.1fr 1.2fr;
+        gap: 18px;
+    }
+
+    .menu-tree-card,
+    .summary-card {
+        border-radius: 10px;
+        border: 1px solid #f0e4da;
+        background: #FFFBF7;
+        padding: 14px 14px 10px;
+    }
+
+    .section-heading {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+        margin: 0 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .section-heading i {
+            color: var(--ipas-primary);
+        }
+
+    .tree-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 12px;
+        color: var(--ipas-text-muted);
+    }
+
+    .toolbar-actions button {
+        border: none;
+        background: transparent;
+        color: var(--ipas-text-muted);
+        font-size: 11px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+        .toolbar-actions button:hover {
+            background: rgba(0,0,0,0.04);
+        }
+
+    .menu-tree {
+        max-height: 420px;
+        overflow: auto;
+        padding-right: 6px;
+        font-size: 13px;
+    }
+
+    .menu-node {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 4px;
+        border-radius: 6px;
+    }
+
+        .menu-node:hover {
+            background: rgba(241,90,41,0.05);
+        }
+
+    .node-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .node-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .children {
+        margin-left: 20px;
+        border-left: 1px dashed #f0e0d0;
+        padding-left: 10px;
+    }
+
+    .caret {
+        cursor: pointer;
+        font-size: 11px;
+        width: 14px;
+        text-align: center;
+        color: var(--ipas-text-muted);
+    }
+
+        .caret.empty {
+            visibility: hidden;
+        }
+
+    .badge-pill {
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: #fff2e8;
+        color: var(--ipas-primary);
+    }
+
+    .summary-list {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0;
+        font-size: 12px;
+    }
+
+        .summary-list li {
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+    .summary-label {
+        color: var(--ipas-text-muted);
+    }
+
+    .summary-value {
+        font-weight: 500;
+    }
+
+    .btn-row {
+        margin-top: 16px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 9px 20px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid transparent;
+        background: transparent;
+    }
+
+    .btn-secondary {
+        border-color: var(--border-soft);
+        color: var(--ipas-text-muted);
+    }
+
+    .btn-primary {
+        background: var(--ipas-primary);
+        border-color: var(--ipas-primary);
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background: #e04922;
+        }
+
+    @@media (max-width: 900px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .page-shell {
+            padding: 12px;
+        }
+
+        .role-select-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+
+
+<div class="page-shell">
+    <div class="card">
+        <div class="card-header">
+            <div class="title-block">
+                <div class="title-icon"><i class="bi bi-shield-lock"></i></div>
+                <div>
+                    <h2 class="card-title">Role Menu Assignment</h2>
+                    <div class="card-subtitle">Map project menus to roles with parent-child relationships.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="role-select-row">
+            <div class="form-group">
+                <label class="form-label">Select Role</label>
+                <select id="roleSelect" class="select">
+                    <option value="">Choose role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="StateCoordinator">State Coordinator</option>
+                    <option value="DistrictManager">District Manager</option>
+                    <option value="FacilityUser">Facility User</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="flex:1;">
+                <label class="form-label">Quick Search Menu</label>
+                <div class="search-wrapper">
+                    <i class="bi bi-search" style="color: var(--ipas-text-muted);"></i>
+                    <input type="text" id="menuSearch" class="search-input" placeholder="Search by menu name" />
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Menu tree -->
+            <div class="menu-tree-card">
+                <h3 class="section-heading"><i class="bi bi-diagram-3"></i> Menu Hierarchy</h3>
+                <div class="tree-toolbar">
+                    <span id="roleSummaryText">Choose a role to begin assignment.</span>
+                    <div class="toolbar-actions">
+                        <button type="button" id="btnExpandAll"><i class="bi bi-arrows-expand"></i> Expand</button>
+                        <button type="button" id="btnCollapseAll"><i class="bi bi-arrows-collapse"></i> Collapse</button>
+                        <button type="button" id="btnClearAll"><i class="bi bi-x-circle"></i> Clear</button>
+                    </div>
+                </div>
+                <div id="menuTree" class="menu-tree"></div>
+            </div>
+
+            <!-- Summary / JSON preview -->
+            <div class="summary-card">
+                <h3 class="section-heading"><i class="bi bi-info-circle"></i> Assignment Summary</h3>
+                <ul class="summary-list">
+                    <li><span class="summary-label">Selected role</span><span class="summary-value" id="summaryRole">-</span></li>
+                    <li><span class="summary-label">Menus assigned</span><span class="summary-value" id="summaryCount">0</span></li>
+                </ul>
+                <div style="margin-top:10px; font-size:11px; color:var(--ipas-text-muted);">
+                    This is a front-end view only. You can capture the JSON payload below and post it to your API to save in the <strong>Menus</strong> / role-mapping tables.
+                </div>
+                <pre id="jsonPreview" style="margin-top:10px; background:#1E293B; color:#E5E7EB; padding:8px; border-radius:6px; font-size:11px; max-height:260px; overflow:auto;">[]</pre>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btnReset">Reset</button>
+            <button type="button" class="btn btn-primary" id="btnSave">Save Assignment</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    // Sample menu data mirroring [Menus] table structure
+    // MenuId, MenuName, ParentMenuId, Url, SortOrder, IsActive, MenuIcon
+    const menus = [
+        { MenuId: 1, MenuName: 'Dashboard', ParentMenuId: null, Url: 'dashboardweb.html', SortOrder: 1, IsActive: true, MenuIcon: 'bi-grid-1x2-fill' },
+        { MenuId: 2, MenuName: 'Beneficiaries', ParentMenuId: null, Url: 'beneficiary-list.html', SortOrder: 2, IsActive: true, MenuIcon: 'bi-people-fill' },
+        { MenuId: 3, MenuName: 'Facilities', ParentMenuId: null, Url: '#', SortOrder: 3, IsActive: true, MenuIcon: 'bi-hospital-fill' },
+        { MenuId: 4, MenuName: 'Facility Information', ParentMenuId: 3, Url: 'facility-info.html', SortOrder: 1, IsActive: true, MenuIcon: 'bi-building' },
+        { MenuId: 5, MenuName: 'ASHA Management', ParentMenuId: 3, Url: 'asha-list.html', SortOrder: 2, IsActive: true, MenuIcon: 'bi-person-badge' },
+        { MenuId: 6, MenuName: 'Reports', ParentMenuId: null, Url: '#', SortOrder: 4, IsActive: true, MenuIcon: 'bi-file-bar-graph' },
+        { MenuId: 7, MenuName: 'Monthly Report', ParentMenuId: 6, Url: '#', SortOrder: 1, IsActive: true, MenuIcon: 'bi-calendar-event' },
+        { MenuId: 8, MenuName: 'User Management', ParentMenuId: null, Url: '#', SortOrder: 5, IsActive: true, MenuIcon: 'bi-people-gear' },
+        { MenuId: 9, MenuName: 'Roles', ParentMenuId: 8, Url: '#', SortOrder: 1, IsActive: true, MenuIcon: 'bi-shield-lock' },
+        { MenuId: 10, MenuName: 'Users', ParentMenuId: 8, Url: '#', SortOrder: 2, IsActive: true, MenuIcon: 'bi-person-lines-fill' }
+    ];
+
+    // Build tree structure
+    const menuByParent = menus.reduce((acc, m) => {
+        const key = m.ParentMenuId == null ? 'root' : String(m.ParentMenuId);
+        (acc[key] = acc[key] || []).push(m);
+        return acc;
+    }, {});
+
+    Object.keys(menuByParent).forEach(k => {
+        menuByParent[k].sort((a, b) => (a.SortOrder || 0) - (b.SortOrder || 0));
+    });
+
+    const assignedByRole = new Map(); // roleName -> Set of MenuId
+
+    const treeContainer = document.getElementById('menuTree');
+    const roleSelect = document.getElementById('roleSelect');
+    const menuSearch = document.getElementById('menuSearch');
+    const summaryRole = document.getElementById('summaryRole');
+    const summaryCount = document.getElementById('summaryCount');
+    const jsonPreview = document.getElementById('jsonPreview');
+    const roleSummaryText = document.getElementById('roleSummaryText');
+
+    function getCurrentSet() {
+        const role = roleSelect.value || '__NO_ROLE__';
+        if (!assignedByRole.has(role)) {
+            assignedByRole.set(role, new Set());
+        }
+        return assignedByRole.get(role);
+    }
+
+    function renderTree() {
+        treeContainer.innerHTML = '';
+        const rootNodes = menuByParent['root'] || [];
+        rootNodes.forEach(m => {
+            const node = createNode(m);
+            treeContainer.appendChild(node);
+        });
+    }
+
+    function createNode(menu) {
+        const hasChildren = (menuByParent[String(menu.MenuId)] || []).length > 0;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'menu-node';
+        wrapper.dataset.menuId = menu.MenuId;
+
+        const caret = document.createElement('span');
+        caret.className = 'caret' + (hasChildren ? '' : ' empty');
+        caret.textContent = hasChildren ? '▾' : '';
+        wrapper.appendChild(caret);
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'menu-check';
+        wrapper.appendChild(checkbox);
+
+        const label = document.createElement('div');
+        label.className = 'node-label';
+        const icon = document.createElement('i');
+        icon.className = `node-icon bi ${menu.MenuIcon || 'bi-square'}`;
+        label.appendChild(icon);
+        const text = document.createElement('span');
+        text.textContent = menu.MenuName;
+        label.appendChild(text);
+        wrapper.appendChild(label);
+
+        if (menu.Url && menu.Url !== '#') {
+            const badge = document.createElement('span');
+            badge.className = 'badge-pill';
+            badge.textContent = 'link';
+            wrapper.appendChild(badge);
+        }
+
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'children';
+        if (!hasChildren) childrenContainer.style.display = 'none';
+
+        const children = menuByParent[String(menu.MenuId)] || [];
+        children.forEach(child => {
+            const childNode = createNode(child);
+            childrenContainer.appendChild(childNode);
+        });
+
+        if (hasChildren) {
+            caret.addEventListener('click', () => {
+                const isHidden = childrenContainer.style.display === 'none';
+                childrenContainer.style.display = isHidden ? 'block' : 'none';
+                caret.textContent = isHidden ? '▾' : '▸';
+            });
+        }
+
+        // Checkbox behaviour
+        checkbox.addEventListener('change', () => {
+            const menuId = menu.MenuId;
+            const set = getCurrentSet();
+            if (checkbox.checked) {
+                // add this and all children
+                addWithChildren(menuId, set);
+            } else {
+                removeWithChildren(menuId, set);
+            }
+            syncChecksFromSet();
+            updateSummary();
+        });
+
+        wrapper.appendChild(childrenContainer);
+        return wrapper;
+    }
+
+    function addWithChildren(menuId, set) {
+        set.add(menuId);
+        const children = menuByParent[String(menuId)] || [];
+        children.forEach(c => addWithChildren(c.MenuId, set));
+    }
+
+    function removeWithChildren(menuId, set) {
+        set.delete(menuId);
+        const children = menuByParent[String(menuId)] || [];
+        children.forEach(c => removeWithChildren(c.MenuId, set));
+    }
+
+    function syncChecksFromSet() {
+        const set = getCurrentSet();
+        document.querySelectorAll('.menu-node').forEach(node => {
+            const id = Number(node.dataset.menuId);
+            const cb = node.querySelector('.menu-check');
+            cb.checked = set.has(id);
+        });
+    }
+
+    function updateSummary() {
+        const role = roleSelect.value || '-';
+        summaryRole.textContent = role;
+        const set = getCurrentSet();
+        const count = roleSelect.value ? set.size : 0;
+        summaryCount.textContent = count;
+
+        const payload = {
+            role: roleSelect.value || null,
+            menuIds: roleSelect.value ? Array.from(set).sort((a, b) => a - b) : []
+        };
+        jsonPreview.textContent = JSON.stringify(payload, null, 2);
+    }
+
+    roleSelect.addEventListener('change', () => {
+        roleSummaryText.textContent = roleSelect.value
+            ? `Assign menus for role: ${roleSelect.value}`
+            : 'Choose a role to begin assignment.';
+        syncChecksFromSet();
+        updateSummary();
+    });
+
+    // Search filter
+    menuSearch.addEventListener('input', () => {
+        const query = menuSearch.value.trim().toLowerCase();
+        document.querySelectorAll('.menu-node').forEach(node => {
+            const text = node.querySelector('.node-label span').textContent.toLowerCase();
+            const match = !query || text.includes(query);
+            node.style.opacity = match ? '1' : '0.35';
+        });
+    });
+
+    // Toolbar actions
+    function setExpandCollapse(expand) {
+        document.querySelectorAll('.children').forEach(c => {
+            c.style.display = expand ? 'block' : 'none';
+        });
+        document.querySelectorAll('.caret').forEach(c => {
+            if (!c.classList.contains('empty')) {
+                c.textContent = expand ? '▾' : '▸';
+            }
+        });
+    }
+
+     document.getElementById('btnExpandAll').addEventListener('click', () => setExpandCollapse(true));
+     document.getElementById('btnCollapseAll').addEventListener('click', () => setExpandCollapse(false));
+     document.getElementById('btnClearAll').addEventListener('click', () => {
+        const set = getCurrentSet();
+        set.clear();
+        syncChecksFromSet();
+        updateSummary();
+     });
+
+     document.getElementById('btnReset').addEventListener('click', () => {
+        roleSelect.value = '';
+        menuSearch.value = '';
+        roleSummaryText.textContent = 'Choose a role to begin assignment.';
+        updateSummary();
+        document.querySelectorAll('.menu-node').forEach(node => {
+            node.querySelector('.menu-check').checked = false;
+            node.style.opacity = '1';
+        });
+     });
+
+     document.getElementById('btnSave').addEventListener('click', () => {
+        if (!roleSelect.value) {
+            alert('Please select a role before saving.');
+            return;
+        }
+        updateSummary();
+        alert('This demo shows the JSON payload in the right panel. Integrate with your API to persist assignments in the database.');
+     });
+
+    // Initial render
+    renderTree();
+    updateSummary();
+    setExpandCollapse(true);
+</script>

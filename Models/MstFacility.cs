@@ -9,5 +9,6 @@
         public long? NinNumber { get; set; }                // bigint → long?
         public int BlockId { get; set; }
         public int IsIntervention { get; set; }
+        public int? ProfileId { get; set; }
     }
 }

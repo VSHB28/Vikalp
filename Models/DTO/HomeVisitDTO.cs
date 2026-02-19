@@ -33,10 +33,10 @@ namespace Vikalp.Models.DTO
         public int? IsReceivingSocialBenefit { get; set; }
         public List<int>? SocialBenifits { get; set; }
         public int? IsUsingFamilyPlanning { get; set; }
-        public List<int>? FamilyPlanningMethod { get; set; }
+        public int? FamilyPlanningMethod { get; set; }
         public int? IsCounsellingDone { get; set; }
         public int? IsReferredForServices { get; set; }
-        public string? ReferredHealthCenterType { get; set; }
+        public int? ReferredHealthCenterType { get; set; }
         public string? ReferredHealthCenterName { get; set; }
         public int? IsConsentTaken { get; set; }
         public int? IsCallInitiated { get; set; }
@@ -52,10 +52,16 @@ namespace Vikalp.Models.DTO
 
         public int UserId { get; set; }
 
+        public List<HomevisitFollowUpDto> FollowUpHistory { get; set; }
+        = new List<HomevisitFollowUpDto>();
+
     }
 
-    public class LineListFollowUpDto
+    public class HomevisitFollowUpDto
     {
+        public string? WomanName { get; set; }
+        public string? HusbandName { get; set; }
+        public string? MobileNumber { get; set; }
         public int? FollowupId { get; set; }
         public Guid FollowupGuId { get; set; }
         public Guid? LineListGuid { get; set; }
@@ -63,6 +69,7 @@ namespace Vikalp.Models.DTO
         public DateTime? FollowupDate { get; set; }
         public string? Remark { get; set; }
         public int? FollowupStatus { get; set; }
+        public string? Status { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
