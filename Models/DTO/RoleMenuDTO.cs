@@ -3,14 +3,14 @@
 
     public class RoleMenuDTO
     {
-        public int RoleId { get; set; }
-        public string RoleName { get; set; }
-        public string RoleType { get; set; }
-        public string Description { get; set; }
+        public int MenuId { get; set; }
+        public string MenuName { get; set; }
+        public int? ParentMenuId { get; set; }
+        public string Url { get; set; }
+        public int SortOrder { get; set; }
         public int IsActive { get; set; }
-        public string? Icon { get; set; }
-        public string? MenuIds { get; set; }
-        public string? MenuNames { get; set; }
+        public string MenuIcon { get; set; }
+        public int Assigned { get; set; }
     }
 
     public class RoleMenuSaveDTO

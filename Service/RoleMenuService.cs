@@ -20,24 +20,29 @@ public class RoleMenuService : IRoleMenuService
     {
         return new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
     }
-
-
-    public List<RoleMenuDTO> GetAll(int userId)
+    public List<RoleMenuDTO> GetAllMenus(int userId)
     {
-        using (var connection = GetConnection())
+        try
         {
-            return connection.Query<RoleMenuDTO>(
-                "sp_GetRolesMenuList",
-                new { UserId = userId },
-                commandType: CommandType.StoredProcedure
-            ).ToList();
+            using (var connection = GetConnection())
+            {
+                return connection.Query<RoleMenuDTO>(
+                    "sp_GetRolesMenuList",
+                    new { UserId = userId },
+                    commandType: CommandType.StoredProcedure
+                ).ToList();
+            }
         }
+        catch (Exception ex)
+        {
+            throw;
+        }       
     }
 
-    public List<MenuDropdownDTO> GetParentMenusByRole(int roleId, int userId)
+    public List<RoleMenuDTO> GetParentMenusByRole(int roleId, int userId)
     {
         using var con = GetConnection();
-        return con.Query<MenuDropdownDTO>(
+        return con.Query<RoleMenuDTO>(
             "sp_GetRolesMenuListbyrolid",
             new { UserId = userId, RoleId = roleId },
             commandType: CommandType.StoredProcedure
