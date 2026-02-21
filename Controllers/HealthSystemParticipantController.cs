@@ -21,10 +21,46 @@ namespace Vikalp.Controllers
         }
 
         // ===================== LIST =====================
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        //public async Task<IActionResult> Index()
+        //{
+        //    var activities = await _service.GetAllParticipantAsync();
+        //    return View(activities);
+        //}
+
+        public async Task<IActionResult> Index(
+    int page = 1,
+    int pageSize = 10,
+    int? StateId = null,
+    int? DistrictId = null,
+    int? BlockId = null,
+    int? FacilityId = null)
         {
-            var activities = await _service.GetAllParticipantAsync();
-            return View(activities);
+            LoadMasters();
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await _service.GetAllParticipantAsync(
+                userId,
+                page,
+                pageSize,
+                StateId,
+                DistrictId,
+                BlockId,
+                FacilityId);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = result.TotalCount;
+            ViewBag.TotalPages =
+                (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+            // preserve filters
+            ViewBag.StateId = StateId;
+            ViewBag.DistrictId = DistrictId;
+            ViewBag.BlockId = BlockId;
+            ViewBag.FacilityId = FacilityId;
+
+            return View(result.Data);
         }
 
         // ===================== CREATE (GET) =====================

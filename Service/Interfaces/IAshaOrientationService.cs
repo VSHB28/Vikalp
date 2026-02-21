@@ -8,6 +8,8 @@ namespace Vikalp.Service.Interfaces
     public interface IAshaOrientationService
     {
         Task<List<AshaOrientationDto>> GetAllAsync();
+
+        Task<(List<AshaOrientationDto> Data, int TotalCount)> GetPagedAsync(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId, DateTime? orientationDate);
         Task CreateAsync(AshaOrientationDto model);
         Task<List<DropdownDto>> SearchFacilitiesAsync(string term);
         Task<List<AshaListDto>> GetAshasByFacilityAsync(int facilityId);

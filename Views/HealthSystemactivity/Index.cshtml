@@ -87,7 +87,43 @@
             </div>
             <hr />
 
-            @if (!Model?.Any() ?? true)
+            <div class="row">
+
+                <div class="col-md-3 mb-1">
+                    <label class="form-label">State </label>
+                    <select name="StateId" class="form-control" id="StateId">
+                        <option value="">-- Select State --</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id" @(ViewBag.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 mb-1">
+                    <label class="form-label">District</label>
+                    <select name="DistrictId" class="form-control" id="DistrictId">
+                        <option value="">-- Select District --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 mb-1">
+                    <label class="form-label">Activity Name</label>
+                    <select name="ActivityNameId" class="form-control" id="ActivityNameId">
+                        <option value="">-- Select ActivityName --</option>
+                        @foreach (var s in ViewBag.ActivityTypeName)
+                        {
+                            <option value="@s.Value" @(ViewBag.ActivityTypeName.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-add" id="searchBtn" onclick="searchData()">Search</button>
+                </div>
+
+                </div>
+
+                @if (!Model?.Any() ?? true)
             {
                 <div class="um-empty">
                     <p class="mb-1">No data found.</p>
@@ -149,42 +185,6 @@
                             }
                         </tbody>
                     </table>
-                    <nav>
-                        <ul class="pagination justify-content-end">
-
-                            @if (ViewBag.CurrentPage > 1)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="?page=@(ViewBag.CurrentPage - 1)&pageSize=@ViewBag.PageSize">
-                                        Previous
-                                    </a>
-                                </li>
-                            }
-
-                            @for (int p = 1; p <= ViewBag.TotalPages; p++)
-                            {
-                                <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
-                                    <a class="page-link"
-                                       href="?page=@p&pageSize=@ViewBag.PageSize">
-                                        @p
-                                    </a>
-                                </li>
-                            }
-
-                            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="?page=@(ViewBag.CurrentPage + 1)&pageSize=@ViewBag.PageSize">
-                                        Next
-                                    </a>
-                                </li>
-                            }
-
-                        </ul>
-                    </nav>
-
                 </div>
             }
         </div>
@@ -233,5 +233,78 @@
 
         document.querySelector("#usersTable tbody").innerHTML = html;
     }
+
+    document.getElementById("StateId").addEventListener("change", function () {
+    let stateId = this.value;
+    resetDropdown("DistrictId", "-- Select District --");
+    if (!stateId) return;
+    fetch(`/HealthSystemActivity/GetDistricts?stateId=${stateId}`)
+           .then(res => res.json())
+            .then(data => {
+                  fillDropdown("DistrictId", data, "id", "name");
+                 });
+             });
+
+    function resetDropdown(id, placeholder) {
+         let ddl = document.getElementById(id);
+          ddl.innerHTML = `<option value="">${placeholder}</option>`;
+    }
+
+    function fillDropdown(id, data, valueField, textField) {
+         let ddl = document.getElementById(id);
+         data.forEach(x => {
+              let opt = document.createElement("option");
+              opt.value = x[valueField];
+              opt.text = x[textField];
+              ddl.appendChild(opt);
+         });
+     }
+
+    //=====================Search======================
+         function searchData() {
+
+            var stateId = document.getElementsByName("StateId")[0].value;
+            var districtId = document.getElementsByName("DistrictId")[0].value;
+            var activitytypeNameId = document.getElementsByName("ActivityNameId")[0].value;
+
+            var url = '/HealthSystemActivity/Index?page=1&pageSize=10'
+                + '&StateId=' + stateId
+                + '&DistrictId=' + districtId
+                + '&ActivityNameId=' + activitytypeNameId
+
+            window.location.href = url;
+        }
+
+        //=========== Reload dropdown and preserve filters =================
+
+document.addEventListener("DOMContentLoaded", async function () {
+
+    var stateId = "@ViewBag.StateId";
+    var districtId = "@ViewBag.DistrictId";
+    var activityNameId = "@ViewBag.ActivityNameId";
+
+    // Restore Activity Name dropdown
+    if (activityNameId) {
+        document.getElementById("ActivityNameId").value = activityNameId;
+    }
+
+    // Restore State dropdown
+    if (stateId) {
+
+        document.getElementById("StateId").value = stateId;
+
+        // Load Districts based on state
+        let districts = await fetch(`/HealthSystemActivity/GetDistricts?stateId=${stateId}`)
+            .then(res => res.json());
+
+        fillDropdown("DistrictId", districts, "id", "name");
+
+        // Restore District selection AFTER filling dropdown
+        if (districtId) {
+            document.getElementById("DistrictId").value = districtId;
+        }
+    }
+
+});
 
 </script>

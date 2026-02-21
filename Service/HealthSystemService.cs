@@ -19,16 +19,16 @@ namespace Vikalp.Service
 
         private string Conn() => _config.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("No connection string");
 
-        public async Task<(List<HealthSystemActivityDto> Data, int TotalCount)> GetPagedAsync(int userId, int pageNumber, int pageSize)
+        public async Task<(List<HealthSystemActivityDto> Data, int TotalCount)> GetPagedAsync(int userId, int pageNumber, int pageSize, int? stateId, int? districtId, int? ActivityNameId)
         {
             var parameters = new[]
             {
         new SqlParameter("@UserId", userId),
         new SqlParameter("@PageNumber", pageNumber),
         new SqlParameter("@PageSize", pageSize),
-        new SqlParameter("@StateId", DBNull.Value),
-        new SqlParameter("@DistrictId", DBNull.Value),
-        new SqlParameter("@ActivityId", DBNull.Value)
+        new SqlParameter("@StateId", stateId),
+        new SqlParameter("@DistrictId", districtId),
+        new SqlParameter("@ActivityNameId", ActivityNameId)
     };
 
             var dt = await Task.Run(() =>
@@ -203,6 +203,63 @@ namespace Vikalp.Service
             }).ToList();
 
             return list;
+        }
+
+        public async Task<(List<HealthSystemParticipantDto> Data, int TotalCount)>
+    GetAllParticipantAsync(
+        int userId,
+        int page,
+        int pageSize,
+        int? stateId,
+        int? districtId,
+        int? blockId,
+        int? facilityId)
+        {
+            var parameters = new[]
+            {
+        new SqlParameter("@UserId", userId),
+        new SqlParameter("@PageNumber", page),
+        new SqlParameter("@PageSize", pageSize),
+        new SqlParameter("@StateId", (object?)stateId ?? DBNull.Value),
+        new SqlParameter("@DistrictId", (object?)districtId ?? DBNull.Value),
+        new SqlParameter("@BlockId", (object?)blockId ?? DBNull.Value),
+        new SqlParameter("@FacilityId", (object?)facilityId ?? DBNull.Value)
+    };
+
+            var dt = await Task.Run(() =>
+                SqlUtils.ExecuteSP(Conn(),
+                    "dbo.sp_GetHealthSystemParticipantsNew",
+                    parameters));
+
+            int totalRecords = 0;
+
+            var list = dt.AsEnumerable().Select(r =>
+            {
+                totalRecords = Convert.ToInt32(r["TotalRecords"]);
+
+                return new HealthSystemParticipantDto
+                {
+                    ParticipantId = r.Field<int>("ParticipantId"),
+                    FullName = r.Field<string>("FullName"),
+                    ProviderTypeId = r.Field<int?>("ProviderTypeId"),
+                    FacilityId = r.Field<int?>("FacilityId"),
+                    FacilityName = r.Field<string?>("FacilityName"),
+                    FacilityTypeId = r.Field<int?>("FacilityTypeId"),
+                    FacilityTypeOther = r.Field<string?>("FacilityTypeOther"),
+                    InterventionFacility = r.Field<int?>("InterventionFacility"),
+                    DistrictId = r.Field<int?>("DistrictId"),
+                    GenderId = r.Field<int?>("GenderId"),
+                    Mobile = r.Field<string?>("Mobile"),
+                    VCATScorePreTest = r.Field<int?>("VCATScorePreTest"),
+                    VCATScorePostTest = r.Field<int?>("VCATScorePostTest"),
+                    RefresherTraining = r.Field<int?>("RefresherTraining"),
+                    Remarks = r.Field<string?>("Remarks"),
+                    CreatedAt = r.Field<DateTime?>("CreatedAt"),
+                    UpdatedAt = r.Field<DateTime?>("UpdatedAt")
+                };
+            }).ToList();
+
+            return (list, totalRecords);
         }
 
         public async Task<bool> SaveParticipantsAsync(DateTime dateOfActivity, int stateId, int? districtId, int? facilityTypeId, string? facilityTypeOther, List<HealthSystemParticipantDto> participants, int createdBy)

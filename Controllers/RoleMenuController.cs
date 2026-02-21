@@ -33,12 +33,7 @@ public class RoleMenuController : Controller
         return View(roleList);
     }
 
-    public IActionResult Index1()
-    {
-        
 
-        return View();
-    }
 
     public JsonResult GetMenusByRole(int roleId)
     {

@@ -20,11 +20,43 @@ namespace Vikalp.Controllers
         }
 
         // ===================== LIST =====================
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(
+     int page = 1,
+     int pageSize = 10,
+     int? StateId = null,
+     int? DistrictId = null,
+     int? BlockId = null,
+     int? FacilityId = null,
+     int? SubCenterId = null)
         {
+            LoadMasters();
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var surveys = _service.GetAllSurveys(userId);
-            return View(surveys);
+
+            var result = await _service.GetAllSurveys(
+                userId,
+                page,
+                pageSize,
+                StateId,
+                DistrictId,
+                BlockId,
+                FacilityId,
+                SubCenterId);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = result.TotalCount;
+            ViewBag.TotalPages =
+                (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+            // preserve filters
+            ViewBag.StateId = StateId;
+            ViewBag.DistrictId = DistrictId;
+            ViewBag.BlockId = BlockId;
+            ViewBag.FacilityId = FacilityId;
+            ViewBag.SubCenterId = SubCenterId;
+
+            return View(result.Data);
         }
 
         // ===================== CREATE =====================

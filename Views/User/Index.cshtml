@@ -70,6 +70,25 @@
             </div>
             <hr />
 
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <label>State</label>
+                    <select name="StateId" class="form-control" id="StateId">
+                        <option value="">-- Select State --</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id" @(ViewBag.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>District</label>
+                    <select name="DistrictId" class="form-control" id="DistrictId">
+                        <option value="">-- Select District --</option>
+                    </select>
+                </div>
+                </div>
+
             @if (!Model?.Any() ?? true)
             {
                 <div class="um-empty">
@@ -149,6 +168,57 @@
                     </table>
                 </div>
             }
+
+            <nav>
+    <ul class="pagination justify-content-end">
+
+        @if (ViewBag.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="@Url.Action("Index", new {
+                       page = ViewBag.CurrentPage - 1,
+                       pageSize = ViewBag.PageSize,
+                       stateId = ViewBag.StateId,
+                       districtId = ViewBag.DistrictId
+                   })">
+                    Previous
+                </a>
+            </li>
+        }
+
+        @for (int p = 1; p <= ViewBag.TotalPages; p++)
+        {
+            <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Index", new {
+                       page = p,
+                       pageSize = ViewBag.PageSize,
+                       stateId = ViewBag.StateId,
+                       districtId = ViewBag.DistrictId
+                   })">
+                    @p
+                </a>
+            </li>
+        }
+
+        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="@Url.Action("Index", new {
+                       page = ViewBag.CurrentPage + 1,
+                       pageSize = ViewBag.PageSize,
+                       stateId = ViewBag.StateId,
+                       districtId = ViewBag.DistrictId
+                   })">
+                    Next
+                </a>
+            </li>
+        }
+
+    </ul>
+</nav>
         </div>
     </div>
 </div>
@@ -196,5 +266,72 @@
 
         document.querySelector("#usersTable tbody").innerHTML = html;
     }
+
+    // ---------------- CASCADING DROPDOWNS ----------------
+
+            document.getElementById("StateId").addEventListener("change", function () {
+                let stateId = this.value;
+                resetDropdown("DistrictId", "-- Select District --");
+
+                if (!stateId) return;
+
+                fetch(`/User/GetDistricts?stateId=${stateId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("DistrictId", data, "id", "name");
+         });
+      });
+
+      function resetDropdown(id, placeholder) {
+                let ddl = document.getElementById(id);
+                ddl.innerHTML = `
+               <option value="">${placeholder}</option>`;
+            }
+
+            function fillDropdown(id, data, valueField, textField) {
+                let ddl = document.getElementById(id);
+                data.forEach(x => {
+         let opt = document.createElement("option");
+         opt.value = x[valueField];
+         opt.text = x[textField];
+         ddl.appendChild(opt);
+                });
+            }
+
+            document.getElementById("DistrictId").addEventListener("change", function () {
+    searchData();
+});
+
+    function searchData() {
+
+    var stateId = document.getElementById("StateId").value;
+    var districtId = document.getElementById("DistrictId").value;
+
+    var url = '/User/Index?page=1&pageSize=10'
+        + '&stateId=' + stateId
+        + '&districtId=' + districtId;
+
+    window.location.href = url;
+}
+
+    document.addEventListener("DOMContentLoaded", async function () {
+
+    var stateId = "@ViewBag.StateId";
+    var districtId = "@ViewBag.DistrictId";
+
+    if (stateId) {
+
+        document.getElementById("StateId").value = stateId;
+
+        let districts = await fetch(`/User/GetDistricts?stateId=${stateId}`)
+            .then(res => res.json());
+
+        fillDropdown("DistrictId", districts, "id", "name");
+
+        if (districtId) {
+                    document.getElementById("DistrictId").value = districtId;
+                }
+    }
+    });
 
 </script>

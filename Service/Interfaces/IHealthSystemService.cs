@@ -5,10 +5,11 @@ namespace Vikalp.Service.Interfaces
     public interface IHealthSystemService
     {
         //Task<List<HealthSystemActivityDto>> GetAllAsync();
-        Task<(List<HealthSystemActivityDto> Data, int TotalCount)> GetPagedAsync(int userId, int pageNumber, int pageSize);
+        Task<(List<HealthSystemActivityDto> Data, int TotalCount)> GetPagedAsync(int userId, int pageNumber, int pageSize, int? stateId, int? districtId, int? ActivityNameId);
         Task<List<DropdownDto>> SearchFacilitiesAsync(string term);
         Task<bool> SaveHealthSystemActivityJsonAsync(HealthSystemActivityDto model, int userId);
         Task<List<HealthSystemParticipantDto>> GetAllParticipantAsync();
+        Task<(List<HealthSystemParticipantDto> Data, int TotalCount)> GetAllParticipantAsync(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId);
         Task<List<ParticipantListDto>> GetparticipantByFacilityAsync(int facilityId);
         Task<MstFacilityDto?> GetFacilityByIdAsync(int facilityId);
 

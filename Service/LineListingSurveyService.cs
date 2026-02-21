@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.Json;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
+using Vikalp.Utilities;
 
 namespace Vikalp.Service
 {
@@ -19,71 +20,84 @@ namespace Vikalp.Service
                                  ?? throw new InvalidOperationException("No connection string");
 
         // ===================== GET ALL =====================
-        public IEnumerable<LineListingSurveyDto> GetAllSurveys(int userId)
+      
+        public async Task<(List<LineListingSurveyDto> Data, int TotalCount)> GetAllSurveys(
+    int userId,
+    int page,
+    int pageSize,
+    int? stateId,
+    int? districtId,
+    int? blockId,
+    int? facilityId,
+    int? subcentreId)
         {
-            var list = new List<LineListingSurveyDto>();
-
-            using var conn = new SqlConnection(Conn());
-            using var cmd = new SqlCommand("sp_GetAllLineListingSurveys", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            // ✅ Add the @UserId parameter
-            cmd.Parameters.AddWithValue("@UserId", userId);
-
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            var parameters = new[]
             {
-                list.Add(MapReaderToDto(reader));
-            }
+        new SqlParameter("@UserId", userId),
+        new SqlParameter("@PageNumber", page),
+        new SqlParameter("@PageSize", pageSize),
+        new SqlParameter("@StateId", (object?)stateId ?? DBNull.Value),
+        new SqlParameter("@DistrictId", (object?)districtId ?? DBNull.Value),
+        new SqlParameter("@BlockId", (object?)blockId ?? DBNull.Value),
+        new SqlParameter("@FacilityId", (object?)facilityId ?? DBNull.Value),
+        new SqlParameter("@SubCenterId", (object)subcentreId ?? DBNull.Value)
+    };
 
-            return list;
-        }
-        private LineListingSurveyDto MapReaderToDto(SqlDataReader reader)
-        {
-            return new LineListingSurveyDto
+            var dt = await Task.Run(() =>
+                SqlUtils.ExecuteSP(Conn(),
+                    "dbo.sp_GetAllLineListingSurveysNew",
+                    parameters));
+
+            int totalRecords = 0;
+
+            var list = dt.AsEnumerable().Select(r =>
             {
-                LineListId = reader.GetInt32(reader.GetOrdinal("LineListId")),
-                LineListGuid = reader["LineListGuid"].ToString(),
+                totalRecords = Convert.ToInt32(r["TotalRecords"]);
 
-                StateId = reader["StateId"] as int?,
-                DistrictId = reader["DistrictId"] as int?,
-                BlockId = reader["BlockId"] as int?,
-                VillageName = reader["VillageName"] as string,
+                return new LineListingSurveyDto
+                {
+                    LineListId = r.Field<int>("LineListId"),
+                    LineListGuid = r.Field<string>("LineListGuid"),
 
-                FacilityId = reader["FacilityId"] as int?,
-                SubCenterId = reader["SubCenterId"] as int?,
-                ASHAId = reader["ASHAId"] as int?,
-                AnganwadiWorkerName = reader["AnganwadiWorkerName"] as string,
+                    StateId = r.Field<int?>("StateId"),
+                    DistrictId = r.Field<int?>("DistrictId"),
+                    BlockId = r.Field<int?>("BlockId"),
+                    VillageName = r.Field<string>("VillageName"),
 
-                WomanName = reader["WomanName"] as string,
-                HusbandName = reader["HusbandName"] as string,
-                MobileNumber = reader["MobileNumber"] as string,
+                    FacilityId = r.Field<int?>("FacilityId"),
+                    SubCenterId = r.Field<int?>("SubCenterId"),
+                    ASHAId = r.Field<int?>("ASHAId"),
+                    AnganwadiWorkerName = r.Field<string>("AnganwadiWorkerName"),
 
-                IsChildAvailable = reader["IsChildAvailable"] as int?,
-                ChildGender = reader["ChildGender"] as int?,
-                ChildDOB = reader["ChildDOB"] as DateTime?,
-                MarriageDate = reader["MarriageDate"] as DateTime?,
+                    WomanName = r.Field<string>("WomanName"),
+                    HusbandName = r.Field<string>("HusbandName"),
+                    MobileNumber = r.Field<string>("MobileNumber"),
 
-                IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] as int?,
-                IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] as int?,
+                    IsChildAvailable = r.Field<int?>("IsChildAvailable"),
+                    ChildGender = r.Field<int?>("ChildGender"),
+                    ChildDOB = r.Field<DateTime?>("ChildDOB"),
+                    MarriageDate = r.Field<DateTime?>("MarriageDate"),
 
-                FamilyPlanningMethod = reader["FamilyPlanningMethod"] as int? ,
+                    IsCurrentlyPregnant = r.Field<int?>("IsCurrentlyPregnant"),
+                    IsUsingFamilyPlanning = r.Field<int?>("IsUsingFamilyPlanning"),
+                    FamilyPlanningMethod = r.Field<int?>("FamilyPlanningMethod"),
 
-                IsAwareOfAntara = reader["IsAwareOfAntara"] as int?,
-                SelectedMethodName = reader["SelectedMethodName"] as string,
-                ReasonForNonUsage = reader["ReasonForNonUsage"] as string,
+                    IsAwareOfAntara = r.Field<int?>("IsAwareOfAntara"),
+                    SelectedMethodName = r.Field<string>("SelectedMethodName"),
+                    ReasonForNonUsage = r.Field<string>("ReasonForNonUsage"),
 
-                IsConcent = reader["IsConcent"] as int?,
-                ConcentDate = reader["ConcentDate"] as DateTime?,
-                Signature = reader["Signature"] as string,
+                    IsConcent = r.Field<int?>("IsConcent"),
+                    ConcentDate = r.Field<DateTime?>("ConcentDate"),
+                    Signature = r.Field<string>("Signature"),
 
-                CreatedOn = reader["CreatedOn"] as DateTime?,
-                CreatedBy = reader["CreatedBy"] as int?,
-                UpdatedOn = reader["UpdatedOn"] as DateTime?,
-                UpdatedBy = reader["UpdatedBy"] as int?
-            };
+                    CreatedOn = r.Field<DateTime?>("CreatedOn"),
+                    CreatedBy = r.Field<int?>("CreatedBy"),
+                    UpdatedOn = r.Field<DateTime?>("UpdatedOn"),
+                    UpdatedBy = r.Field<int?>("UpdatedBy")
+                };
+            }).ToList();
+
+            return (list, totalRecords);
         }
 
 

@@ -9,6 +9,7 @@ namespace Vikalp.Service.Interfaces
     {
         Task<string> GetUsersAsync();
         List<UserDto> GetAll();
+        (List<UserDto> Data, int TotalRecords) GetAll(int userId, int page, int pageSize, int? stateId, int? districtId);
         UserDto? GetById(int id);
         int Create(UserDto user);
         bool Update(UserDto user);

@@ -4,7 +4,7 @@ namespace Vikalp.Service.Interfaces
 {
     public interface ILineListingSurveyService
     {
-        IEnumerable<LineListingSurveyDto> GetAllSurveys(int userid);
+        Task<(List<LineListingSurveyDto> Data, int TotalCount)> GetAllSurveys(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId, int? subcentreId);
         LineListingSurveyDto? GetSurveyById(int id);
 
         Task<bool> InsertLineListingAsync(LineListingSurveyCreateDto model, int userId);

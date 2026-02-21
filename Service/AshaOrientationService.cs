@@ -90,6 +90,63 @@ namespace Vikalp.Service
             return list;
         }
 
+        public async Task<(List<AshaOrientationDto> Data, int TotalCount)>
+    GetPagedAsync(
+        int userId,
+        int page,
+        int pageSize,
+        int? stateId,
+        int? districtId,
+        int? blockId,
+        int? facilityId,
+        DateTime? orientationDate)
+        {
+            var parameters = new[]
+            {
+        new SqlParameter("@UserId", userId),
+        new SqlParameter("@PageNumber", page),
+        new SqlParameter("@PageSize", pageSize),
+        new SqlParameter("@StateId", (object?)stateId ?? DBNull.Value),
+        new SqlParameter("@DistrictId", (object?)districtId ?? DBNull.Value),
+        new SqlParameter("@BlockId", (object?)blockId ?? DBNull.Value),
+        new SqlParameter("@FacilityId", (object?)facilityId ?? DBNull.Value),
+        new SqlParameter("@OrientationDate", (object?)orientationDate ?? DBNull.Value)
+    };
+
+            var dt = await Task.Run(() =>
+                SqlUtils.ExecuteSP(Conn(),
+                    "dbo.sp_GetVenueOrientationSummaryNew",
+                    parameters));
+
+            int totalRecords = 0;
+
+            var list = dt.AsEnumerable().Select(r =>
+            {
+                totalRecords = Convert.ToInt32(r["TotalRecords"]);
+
+                return new AshaOrientationDto
+                {
+                    VenueId = Convert.ToInt32(r["VenueId"]),
+                    VenueGuid = r["VenueGuid"]?.ToString(),
+                    FacilityId = Convert.ToInt32(r["FacilityId"]),
+                    FacilityName = r["FacilityName"]?.ToString(),
+                    StateId = Convert.ToInt32(r["StateId"]),
+                    StateName = r["StateName"]?.ToString(),
+                    DistrictId = Convert.ToInt32(r["DistrictId"]),
+                    DistrictName = r["DistrictName"]?.ToString(),
+                    BlockId = Convert.ToInt32(r["BlockId"]),
+                    BlockName = r["BlockName"]?.ToString(),
+                    DateofOrientation = Convert.ToDateTime(r["DateofOrientation"]),
+                    InterventionCount = Convert.ToInt32(r["InterventionCount"]),
+                    NonInterventionCount = Convert.ToInt32(r["NonInterventionCount"]),
+                    TotalOrientations = Convert.ToInt32(r["TotalOrientations"])
+
+                };
+            }).ToList();
+
+            return (list, totalRecords);
+        }
+
         public async Task CreateAsync(AshaOrientationDto model)
         {
             await Task.Run(() =>

@@ -21,23 +21,37 @@ namespace Vikalp.Controllers
 
         // ===================== LIST =====================
         [HttpGet]
-        //public async Task<IActionResult> Index()
-        //{
-        //    var activities = await _service.GetAllAsync();
-        //    return View(activities);
-        //}
-
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(
+    int page = 1,
+    int pageSize = 10,
+    int? StateId = null,
+    int? DistrictId = null,
+    int? ActivityNameId = null)
         {
-            int userId = 1; // from session
+            LoadMasters();
 
-            var result = await _service.GetPagedAsync(userId, page, pageSize);
+            var dropdowns = await _dropdownService.GetCommonDropdownsAsync(1, 1);
+            ViewBag.ActivityTypeName = dropdowns["ActivityTypeName"];
+
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await _service.GetPagedAsync(
+                userId,
+                page,
+                pageSize,
+                StateId,
+                DistrictId,
+                ActivityNameId);
 
             ViewBag.CurrentPage = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalRecords = result.TotalCount;
-            ViewBag.TotalPages =
-                (int)Math.Ceiling((double)result.TotalCount / pageSize);
+            ViewBag.TotalPages = (int)Math.Ceiling((double)result.TotalCount / pageSize);
+
+            // preserve filters
+            ViewBag.StateId = StateId;
+            ViewBag.DistrictId = DistrictId;
+            ViewBag.ActivityNameId = ActivityNameId;
 
             return View(result.Data);
         }

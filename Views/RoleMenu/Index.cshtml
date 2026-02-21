@@ -146,38 +146,11 @@
     .bg-dark {
         background-color: #343a40;
     }
-
-    .menu-badge {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px 12px;
-        margin: 3px 5px 3px 0;
-        font-size: 13px;
-        font-weight: 500;
-        border-radius: 20px;
-        color: #fff;
-        position: relative;
-        transition: 0.2s ease-in-out;
-    }
-
-        .menu-badge:hover {
-            transform: scale(1.05);
-        }
-
-    .menu-remove {
-        margin-left: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        font-size: 14px;
-        opacity: 0.8;
-    }
-
-        .menu-remove:hover {
-            opacity: 1;
-        }
-
 </style>
 
+    .bg-dark {
+        background-color: #343a40;
+    }
 
 <div class="container-fluid" id="RoleMenu-record">
     @Html.AntiForgeryToken()
@@ -377,22 +350,6 @@
         })
         .catch(error => console.error(error));
     }
-
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const colors = [
-            "#0d6efd", "#198754", "#fd7e14",
-            "#6f42c1", "#dc3545", "#20c997",
-            "#6610f2", "#d63384", "#198754",
-            "#0dcaf0"
-        ];
-
-        document.querySelectorAll(".menu-color").forEach(function (badge) {
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            badge.style.backgroundColor = randomColor;
-        });
-
-    });
 
        function unassignMenu(roleId, menuId) {
 
