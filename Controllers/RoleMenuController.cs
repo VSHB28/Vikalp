@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Data;
 using System.Security.Claims;
 using Vikalp.DTO;
 using Vikalp.Models.DTO;
+using Vikalp.Service;
 using Vikalp.Service.Interfaces;
 
 public class RoleMenuController : Controller
@@ -28,14 +30,18 @@ public class RoleMenuController : Controller
 
         int userId = int.Parse(claim.Value);
 
-        var roleList = _roleMenuService.GetAll(userId);
+        ViewBag.Roles = _dropdownService.GetRoles();
 
-        return View(roleList);
+        // NEW: Load menus dynamically
+        var menus = _roleMenuService.GetAllMenus(userId);
+
+        ViewBag.MenusJson = JsonConvert.SerializeObject(menus);
+
+        return View();
     }
 
 
-
-    public JsonResult GetMenusByRole(int roleId)
+    public JsonResult GetRoleMenus(int roleId)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var menus = _roleMenuService.GetParentMenusByRole(roleId, userId);
@@ -59,6 +65,14 @@ public class RoleMenuController : Controller
     {
         var result = await _roleMenuService
             .UnassignMenuAsync(model.RoleId, model.MenuId);
+
+        return Json(new { success = result });
+    }
+
+    [HttpPost]
+    public IActionResult SaveRoleMenus([FromBody] RoleMenuSaveDTO request)
+    {
+        var result = _roleMenuService.SaveRoleMenuMapping(request);
 
         return Json(new { success = result });
     }

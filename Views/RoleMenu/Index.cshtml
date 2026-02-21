@@ -1,389 +1,732 @@
-﻿@using Vikalp.Models.DTO
-@model IEnumerable<Vikalp.Models.DTO.RoleMenuDTO>
-
+﻿@model IEnumerable<Vikalp.Models.DTO.RoleDto>
 @{
-    ViewData["Title"] = "Role Menu Mapping";
+    ViewData["Title"] = "Roles";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
 <style>
-    #RoleMenu-record {
-        padding: 10px;
-    }
-</style>
-
-<style>
-    .um-action {
-        white-space: nowrap;
-    }
-    /* Small, focused styles for the user management page */
-    .um-card {
-        border-radius: 0.5rem;
-        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #E8E4E0;
     }
 
-    .um-toolbar {
-        gap: .5rem;
+    * {
+        box-sizing: border-box;
+    }
+
+   
+
+    .page-shell {
+        width: 100%;
+        /* max-width: 1100px; */
+        padding: 24px;
+    }
+
+    .card {
+        background: var(--ipas-white);
+        border-radius: 12px;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        padding: 20px 22px 18px;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .title-block {
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .um-search {
-        max-width: 320px;
+    .title-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(241,90,41,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 20px;
     }
 
-    .um-table thead th {
-        /* background: linear-gradient(90deg,#0d6efd, #6610f2);
-                        color: #fff;
-                        border: 0; */
-        color: #fff;
-        border: 1px dotted;
-        background: var(--ipas-sidebar);
+    .card-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
     }
 
-    .um-table tbody tr:hover {
-        background: rgba(13,110,253,0.03);
+    .card-subtitle {
+        font-size: 12px;
+        color: var(--ipas-text-muted);
     }
 
-    .um-action .btn {
-        min-width: 44px;
+    .role-select-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+        border-bottom: 1px solid #f0e4da;
+        padding-bottom: 12px;
     }
 
-    .um-badge-role {
-        font-size: .8rem;
-        padding: .25rem .45rem;
-        border-radius: .25rem;
+    .form-group {
+        display: flex;
+        flex-direction: column;
     }
 
-    .um-empty {
-        padding: 2rem;
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+    }
+
+    .select,
+    .search-input {
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        min-width: 220px;
+    }
+
+        .select:focus,
+        .search-input:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241,90,41,0.16);
+        }
+
+    .search-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .search-input {
+        min-width: 200px;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2.1fr 1.2fr;
+        gap: 18px;
+    }
+
+    .menu-tree-card,
+    .summary-card {
+        border-radius: 10px;
+        border: 1px solid #f0e4da;
+        background: #FFFBF7;
+        padding: 14px 14px 10px;
+    }
+
+    .section-heading {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+        margin: 0 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .section-heading i {
+            color: var(--ipas-primary);
+        }
+
+    .tree-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 12px;
+        color: var(--ipas-text-muted);
+    }
+
+    .toolbar-actions button {
+        border: none;
+        background: transparent;
+        color: var(--ipas-text-muted);
+        font-size: 11px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+        .toolbar-actions button:hover {
+            background: rgba(0,0,0,0.04);
+        }
+
+    .menu-tree {
+        max-height: 420px;
+        overflow: auto;
+        padding-right: 6px;
+        font-size: 13px;
+    }
+
+    .menu-node {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 4px;
+        border-radius: 6px;
+    }
+
+        .menu-node:hover {
+            background: rgba(241,90,41,0.05);
+        }
+
+    .node-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .node-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .children {
+        margin-left: 20px;
+        border-left: 1px dashed #f0e0d0;
+        padding-left: 10px;
+    }
+
+    .caret {
+        cursor: pointer;
+        font-size: 11px;
+        width: 14px;
         text-align: center;
-        color: #6c757d;
+        color: var(--ipas-text-muted);
     }
 
-    .um-action a,
-    .um-action button {
-        position: relative;
-        z-index: 10;
-        pointer-events: auto;
+        .caret.empty {
+            visibility: hidden;
+        }
+
+    .badge-pill {
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: #fff2e8;
+        color: var(--ipas-primary);
     }
 
-    .um-action svg {
-        pointer-events: none;
+    .summary-list {
+        list-style: none;
+        padding: 0;
+        margin: 8px 0 0;
+        font-size: 12px;
     }
 
-    .table-responsive {
-        position: relative;
-        z-index: 1;
+        .summary-list li {
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+    .summary-label {
+        color: var(--ipas-text-muted);
     }
 
-    .btn-add {
-        background-color: #3F0C11;
-        color: white;
+    .summary-value {
+        font-weight: 500;
     }
 
-    .umcard-header {
-        background: linear-gradient(135deg, #F15A29, #b10315b5);
-        color: #ffffff;
-        padding: 10px 20px;
+    .btn-row {
+        margin-top: 16px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 9px 20px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid transparent;
+        background: transparent;
+    }
+
+    .btn-secondary {
+        border-color: var(--border-soft);
+        color: var(--ipas-text-muted);
+    }
+
+    .btn-primary {
+        background: var(--ipas-primary);
+        border-color: var(--ipas-primary);
+        color: #fff;
+    }
+
+        .btn-primary:hover {
+            background: #e04922;
+        }
+
+    .assigned-menu-list {
+        margin-top: 10px;
+        max-height: 260px;
+        overflow: auto;
+        padding: 8px;
+        border-radius: 6px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
     }
 
     .menu-badge {
         display: inline-block;
-        padding: 6px 12px;
-        margin: 3px 5px 3px 0;
-        font-size: 13px;
-        font-weight: 500;
-        border-radius: 20px;
-        background-color: #e9f2ff;
-        color: #0d6efd;
-        border: 1px solid #cfe2ff;
+        background: #2563eb;
+        color: white;
+        padding: 4px 8px;
+        margin: 3px;
+        border-radius: 5px;
+        font-size: 12px;
     }
 
-        .menu-badge:hover {
-            background-color: #0d6efd;
-            color: #fff;
-            transition: 0.2s ease-in-out;
+    @@media (max-width: 900px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .page-shell {
+            padding: 12px;
         }
 
-    .role-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 18px;
-        margin-right: 10px;
-    }
-
-    .bg-blue {
-        background-color: #0d6efd;
-    }
-
-    .bg-green {
-        background-color: #198754;
-    }
-
-    .bg-orange {
-        background-color: #fd7e14;
-    }
-
-    .bg-purple {
-        background-color: #6f42c1;
-    }
-
-    .bg-red {
-        background-color: #dc3545;
-    }
-
-    .bg-teal {
-        background-color: #20c997;
-    }
-
-    .bg-dark {
-        background-color: #343a40;
+        .role-select-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
     }
 </style>
 
-    .bg-dark {
-        background-color: #343a40;
-    }
 
-<div class="container-fluid" id="RoleMenu-record">
-    @Html.AntiForgeryToken()
-    <div class="card um-card mb-3">
-        <div class="card-body">
-            <div class="umcard-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="mb-0">Role Menu Mapping</h3>
-                    </div>
+<div class="page-shell">
+    <div class="card">
+        <div class="card-header">
+            <div class="title-block">
+                <div class="title-icon"><i class="bi bi-shield-lock"></i></div>
+                <div>
+                    <h2 class="card-title">Role Menu Assignment</h2>
+                    <div class="card-subtitle">Map project menus to roles with parent-child relationships.</div>
                 </div>
             </div>
-            <hr />
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table id="activitiesTable" class="table table-striped um-table align-middle">
-                        <thead>
-                            <tr>
-                                <th><i class="bi bi-person-fill me-2"></i>Role Name</th>
-                                <th><i class="bi bi-person me-2"></i>Assigned Menus</th>
-                                <th><i class="bi bi-pencil-square me-2"></i>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td><span class="role-icon bg-orange"><i class="@item.Icon"></i></span>@item.RoleName</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.MenuNames))
-                                        {
-                                            var menus = item.MenuNames.Split(',');
+        </div>
 
-                                        @* foreach (var menu in menus)
-                                        {
-                                            var trimmedMenu = menu.Trim();
-                                            <span class="menu-badge menu-color"
-                                                  data-roleid="@item.RoleId"
-                                                  data-menuname="@trimmedMenu">
-                                                @trimmedMenu
-                                                <span class="menu-remove"
-                                                      onclick="unassignMenu(@item.RoleId, '@trimmedMenu')">
-                                                    &times;
-                                                </span>
-                                            </span>
-                                        } *@
-                                        @if (!string.IsNullOrEmpty(item.MenuIds) && !string.IsNullOrEmpty(item.MenuNames))
-                                        {
-                                            var ids = item.MenuIds.Split(',');
-                                            var names = item.MenuNames.Split(',');
-
-                                            for (int i = 0; i < ids.Length; i++)
-                                            {
-                                                var menuId = ids[i].Trim();
-                                                var menuName = names.Length > i ? names[i].Trim() : "";
-
-                                                <span class="menu-badge menu-color"
-                                                      data-roleid="@item.RoleId"
-                                                      data-menuid="@menuId">
-
-                                                    @menuName
-
-                                                    <span class="menu-remove"
-                                                          onclick="unassignMenu(@item.RoleId, @menuId)">
-                                                        &times;
-                                                    </span>
-                                                </span>
-                                            }
-                                        }
-                                        }
-                                    </td>
-
-                                    <td class="text-end um-action">
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-primary"
-                                                onclick="openMenuPopup(@item.RoleId)"
-                                                title="Edit Role Menu">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-            <!-- Role Menu Modal -->
-            <div class="modal fade" id="roleMenuModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="bi bi-list-check me-2"></i>Assign Menus
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <input type="hidden" id="selectedRoleId" />
-
-                            <div id="menuCheckboxContainer" class="row">
-                                <!-- Menus will load here -->
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button"
-                                    class="btn-back"
-                                    data-bs-dismiss="modal">
-                                Cancel
-                            </button>
-
-                            <button type="button"
-                                    class="btn-save"
-                                    onclick="saveRoleMenus()">
-                                <i class="bi bi-save me-1"></i>Save
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
+        <div class="role-select-row">
+            <div class="form-group">
+                <label class="form-label">Select Role</label>
+                <select name="RoleId" id="RoleId" class="select">
+                    <option value="">-- Select Role --</option>
+                    @foreach (var role in ViewBag.Roles)
+                    {
+                        <option value="@role.Id">@role.Name</option>
+                    }
+                </select>
             </div>
 
+            <div class="form-group" style="flex:1;">
+                <label class="form-label">Quick Search Menu</label>
+                <div class="search-wrapper">
+                    <i class="bi bi-search" style="color: var(--ipas-text-muted);"></i>
+                    <input type="text" id="menuSearch" class="search-input" placeholder="Search by menu name" />
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Menu tree -->
+            <div class="menu-tree-card">
+                <h3 class="section-heading"><i class="bi bi-diagram-3"></i> Menu Hierarchy</h3>
+                <div class="tree-toolbar">
+                    <span id="roleSummaryText">Choose a role to begin assignment.</span>
+                    <div class="toolbar-actions">
+                        <button type="button" id="btnExpandAll"><i class="bi bi-arrows-expand"></i> Expand</button>
+                        <button type="button" id="btnCollapseAll"><i class="bi bi-arrows-collapse"></i> Collapse</button>
+                        <button type="button" id="btnClearAll"><i class="bi bi-x-circle"></i> Clear</button>
+                    </div>
+                </div>
+                <div id="menuTree" class="menu-tree"></div>
+            </div>
+
+            <!-- Summary / JSON preview -->
+            <div class="summary-card">
+                <h3 class="section-heading"><i class="bi bi-info-circle"></i> Assignment Summary</h3>
+                <ul class="summary-list">
+                    <li><span class="summary-label">Selected role</span><span class="summary-value" id="summaryRole">-</span></li>
+                    <li><span class="summary-label">Menus assigned</span><span class="summary-value" id="summaryCount">0</span></li>
+                </ul>
+                <div style="margin-top:10px; font-size:11px; color:var(--ipas-text-muted);">
+                    This section displays the menus currently assigned or selected for the chosen role. You can review the selection before saving the assignment.
+                </div>
+                <div id="assignedMenuList" class="assigned-menu-list">
+                    <span class="text-muted">No menus selected</span>
+                </div>
+                @* <pre id="jsonPreview" style="margin-top:10px; background:#1E293B; color:#E5E7EB; padding:8px; border-radius:6px; font-size:11px; max-height:260px; overflow:auto;">[]</pre> *@
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button type="button" class="btn btn-secondary" id="btnReset">Reset</button>
+            <button type="button" class="btn btn-primary" id="btnSave">Save Assignment</button>
         </div>
     </div>
 </div>
 
+
+
 <script>
-        function openMenuPopup(roleId) {
 
-        document.getElementById("selectedRoleId").value = roleId;
+    // Load menus from ViewBag JSON
+    const menus = @Html.Raw(ViewBag.MenusJson);
 
-        fetch('/RoleMenu/GetMenusByRole?roleId=' + roleId)
-            .then(response => response.json())
-            .then(res => {
+    // DOM references
+    const treeContainer = document.getElementById('menuTree');
+    const RoleId = document.getElementById('RoleId');
+    const menuSearch = document.getElementById('menuSearch');
+    const summaryRole = document.getElementById('summaryRole');
+    const summaryCount = document.getElementById('summaryCount');
+    const jsonPreview = document.getElementById('jsonPreview');
+    const roleSummaryText = document.getElementById('roleSummaryText');
 
-                let html = '';
+    // Role → assigned menu set
+    const assignedByRole = new Map();
 
-                res.forEach(menu => {
+    // Build menu hierarchy
+    const menuByParent = menus.reduce((acc, m) => {
+        const key = m.ParentMenuId == null ? 'root' : m.ParentMenuId.toString();
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(m);
+        return acc;
+    }, {});
 
-                    html += `
-                        <div class="col-md-4 mb-2">
-                            <div class="form-check">
-                                <input class="form-check-input menu-checkbox"
-                                       type="checkbox"
-                                       value="${menu.menuId}"
-                                       ${menu.roleMenuId ? 'checked' : ''}>
-                                <label class="form-check-label">
-                                    ${menu.menuName}
-                                </label>
-                            </div>
-                        </div>`;
-                });
+    Object.keys(menuByParent).forEach(k => {
+        menuByParent[k].sort((a, b) => (a.SortOrder || 0) - (b.SortOrder || 0));
+    });
 
-                document.getElementById("menuCheckboxContainer").innerHTML = html;
 
-                var modal = new bootstrap.Modal(document.getElementById('roleMenuModal'));
-                modal.show();
-            })
-            .catch(error => {
-                console.error("Error loading menus:", error);
-            });
+    //---------------------------------------------------
+    // Get current role assigned set
+    //---------------------------------------------------
+    function getCurrentSet() {
+
+        const role = RoleId.value;
+
+        if (!role)
+            return new Set();
+
+        if (!assignedByRole.has(role))
+            assignedByRole.set(role, new Set());
+
+        return assignedByRole.get(role);
     }
 
 
-        function saveRoleMenus() {
+    //---------------------------------------------------
+    // Render full tree (only once)
+    //---------------------------------------------------
+    function renderTree() {
 
-        var roleId = document.getElementById("selectedRoleId").value;
+        treeContainer.innerHTML = '';
 
-        var checkboxes = document.querySelectorAll(".menu-checkbox:checked");
+        const roots = menuByParent['root'] || [];
 
-        var selectedMenus = [];
+        roots.forEach(menu => {
 
-        checkboxes.forEach(function (checkbox) {
-            selectedMenus.push(parseInt(checkbox.value));
+            treeContainer.appendChild(createNode(menu));
+
+        });
+    }
+
+
+    //---------------------------------------------------
+    // Create node recursively
+    //---------------------------------------------------
+    function createNode(menu) {
+
+        const hasChildren = menuByParent[menu.MenuId]?.length > 0;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'menu-node';
+        wrapper.dataset.menuId = menu.MenuId;
+
+        // caret
+        const caret = document.createElement('span');
+        caret.className = 'caret';
+        caret.innerHTML = hasChildren ? '▾' : '';
+        wrapper.appendChild(caret);
+
+        // checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'menu-check';
+        wrapper.appendChild(checkbox);
+
+        // label
+        const label = document.createElement('span');
+        label.innerHTML = `<i class="bi ${menu.MenuIcon || 'bi-square'}"></i> ${menu.MenuName}`;
+        wrapper.appendChild(label);
+
+
+        // children container
+        const childrenDiv = document.createElement('div');
+        childrenDiv.className = 'children';
+
+        if (!hasChildren)
+            childrenDiv.style.display = 'none';
+
+
+        const children = menuByParent[menu.MenuId] || [];
+
+        children.forEach(child => {
+
+            childrenDiv.appendChild(createNode(child));
+
         });
 
-        fetch('/RoleMenu/SaveRoleMenuMapping', {
+        wrapper.appendChild(childrenDiv);
+
+
+        // caret click expand collapse
+        caret.onclick = () => {
+
+            const show = childrenDiv.style.display === 'none';
+
+            childrenDiv.style.display = show ? 'block' : 'none';
+
+            caret.innerHTML = show ? '▾' : '▸';
+        };
+
+
+        // checkbox change
+        checkbox.onchange = () => {
+
+            const set = getCurrentSet();
+
+            if (checkbox.checked)
+                addWithChildren(menu.MenuId, set);
+            else
+                removeWithChildren(menu.MenuId, set);
+
+            syncChecks();
+            updateSummary();
+        };
+
+        return wrapper;
+    }
+
+
+    //---------------------------------------------------
+    // Add with children
+    //---------------------------------------------------
+    function addWithChildren(menuId, set) {
+
+        set.add(menuId);
+
+        const children = menuByParent[menuId] || [];
+
+        children.forEach(c => addWithChildren(c.MenuId, set));
+    }
+
+
+    //---------------------------------------------------
+    // Remove with children
+    //---------------------------------------------------
+    function removeWithChildren(menuId, set) {
+
+        set.delete(menuId);
+
+        const children = menuByParent[menuId] || [];
+
+        children.forEach(c => removeWithChildren(c.MenuId, set));
+    }
+
+
+    //---------------------------------------------------
+    // Sync checkboxes from assigned set
+    //---------------------------------------------------
+    function syncChecks() {
+
+        const set = getCurrentSet();
+
+        document.querySelectorAll('.menu-node').forEach(node => {
+
+            const id = parseInt(node.dataset.menuId);
+
+            const cb = node.querySelector('input');
+
+            cb.checked = set.has(id);
+        });
+    }
+
+
+    //---------------------------------------------------
+    // Role change → load assigned menus
+    //---------------------------------------------------
+
+         RoleId.addEventListener('change', async function () {
+        const roleId = this.value;
+
+        if (!roleId) {
+            assignedByRole.clear();
+            syncChecks();
+            updateSummary();
+            return;
+        }
+
+        roleSummaryText.innerText = RoleId.options[RoleId.selectedIndex].text;
+
+        // load menus with Assigned flag from API
+        const response = await fetch(`/RoleMenu/GetRoleMenus?roleId=${roleId}`);
+        const menusWithAssigned = await response.json();
+
+        // Build set of IDs where Assigned = 1
+        const assignedSet = new Set(
+            menusWithAssigned.filter(m => m.assigned === 1).map(m => m.menuId)
+        );
+
+        assignedByRole.set(roleId, assignedSet);
+
+        syncChecks();
+        updateSummary();
+    });
+
+    //---------------------------------------------------
+    // Update summary panel
+    //---------------------------------------------------
+        function updateSummary()
+    {
+        const roleId = RoleId.value;
+        const selectedRoleText = RoleId.options[RoleId.selectedIndex]?.text || "-";
+
+        summaryRole.textContent = selectedRoleText;
+
+        const set = getCurrentSet();
+        summaryCount.textContent = roleId ? set.size : 0;
+
+        const container = document.getElementById("assignedMenuList");
+
+        if (!roleId || set.size === 0)
+        {
+            container.innerHTML = `<span class="text-muted">No menus selected</span>`;
+            return;
+        }
+
+        let html = "";
+
+        set.forEach(menuId =>
+        {
+            const menu = menus.find(m => m.MenuId === menuId);
+
+            if (menu)
+            {
+                html += `<span class="menu-badge">
+                            <i class="bi ${menu.MenuIcon || 'bi-square'}"></i>
+                            ${menu.MenuName}
+                         </span>`;
+            }
+        });
+
+        container.innerHTML = html;
+    }
+
+    //---------------------------------------------------
+    // Save
+    //---------------------------------------------------
+    document.getElementById('btnSave').onclick = async function () {
+
+        const roleId = RoleId.value;
+
+        if (!roleId)
+        {
+            alert("Select role");
+            return;
+        }
+
+        const payload =
+        {
+            RoleId: parseInt(roleId),
+            MenuIds: Array.from(getCurrentSet())
+        };
+
+        const res = await fetch('/RoleMenu/SaveRoleMenus',
+        {
             method: 'POST',
-            headers: {
+            headers:
+            {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                roleId: parseInt(roleId),
-                menuIds: selectedMenus
-            })
-        })
-        .then(response => response.json())
-        .then(res => {
-            if (res.success) {
-                alert("Mapping Saved Successfully");
-                location.reload();
-            } else {
-                alert("Error saving mapping");
-            }
-        })
-        .catch(error => console.error(error));
-    }
+            body: JSON.stringify(payload)
+        });
 
-       function unassignMenu(roleId, menuId) {
+        if (res.ok)
+            alert("Saved successfully");
+        else
+            alert("Save failed");
+    };
 
-        if (!confirm("Are you sure you want to unassign this menu?"))
-            return;
 
-        const token = document.querySelector(
-            'input[name="__RequestVerificationToken"]'
-        ).value;
+    //---------------------------------------------------
+    // Search filter
+    //---------------------------------------------------
+    menuSearch.addEventListener('input', function () {
 
-        fetch('/RoleMenu/UnassignMenu', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': token
-            },
-            body: JSON.stringify({
-                roleId: roleId,
-                menuId: menuId
-            })
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Network response not ok");
-            return res.json();
-        })
-        .then(data => {
-            if (data.success) {
-                document.querySelector(
-                    `[data-roleid='${roleId}'][data-menuid='${menuId}']`
-                ).remove();
-            }
-        })
-        .catch(err => console.error("Error:", err));
-    }
+        const q = this.value.toLowerCase();
+
+        document.querySelectorAll('.menu-node').forEach(node =>
+        {
+            const text = node.innerText.toLowerCase();
+
+            node.style.display =
+                text.includes(q) ? '' : 'none';
+        });
+    });
+
+
+    //---------------------------------------------------
+    // Expand / Collapse
+    //---------------------------------------------------
+    document.getElementById('btnExpandAll').onclick =
+        () => document.querySelectorAll('.children')
+        .forEach(c => c.style.display = 'block');
+
+    document.getElementById('btnCollapseAll').onclick =
+        () => document.querySelectorAll('.children')
+        .forEach(c => c.style.display = 'none');
+
+
+    //---------------------------------------------------
+    // Clear
+    //---------------------------------------------------
+    document.getElementById('btnClearAll').onclick =
+        () =>
+        {
+            getCurrentSet().clear();
+            syncChecks();
+            updateSummary();
+        };
+
+
+    //---------------------------------------------------
+    // Init
+    //---------------------------------------------------
+    renderTree();
 
 </script>
-

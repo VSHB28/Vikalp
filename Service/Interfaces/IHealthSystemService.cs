@@ -13,7 +13,6 @@ namespace Vikalp.Service.Interfaces
         Task<List<ParticipantListDto>> GetparticipantByFacilityAsync(int facilityId);
         Task<MstFacilityDto?> GetFacilityByIdAsync(int facilityId);
 
-        Task<bool> SaveParticipantsAsync(DateTime dateOfActivity, int stateId, int? districtId, int? facilityTypeId, string? facilityTypeOther, List<HealthSystemParticipantDto> participants, int createdBy
-    );
+        Task<bool> SaveParticipantsAsync(DateTime dateOfActivity, int stateId, int? districtId, int? facilityTypeId, string? facilityTypeOther, List<HealthSystemParticipantDto> participants, int createdBy);
     }
 }
