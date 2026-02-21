@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Vikalp.Models;
 using Vikalp.Models.DTO;
 using Vikalp.Service;
@@ -17,11 +18,23 @@ namespace Vikalp.Controllers
             _dropdownService = dropdownService;
         }
         //============================ LIST ============================
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10, int? stateId = null, int? districtId = null)
         {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = _service.GetAll(userId, page, pageSize, stateId, districtId);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = result.TotalRecords;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)result.TotalRecords / pageSize);
+
+            ViewBag.StateId = stateId;
+            ViewBag.DistrictId = districtId;
+
             LoadMasters();
-            var users = _service.GetAll();
-            return View(users);
+
+            return View(result.Data);
         }
 
         //============================ CREATE (GET) ============================

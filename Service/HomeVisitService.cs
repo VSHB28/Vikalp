@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
+using Vikalp.Utilities;
 
 public class HomeVisitService : IHomeVisitService
 {
@@ -17,24 +18,133 @@ public class HomeVisitService : IHomeVisitService
     private SqlConnection GetConnection()
         => new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
-    public async Task<List<HomeVisitDTO>> GetAllAsync(int userId)
-    {
-        var list = new List<HomeVisitDTO>();
+    // ===================== GET ALL =====================
 
+    public async Task<(List<HomeVisitDTO> Data, int TotalCount)> GetAllAsync(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId, int? subcentreId)
+    {
         using var con = GetConnection();
-        using var cmd = new SqlCommand("sp_getHomeVisitalldata", con);
+        using var cmd = new SqlCommand("sp_getHomeVisitalldataNew", con);
         cmd.CommandType = CommandType.StoredProcedure;
+
         cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@PageNumber", page);
+        cmd.Parameters.AddWithValue("@PageSize", pageSize);
+        cmd.Parameters.AddWithValue("@StateId", (object?)stateId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@BlockId", (object?)blockId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@FacilityId", (object?)facilityId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@SubCenterId", (object?)subcentreId ?? DBNull.Value);
+
+        await con.OpenAsync();
+
+        var dt = new DataTable();
+        using (var reader = await cmd.ExecuteReaderAsync())
+        {
+            dt.Load(reader);
+        }
+
+        int totalRecords = 0;
+
+        var list = dt.AsEnumerable().Select(r =>
+        {
+            totalRecords = r["TotalRecords"] != DBNull.Value
+                ? Convert.ToInt32(r["TotalRecords"])
+                : 0;
+
+            return new HomeVisitDTO
+            {
+                LineListId = r.Field<int?>("LineListId") ?? 0,
+
+                LineListGuid = r.Field<string>("LineListGuid"),
+
+                StateId = r.Field<int?>("StateId"),
+                StateName = r.Field<string>("StateName"),
+
+                DistrictId = r.Field<int?>("DistrictId"),
+                DistrictName = r.Field<string>("DistrictName"),
+
+                BlockId = r.Field<int?>("BlockId"),
+                BlockName = r.Field<string>("BlockName"),
+
+                VillageName = r.Field<string>("VillageName"),
+
+                FacilityId = r.Field<int?>("FacilityId"),
+                FacilityName = r.Field<string>("FacilityName"),
+
+                SubCenterId = r.Field<int?>("SubCenterId"),
+
+                // FIX: Your SP returns SubCenterName, not SubCentre
+                SubCentre = r.Field<string>("SubCenterName"),
+
+                ASHAId = r.Field<int?>("ASHAId"),
+                AnganwadiWorkerName = r.Field<string>("AnganwadiWorkerName"),
+
+                WomanName = r.Field<string>("WomanName"),
+                HusbandName = r.Field<string>("HusbandName"),
+                MobileNumber = r.Field<string>("MobileNumber"),
+
+                VisitId = r.Field<int?>("VisitId"),
+                VisitGuid = r.Field<string>("VisitGuid"),
+
+                ASHAName = r.Table.Columns.Contains("ASHAName")
+                    ? r.Field<string>("ASHAName")
+                    : null,
+
+                ClientParity = r.Field<int?>("ClientParity"),
+                IsCurrentlyPregnant = r.Field<int?>("IsCurrentlyPregnant"),
+
+                IsReceivingSocialBenefit = r.Field<int?>("IsReceivingSocialBenefit"),
+
+                SocialBenifits =
+                    r["SocialBenifits"] != DBNull.Value
+                    ? r.Field<string>("SocialBenifits")
+                        .Split(',')
+                        .Select(int.Parse)
+                        .ToList()
+                    : new List<int>(),
+
+                IsUsingFamilyPlanning = r.Field<int?>("IsUsingFamilyPlanning"),
+                FamilyPlanningMethod = r.Field<int?>("FamilyPlanningMethod"),
+
+                IsCounsellingDone = r.Field<int?>("IsCounsellingDone"),
+                IsReferredForServices = r.Field<int?>("IsReferredForServices"),
+
+                ReferredHealthCenterType = r.Field<int?>("ReferredHealthCenterType"),
+                ReferredHealthCenterName = r.Field<string>("ReferredHealthCenterName"),
+
+                IsConsentTaken = r.Field<int?>("IsConsentTaken"),
+                IsCallInitiated = r.Field<int?>("IsCallInitiated"),
+
+                CreatedOn = r.Field<DateTime?>("CreatedOn"),
+                CreatedBy = r.Field<int?>("CreatedBy"),
+                UpdatedOn = r.Field<DateTime?>("UpdatedOn"),
+                UpdatedBy = r.Field<int?>("UpdatedBy"),
+
+                SubCenterName = r.Field<string>("SubCenterName")
+            };
+        }).ToList();
+
+        return (list, totalRecords);
+    }
+
+    public async Task<HomeVisitDTO?> GetByIdAsync(Guid linelistguid, int userId)
+    {
+        using var con = GetConnection();
+        using var cmd = new SqlCommand("sp_getHomeVisitByguid", con);
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@linelistguid", linelistguid);
 
         await con.OpenAsync();
         using var dr = await cmd.ExecuteReaderAsync();
 
-        while (await dr.ReadAsync())
+        if (await dr.ReadAsync())
         {
-            list.Add(MapReaderToHomeVisitDto(dr));
+            return MapReaderToHomeVisitDto(dr);
         }
 
-        return list;
+        return null;
     }
 
     private HomeVisitDTO MapReaderToHomeVisitDto(SqlDataReader dr)
@@ -88,26 +198,6 @@ public class HomeVisitService : IHomeVisitService
             SubCenterName = dr["SubCenterName"]?.ToString()
         };
     }
-    public async Task<HomeVisitDTO?> GetByIdAsync(Guid linelistguid, int userId)
-    {
-        using var con = GetConnection();
-        using var cmd = new SqlCommand("sp_getHomeVisitByguid", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-
-        cmd.Parameters.AddWithValue("@UserId", userId);
-        cmd.Parameters.AddWithValue("@linelistguid", linelistguid);
-
-        await con.OpenAsync();
-        using var dr = await cmd.ExecuteReaderAsync();
-
-        if (await dr.ReadAsync())
-        {
-            return MapReaderToHomeVisitDto(dr);
-        }
-
-        return null;
-    }
-
     public async Task<List<HomevisitFollowUpDto>> GetFollowUpHistoryAsync(Guid linelistguid, int userId)
     {
         try

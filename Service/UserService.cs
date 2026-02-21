@@ -65,6 +65,54 @@ public class UserService : IUserService
                         .ToList()
         }).ToList();
     }
+
+    public (List<UserDto> Data, int TotalRecords) GetAll(int userId, int page, int pageSize, int? stateId, int? districtId)
+    {
+        var list = new List<UserDto>();
+        int totalRecords = 0;
+
+        using var conn = new SqlConnection(Conn());
+        using var cmd = new SqlCommand("sp_GetUsersNew", conn);
+
+        cmd.CommandType = CommandType.StoredProcedure;
+
+        cmd.Parameters.AddWithValue("@UserId", userId);
+        cmd.Parameters.AddWithValue("@PageNumber", page);
+        cmd.Parameters.AddWithValue("@PageSize", pageSize);
+        cmd.Parameters.AddWithValue("@StateId", (object?)stateId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
+
+        conn.Open();
+
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            totalRecords = reader["TotalRecords"] != DBNull.Value
+                ? Convert.ToInt32(reader["TotalRecords"])
+                : 0;
+
+            list.Add(new UserDto
+            {
+                UserId = Convert.ToInt32(reader["UserId"]),
+                MobileNumber = reader["MobileNumber"]?.ToString(),
+                Email = reader["Email"]?.ToString(),
+                RoleName = reader["RoleName"]?.ToString(),
+                IsActive = reader["IsActive"] != DBNull.Value
+                            ? Convert.ToInt32(reader["IsActive"])
+                            : 0,
+                StateId = reader["StateId"] != DBNull.Value
+                    ? Convert.ToInt32(reader["StateId"])
+                    : 0,
+
+                DistrictId = reader["DistrictId"] != DBNull.Value
+                    ? Convert.ToInt32(reader["DistrictId"])
+                    : 0
+            });
+        }
+
+        return (list, totalRecords);
+    }
     public UserDto? GetById(int id)
     {
         var parameters = new SqlParameter[] { new SqlParameter("@UserId", SqlDbType.Int) { Value = id } };
