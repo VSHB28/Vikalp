@@ -86,42 +86,41 @@
                 </div>
             </div>
             <hr />
-
-            <div class="row">
-
-                <div class="col-md-3 mb-1">
-                    <label class="form-label">State </label>
-                    <select name="StateId" class="form-control" id="StateId">
-                        <option value="">-- Select State --</option>
-                        @foreach (var s in ViewBag.States)
-                        {
-                            <option value="@s.Id" @(ViewBag.StateId == s.Id ? "selected" : "")>@s.Name</option>
-                        }
-                    </select>
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div class="filter-item">
+                        <label class="form-label">State </label>
+                        <select name="StateId" class="form-control" id="StateId">
+                            <option value="">-- Select State --</option>
+                            @foreach (var s in ViewBag.States)
+                            {
+                                <option value="@s.Id" @(ViewBag.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="form-label">District</label>
+                        <select name="DistrictId" class="form-control" id="DistrictId">
+                            <option value="">-- Select District --</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="form-label">Activity Name</label>
+                        <select name="ActivityNameId" class="form-control" id="ActivityNameId">
+                            <option value="">-- Select ActivityName --</option>
+                            @foreach (var s in ViewBag.ActivityTypeName)
+                            {
+                                <option value="@s.Value" @(ViewBag.ActivityTypeName.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="filter-item filter-btn-item">
+                        <button type="button" class="btn btn-add" id="searchBtn" onclick="searchData()">Search</button>
+                    </div>
                 </div>
-                <div class="col-md-3 mb-1">
-                    <label class="form-label">District</label>
-                    <select name="DistrictId" class="form-control" id="DistrictId">
-                        <option value="">-- Select District --</option>
-                    </select>
-                </div>
+            </div>
 
-                <div class="col-md-3 mb-1">
-                    <label class="form-label">Activity Name</label>
-                    <select name="ActivityNameId" class="form-control" id="ActivityNameId">
-                        <option value="">-- Select ActivityName --</option>
-                        @foreach (var s in ViewBag.ActivityTypeName)
-                        {
-                            <option value="@s.Value" @(ViewBag.ActivityTypeName.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-add" id="searchBtn" onclick="searchData()">Search</button>
-                </div>
-
-                </div>
+            
 
                 @if (!Model?.Any() ?? true)
             {

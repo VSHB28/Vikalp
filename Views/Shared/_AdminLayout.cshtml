@@ -662,6 +662,107 @@
         .umcard-header h3 {
             font-size: 21px !important;
         }
+
+
+        /* filter grid */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 10px;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-btn-item {
+            display: flex;
+            align-items: start;
+            justify-content: center;
+        }
+
+
+        @@media (max-width: 992px) {
+            .filter-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-btn-item {
+                grid-column: span 2;
+            }
+        }
+
+        /* ===== PAGINATION STYLES ===== */
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+        }
+
+        .page-item {
+            list-style: none;
+        }
+
+            /* Circle shape for ALL links by default */
+            .page-item .page-link {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background-color: #ffffff;
+                color: #F15A29;
+                border: 2px solid #F15A29;
+                font-weight: 600;
+                font-size: 14px;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 6px rgba(241, 90, 41, 0.15);
+            }
+
+            /* Cylindrical/Pill shape ONLY for Next and Previous buttons */
+            .page-item:first-child .page-link,
+            .page-item:last-child .page-link {
+                width: auto !important;
+                min-width: 90px;
+                height: 42px;
+                padding: 0 20px;
+                border-radius: 50px !important;
+            }
+
+            /* Hover state */
+            .page-item .page-link:hover {
+                background-color: #F15A29;
+                color: #ffffff;
+                border-color: #F15A29;
+                box-shadow: 0 4px 14px rgba(241, 90, 41, 0.35);
+                transform: translateY(-2px);
+            }
+
+            /* Active (current page highlighted) */
+            .page-item.active .page-link {
+                background-color: #F15A29;
+                color: #ffffff;
+                border-color: #F15A29;
+                box-shadow: 0 4px 14px rgba(241, 90, 41, 0.35);
+            }
+
+            /* Focus */
+            .page-item .page-link:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(241, 90, 41, 0.25);
+            }
     </style>
 </head>
 <body>
