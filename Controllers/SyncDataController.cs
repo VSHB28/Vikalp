@@ -26,10 +26,13 @@ namespace Vikalp.Controllers.Api
             {
                 if (!(User?.Identity?.IsAuthenticated ?? false))
                 {
-                    return Unauthorized(new { message = "Invalid or expired token" });
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid or expired token"
+                    });
                 }
 
-                // 🔹 Get UserId from JWT (same logic as download)
                 var userIdClaim = User.Claims.FirstOrDefault(c =>
                     c.Type == "uid" ||
                     c.Type == ClaimTypes.NameIdentifier ||
@@ -37,10 +40,13 @@ namespace Vikalp.Controllers.Api
 
                 if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
                 {
-                    return Unauthorized(new { message = "Invalid user token" });
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid user token"
+                    });
                 }
 
-                // 🔹 Read raw JSON body
                 string rawJson;
                 using (var reader = new StreamReader(Request.Body))
                 {
@@ -49,8 +55,14 @@ namespace Vikalp.Controllers.Api
 
                 if (string.IsNullOrWhiteSpace(rawJson))
                 {
-                    return BadRequest(new { message = "Request payload is required" });
+                    return BadRequest(new
+                    {
+                        statusCode = 400,
+                        message = "Request payload is required"
+                    });
                 }
+
+                Log(userId, rawJson, "save-asha-orientation");
 
                 var connStr = _config.GetConnectionString("DefaultConnection");
 
@@ -58,7 +70,6 @@ namespace Vikalp.Controllers.Api
                 using (var cmd = new SqlCommand("dbo.sp_InsertAshaOrientationSync", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
                     cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
@@ -68,6 +79,7 @@ namespace Vikalp.Controllers.Api
 
                 return Ok(new
                 {
+                    statusCode = 200,
                     message = "Sync completed successfully"
                 });
             }
@@ -75,6 +87,7 @@ namespace Vikalp.Controllers.Api
             {
                 return StatusCode(500, new
                 {
+                    statusCode = 500,
                     message = "Database error during sync",
                     error = ex.Message
                 });
@@ -83,10 +96,11 @@ namespace Vikalp.Controllers.Api
             {
                 return StatusCode(500, new
                 {
+                    statusCode = 500,
                     message = "Internal server error",
                     error = ex.Message
                 });
-            }
+            }            
         }
 
         [HttpPost("SaveUpdateLineList")]
@@ -131,6 +145,8 @@ namespace Vikalp.Controllers.Api
                         message = "Request payload is required"
                     });
                 }
+
+                Log(userId, rawJson, "SaveUpdateLineList");
 
                 var connStr = _config.GetConnectionString("DefaultConnection");
 
@@ -214,6 +230,8 @@ namespace Vikalp.Controllers.Api
                     });
                 }
 
+                Log(userId, rawJson, "SaveUpdateHomeVisit");
+
                 var connStr = _config.GetConnectionString("DefaultConnection");
 
                 using (var conn = new SqlConnection(connStr))
@@ -295,6 +313,8 @@ namespace Vikalp.Controllers.Api
                         message = "Request payload is required"
                     });
                 }
+
+                Log(userId, rawJson, "SaveUpdateLineListConcent");
 
                 var connStr = _config.GetConnectionString("DefaultConnection");
 
@@ -378,6 +398,8 @@ namespace Vikalp.Controllers.Api
                     });
                 }
 
+                Log(userId, rawJson, "SaveUpdateHomeVisitFollowup");
+
                 var connStr = _config.GetConnectionString("DefaultConnection");
 
                 using (var conn = new SqlConnection(connStr))
@@ -390,7 +412,6 @@ namespace Vikalp.Controllers.Api
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
-
                 return Ok(new
                 {
                     statusCode = 200,
@@ -416,5 +437,23 @@ namespace Vikalp.Controllers.Api
                 });
             }            
         }
+
+
+        //============================= = LOGGING METHOD =============================
+        public void Log(int userId, string jsonPayload, string api)
+        {
+            using (var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection")))
+            using (var cmd = new SqlCommand("dbo.sp_LogSyncRequest", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@UserId", userId);
+                cmd.Parameters.AddWithValue("@JsonPayload", jsonPayload);
+                cmd.Parameters.AddWithValue("@API", api);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
     }
 }
