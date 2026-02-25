@@ -1,0 +1,445 @@
+﻿@using Vikalp.Models.DTO
+@model IEnumerable<Vikalp.Models.DTO.EventActivityDto>
+
+@{
+    ViewData["Title"] = "Event Activities";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    #eventactivity-record {
+        padding: 10px;
+    }
+</style>
+
+<style>
+    .um-action {
+        white-space: nowrap;
+    }
+    /* Small, focused styles for the user management page */
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
+
+    .um-toolbar {
+        gap: .5rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .um-search {
+        max-width: 320px;
+    }
+
+    .um-table thead th {
+        /* background: linear-gradient(90deg,#0d6efd, #6610f2);
+                    color: #fff;
+                    border: 0; */
+        color: #fff;
+        border: 1px dotted;
+        background: var(--ipas-sidebar);
+    }
+
+    .um-table tbody tr:hover {
+        background: rgba(13,110,253,0.03);
+    }
+
+    .um-action .btn {
+        min-width: 44px;
+    }
+
+    .um-badge-role {
+        font-size: .8rem;
+        padding: .25rem .45rem;
+        border-radius: .25rem;
+    }
+
+    .um-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .um-action a,
+    .um-action button {
+        position: relative;
+        z-index: 10;
+        pointer-events: auto;
+    }
+
+    .um-action svg {
+        pointer-events: none;
+    }
+
+    .table-responsive {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-add {
+        background-color: #3F0C11;
+        color: white;
+    }
+
+    .umcard-header {
+        background: linear-gradient(135deg, #F15A29, #b10315b5);
+        color: #ffffff;
+        padding: 10px 20px;
+    }
+
+</style>
+
+<div class="container-fluid" id="eventactivity-record">
+        <!-- ===== HEADER BAR ===== -->
+        <div class="card um-card mb-3">
+            <div class="card-body">
+                <div class="umcard-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="mb-0">Event Activities</h3>
+                        </div>
+
+                        <div class="um-toolbar">
+                            <a href="@Url.Action("Create", "EventActivities")" class="btn btn-add">
+                                <i class="fa fa-plus"></i>
+                                Add Event
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+
+                <div class="filter-section">
+                    <div class="filter-grid">
+                        <div class="filter-item">
+                            <label>State</label>
+                            <select name="StateId" class="form-control" id="StateId">
+                                <option value="">-- Select State --</option>
+                                @foreach (var s in ViewBag.States)
+                                {
+                                    <option value="@s.Id" @(ViewBag.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>District</label>
+                            <select name="DistrictId" class="form-control" id="DistrictId">
+                                <option value="">-- Select District --</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Block</label>
+                            <select name="BlockId" class="form-control" id="BlockId">
+                                <option value="">-- Select Block --</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Facility</label>
+                            <select name="FacilityId" class="form-control" id="FacilityId">
+                                <option value="">-- Select Facility --</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>Sub Centre</label>
+                            <select name="SubCenterId" class="form-control" id="SubCenterId">
+                                <option value="">-- Select Sub-centre --</option>
+                            </select>
+                        </div>
+                        <div class="filter-item filter-btn-item">
+                            <button type="button" class="btn btn-add" id="searchBtn" onclick="searchData()">Search</button>
+                        </div>
+                    </div>
+                </div>
+            <div class="table-responsive">
+<table id="activitiesTable" class="table table-striped um-table align-middle">
+                        <thead>
+       <tr>
+    <th><i class="bi bi-calendar-event"></i> Event</th>
+    <th><i class="bi bi-calendar-date"></i> Event Date</th>
+    <th><i class="bi bi-hospital"></i> PHC</th>
+    <th><i class="bi bi-house-heart"></i> SubCentre</th>
+    <th><i class="bi bi-file-earmark-text"></i> Leaflets Distributed</th>
+    <th><i class="bi bi-gear"></i> Actions</th>
+</tr>
+
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            string eventName = item.EventTypeId switch
+                            {
+                                1 => "सास बहु सदा सुखी रहो समारोह",
+                                2 => "तैयारी जीत की",
+                                3 => "शादी मुबारक",
+                                4 => "सुनो दीदी",
+                                _ => "Unknown"
+                            };
+                        }
+                        @eventName
+                    </td>
+                    <td>@item.EventDate?.ToString("dd-MMM-yyyy")</td>
+                    <td>@item.FacilityName</td>
+                    <td>@item.SubCenter</td>
+                    <td>@item.LeafletsDistributed</td>
+                    <td class="text-end um-action">
+                        <a class="btn btn-sm btn-outline-primary me-1"
+                           asp-controller="EventActivities"
+                           onclick="goToEdit(@item.EventId)"
+                           asp-route-id="@item.EventId"
+                           title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form asp-controller="EventActivities"
+                              asp-action="Delete"
+                              asp-route-id="@item.EventId"
+                              method="post"
+                              class="d-inline"
+                              onsubmit="return confirm('Are you sure you want to delete this activity?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="14" class="text-center text-muted">No event activities found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+ <nav>
+    <ul class="pagination justify-content-end">
+
+        <!-- Previous button (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage <= 1 ? "#" :
+                Url.Action("Index", new {
+                    page = ViewBag.CurrentPage - 1,
+                    pageSize = ViewBag.PageSize,
+                    StateId = ViewBag.StateId,
+                    DistrictId = ViewBag.DistrictId,
+                    BlockId = ViewBag.BlockId,
+                    FacilityId = ViewBag.FacilityId,
+                    SubCenterId = ViewBag.SubCenterId
+                }))">
+                Previous
+            </a>
+        </li>
+
+        <!-- Page numbers -->
+        @for (int p = 1; p <= ViewBag.TotalPages; p++)
+        {
+            <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Index", new {
+                        page = p,
+                        pageSize = ViewBag.PageSize,
+                        StateId = ViewBag.StateId,
+                        DistrictId = ViewBag.DistrictId,
+                        BlockId = ViewBag.BlockId,
+                        FacilityId = ViewBag.FacilityId,
+                        SubCenterId = ViewBag.SubCenterId
+                   })">
+                    @p
+                </a>
+            </li>
+        }
+
+        <!-- Next button (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage >= ViewBag.TotalPages ? "#" :
+                Url.Action("Index", new {
+                    page = ViewBag.CurrentPage + 1,
+                    pageSize = ViewBag.PageSize,
+                    StateId = ViewBag.StateId,
+                    DistrictId = ViewBag.DistrictId,
+                    BlockId = ViewBag.BlockId,
+                    FacilityId = ViewBag.FacilityId,
+                    SubCenterId = ViewBag.SubCenterId
+                }))">
+                Next
+            </a>
+        </li>
+
+    </ul>
+</nav>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function goToEdit(id) {
+        window.location.href = '/EventActivities/Edit/' + id;
+    }
+
+// ---------------- CASCADING DROPDOWNS ----------------
+
+            document.getElementById("StateId").addEventListener("change", function () {
+                let stateId = this.value;
+                resetDropdown("DistrictId", "-- Select District --");
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!stateId) return;
+
+                fetch(`/EventActivities/GetDistricts?stateId=${stateId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("DistrictId", data, "id", "name");
+         });
+            });
+
+            document.getElementById("DistrictId").addEventListener("change", function () {
+                let districtId = this.value;
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!districtId) return;
+
+                fetch(`/EventActivities/GetBlocks?districtId=${districtId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("BlockId", data, "id", "name");
+         });
+            });
+
+            document.getElementById("BlockId").addEventListener("change", function () {
+                let blockId = this.value;
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!blockId) return;
+
+                fetch(`/EventActivities/GetFacilities?blockId=${blockId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("FacilityId", data, "id", "name");
+         });
+            });
+
+             document.getElementById("FacilityId").addEventListener("change", function () {
+                let blockId = document.getElementById("BlockId").value;
+                resetDropdown("SubCenterId", "-- Select Sub-centre --");
+
+                if (!blockId) return;
+
+                fetch(`/EventActivities/GetSubCentre?blockId=${blockId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("SubCenterId", data, "id", "name");
+         });
+            });
+
+            function resetDropdown(id, placeholder) {
+                let ddl = document.getElementById(id);
+                ddl.innerHTML = `<option value="">${placeholder}</option>`;
+            }
+
+            function fillDropdown(id, data, valueField, textField) {
+                let ddl = document.getElementById(id);
+                data.forEach(x => {
+         let opt = document.createElement("option");
+         opt.value = x[valueField];
+         opt.text = x[textField];
+         ddl.appendChild(opt);
+                });
+            }
+
+      async function searchActivity() {
+        const term = document.getElementById("searchTerm").value;
+
+        const response = await fetch(`/EventActivities/Search?q=${encodeURIComponent(term)}`);
+        const html = await response.text();
+
+        document.querySelector("#usersTable tbody").innerHTML = html;
+    }
+
+        function searchData() {
+
+    var stateId = document.getElementById("StateId").value;
+    var districtId = document.getElementById("DistrictId").value;
+    var blockId = document.getElementById("BlockId").value;
+    var facilityId = document.getElementById("FacilityId").value;
+    var subCenterId = document.getElementById("SubCenterId").value;
+
+    var url = '@Url.Action("Index", "EventActivities")'
+        + '?page=1'
+        + '&pageSize=10'
+        + '&StateId=' + stateId
+        + '&DistrictId=' + districtId
+        + '&BlockId=' + blockId
+        + '&FacilityId=' + facilityId
+        + '&SubCenterId=' + subCenterId
+
+    window.location.href = url;
+}
+
+    document.addEventListener("DOMContentLoaded", async function () {
+
+    var stateId = "@ViewBag.StateId";
+    var districtId = "@ViewBag.DistrictId";
+    var blockId = "@ViewBag.BlockId";
+    var facilityId = "@ViewBag.FacilityId";
+    var subCenterId = "@ViewBag.SubCenterId";
+
+    if (stateId) {
+
+        document.getElementById("StateId").value = stateId;
+
+        let districts = await fetch(`/EventActivities/GetDistricts?stateId=${stateId}`)
+            .then(res => res.json());
+
+        fillDropdown("DistrictId", districts, "id", "name");
+
+        if (districtId) {
+
+            document.getElementById("DistrictId").value = districtId;
+
+            let blocks = await fetch(`/EventActivities/GetBlocks?districtId=${districtId}`)
+                .then(res => res.json());
+
+            fillDropdown("BlockId", blocks, "id", "name");
+
+            if (blockId) {
+
+                document.getElementById("BlockId").value = blockId;
+
+                let facilities = await fetch(`/EventActivities/GetFacilities?blockId=${blockId}`)
+                    .then(res => res.json());
+
+                fillDropdown("FacilityId", facilities, "id", "name");
+
+                if (facilityId) {
+                    document.getElementById("FacilityId").value = facilityId;
+                }
+
+                // FIXED: subcentre loads using blockId
+                let subCenters = await fetch(`/EventActivities/GetSubCentre?blockId=${blockId}`)
+                    .then(res => res.json());
+
+                fillDropdown("SubCenterId", subCenters, "id", "name");
+
+                if (subCenterId) {
+                    document.getElementById("SubCenterId").value = subCenterId;
+                }
+            }
+        }
+    }
+
+});
+
+   </script>

@@ -221,11 +221,11 @@
             <nav>
     <ul class="pagination justify-content-end">
 
-        @if (ViewBag.CurrentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   href="@Url.Action("Index", new {
+        <!-- Previous (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage <= 1 ? "#" :
+                   Url.Action("Index", new {
                        page = ViewBag.CurrentPage - 1,
                        pageSize = ViewBag.PageSize,
                        StateId = ViewBag.StateId,
@@ -233,12 +233,13 @@
                        BlockId = ViewBag.BlockId,
                        FacilityId = ViewBag.FacilityId,
                        OrientationDate = ViewBag.OrientationDate
-                   })">
-                    Previous
-                </a>
-            </li>
-        }
+                   }))">
+                Previous
+            </a>
+        </li>
 
+
+        <!-- Page numbers -->
         @for (int p = 1; p <= ViewBag.TotalPages; p++)
         {
             <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
@@ -257,11 +258,12 @@
             </li>
         }
 
-        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   href="@Url.Action("Index", new {
+
+        <!-- Next (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage >= ViewBag.TotalPages ? "#" :
+                   Url.Action("Index", new {
                        page = ViewBag.CurrentPage + 1,
                        pageSize = ViewBag.PageSize,
                        StateId = ViewBag.StateId,
@@ -269,11 +271,10 @@
                        BlockId = ViewBag.BlockId,
                        FacilityId = ViewBag.FacilityId,
                        OrientationDate = ViewBag.OrientationDate
-                   })">
-                    Next
-                </a>
-            </li>
-        }
+                   }))">
+                Next
+            </a>
+        </li>
 
     </ul>
 </nav>

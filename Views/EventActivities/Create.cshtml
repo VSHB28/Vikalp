@@ -1,0 +1,822 @@
+﻿@model Vikalp.Models.DTO.EventActivityDto
+@{
+    ViewData["Title"] = "Add Event Activity";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-primary-soft: rgba(241, 90, 41, 0.08);
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        background: rgba(0,0,0,0.05);
+    }
+
+    .shell {
+        width: 100%;
+        max-width: 1100px;
+        padding: 24px;
+    }
+
+    .container {
+        background: var(--ipas-white);
+        border-radius: 12px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+        overflow: hidden;
+    }
+
+    .left-panel {
+        padding: 22px 24px 20px;
+        background: var(--ipas-light);
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: var(--ipas-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 18px;
+    }
+
+    .header-text-main {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+    }
+
+    .header-text-sub {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .badge-date {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #ffe3c4;
+        font-size: 11px;
+        color: var(--ipas-text-dark);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .section-switcher {
+        margin-bottom: 16px;
+    }
+
+    .section-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 6px;
+    }
+
+    .pill-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .pill {
+        border-radius: 999px;
+        border: 1px solid #f3d2b8;
+        padding: 6px 12px;
+        font-size: 11px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--ipas-white);
+        color: var(--ipas-text-muted);
+    }
+
+        .pill i {
+            font-size: 13px;
+        }
+
+        .pill.active {
+            background: #ffd7aa;
+            border-color: #f1a259;
+            color: var(--ipas-text-dark);
+            font-weight: 600;
+        }
+
+    .form-section {
+        background: var(--ipas-white);
+        border-radius: 8px;
+        border: 1px solid #f0e0d2;
+        padding: 14px 14px 16px;
+        margin-bottom: 10px;
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ipas-text-dark);
+    }
+
+    .form-section-title-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: var(--ipas-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 13px;
+    }
+
+    .form-section-subtitle {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        padding: 9px 11px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241, 90, 41, 0.18);
+        }
+
+    .form-textarea {
+        min-height: 70px;
+        resize: vertical;
+    }
+
+    .form-footer {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .footer-note {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .btn-primary {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #f1a259;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #FFD8A6;
+        color: #e46b29;
+    }
+
+        .btn-primary:hover {
+            background-color: #ffc37a;
+        }
+
+    .question-field[hidden] {
+        display: none !important;
+    }
+
+    @@media (max-width: 900px) {
+        .container
+
+    {
+        border-radius: 0;
+    }
+
+    }
+
+    @@media (max-width: 640px) {
+        .shell
+
+    {
+        padding: 14px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    }
+</style>
+
+<div class="shell">
+    <div class="container">
+        <div class="left-panel">
+            <div class="header-bar">
+                <div class="header-title">
+                    <div class="header-icon"><i class="bi bi-clipboard2-check"></i></div>
+                    <div>
+                        <div class="header-text-main">Event Activities</div>
+                        <div class="header-text-sub">Capture daily Antara program details</div>
+                    </div>
+                </div>
+                <div class="badge-date">
+                    <i class="bi bi-calendar-event"></i>
+                    <span id="today-label">Today</span>
+                </div>
+            </div>
+
+            <!-- Set / Section Switcher -->
+            <div class="section-switcher">
+                <div class="section-label">Select Section / Program Type</div>
+
+                <div class="pill-group" id="setSwitcher">
+                    @foreach (var ev in ViewBag.EventList)
+                    {
+                        var isActive = ev.Id == 1 ? "active" : ""; // first one active by default
+                         <button type="button" class="pill @isActive" data-set="@ev.Id">
+                         <i class="bi bi-@ev.Id-circle"></i>
+                         <span>@ev.Name</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <form id="programForm" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <!-- Basic Details -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-info-circle"></i></div>
+                            <span>Basic Details</span>
+                        </div>
+                        <div class="form-section-subtitle">Program date and location</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q1 Program Date -->
+                        <div class="form-group question-field" data-qid="Q1">
+                            <label class="form-label"><i class="bi bi-calendar-date label-icon"></i><span>Q1. Program Date</span></label>
+                            <input type="date" class="form-input" name="EventDate" />
+                        </div>
+                        <!-- Q2 Name of State -->
+                        <div class="form-group question-field" data-qid="Q2.1">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.1 Name of State</span></label>
+                            <select name="StateId" class="form-input" id="StateId">
+                                <option value="">-- Select State --</option>
+                                @foreach (var s in ViewBag.States)
+                                {
+                                    <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q2 Name of District -->
+                        <div class="form-group question-field" data-qid="Q2.2">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.2 Name of District</span></label>
+                            <select name="DistrictId" class="form-input" id="DistrictId">
+                                <option value="">-- Select District --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of Block -->
+                        <div class="form-group question-field" data-qid="Q2.3">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.3 Name of Block</span></label>
+                            <select name="BlockId" class="form-input" id="BlockId">
+                                <option value="">-- Select Block --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of PHC -->
+                        <div class="form-group question-field" data-qid="Q2.4">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.4 Name of PHC</span></label>
+                            <select name="FacilityId" class="form-input" id="FacilityId">
+                                <option value="">-- Select Facility --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of SC -->
+                        <div class="form-group question-field" data-qid="Q2.5">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.5 Name of Sub Centre</span></label>
+                            <select name="SubcentreId" class="form-input" id="SubcentreId">
+                                <option value="">-- Select SubCentre --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of Village -->
+                        <div class="form-group question-field" data-qid="Q2.6">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.6 Name of Village</span></label>
+                            <input type="text" class="form-input" name="VillageName" placeholder="Enter name of Village" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Women & Mothers-in-law -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-gender-female"></i></div>
+                            <span>Women &amp; Mothers-in-law</span>
+                        </div>
+                        <div class="form-section-subtitle">Counts of women by parity</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q3 -->
+                        <div class="form-group question-field" data-qid="Q3">
+                            <label class="form-label"><i class="bi bi-people label-icon"></i><span>Q3. Number of Women with 0 Children</span></label>
+                            <input type="number" min="0" class="form-input" name="Women_0Children" placeholder="0" />
+                        </div>
+                        <!-- Q4 -->
+                        <div class="form-group question-field" data-qid="Q4">
+                            <label class="form-label"><i class="bi bi-person-heart label-icon"></i><span>Q4. Number of Women with 1 Child</span></label>
+                            <input type="number" min="0" class="form-input" name="Women_1Child" placeholder="0" />
+                        </div>
+                        <!-- Q5 -->
+                        <div class="form-group question-field" data-qid="Q5">
+                            <label class="form-label"><i class="bi bi-people-fill label-icon"></i><span>Q5. Number of Women with 2 or More Children</span></label>
+                            <input type="number" min="0" class="form-input" name="Women_2PlusChildren" placeholder="0" />
+                        </div>
+                        <!-- Q6 -->
+                        <div class="form-group question-field" data-qid="Q6">
+                            <label class="form-label"><i class="bi bi-house-heart-fill label-icon"></i><span>Q6. Number of Mothers-in-Law</span></label>
+                            <input type="number" min="0" class="form-input" name="MotherInLawCount" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temporary Methods & Antara (Women) -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-capsule"></i></div>
+                            <span>Temporary Methods &amp; Antara (Women)</span>
+                        </div>
+                        <div class="form-section-subtitle">Usage and doses by parity</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q7 -->
+                        <div class="form-group question-field" data-qid="Q7">
+                            <label class="form-label"><i class="bi bi-shield-check label-icon"></i><span>Q7. Number of Women Using Temporary Devices (0 Parity)</span></label>
+                            <input type="number" min="0" class="form-input" name="WomenAdopted_Parity0" placeholder="0" />
+                        </div>
+                        <!-- Q8 -->
+                        <div class="form-group question-field" data-qid="Q8">
+                            <label class="form-label"><i class="bi bi-droplet-half label-icon"></i><span>Q8. Number of Antara Doses Given to Women with 0 Parity</span></label>
+                            <input type="number" min="0" class="form-input" name="AntaraGiven_Parity0" placeholder="0" />
+                        </div>
+                        <!-- Q9 -->
+                        <div class="form-group question-field" data-qid="Q9">
+                            <label class="form-label"><i class="bi bi-shield-fill-check label-icon"></i><span>Q9. Number of Women Using Temporary Devices (1 Parity)</span></label>
+                            <input type="number" min="0" class="form-input" name="WomenAdopted_Parity1" placeholder="0" />
+                        </div>
+                        <!-- Q12 -->
+                        <div class="form-group question-field" data-qid="Q12">
+                            <label class="form-label"><i class="bi bi-droplet-fill label-icon"></i><span>Q12. Number of Antara Doses Given to Women with 1 Parity</span></label>
+                            <input type="number" min="0" class="form-input" name="AntaraGiven_Parity1" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Men & Male Program -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-gender-male"></i></div>
+                            <span>Men &amp; Male Program</span>
+                        </div>
+                        <div class="form-section-subtitle">Counts of men by parity and referrals</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q10 -->
+                        <div class="form-group question-field" data-qid="Q10">
+                            <label class="form-label"><i class="bi bi-person label-icon"></i><span>Q10. Number of Men with 0 Children</span></label>
+                            <input type="number" min="0" class="form-input" name="Men_0Children" placeholder="0" />
+                        </div>
+                        <!-- Q11 -->
+                        <div class="form-group question-field" data-qid="Q11">
+                            <label class="form-label"><i class="bi bi-person-check-fill label-icon"></i><span>Q11. Number of Men with 1 Child</span></label>
+                            <input type="number" min="0" class="form-input" name="Men_1Child" placeholder="0" />
+                        </div>
+                        <!-- Q15 -->
+                        <div class="form-group question-field" data-qid="Q15">
+                            <label class="form-label"><i class="bi bi-people-fill label-icon"></i><span>Q15. Number of Men with 2 or More Children (Male Program)</span></label>
+                            <input type="number" min="0" class="form-input" name="Men_2PlusChildren" placeholder="0" />
+                        </div>
+                        <!-- Q17 -->
+                        <div class="form-group question-field" data-qid="Q17">
+                            <label class="form-label"><i class="bi bi-arrow-right-circle-fill label-icon"></i><span>Q17. Number of Men Referred for Temporary Devices</span></label>
+                            <input type="number" min="0" class="form-input" name="MenReferred_TemporaryMethods" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referrals, Sessions, Helpline & IEC -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-telephone"></i></div>
+                            <span>Referrals, Sessions, Helpline &amp; IEC</span>
+                        </div>
+                        <div class="form-section-subtitle">Service uptake and communication materials</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q13 -->
+                        <div class="form-group question-field" data-qid="Q13">
+                            <label class="form-label"><i class="bi bi-arrow-repeat label-icon"></i><span>Q13. Number of Women Referred for Temporary Devices</span></label>
+                            <input type="number" min="0" class="form-input" name="WomenReferred_TemporaryMethods" placeholder="0" />
+                        </div>
+                        <!-- Q14 -->
+                        <div class="form-group question-field" data-qid="Q14">
+                            <label class="form-label"><i class="bi bi-droplet label-icon"></i><span>Q14. Number of Antara Doses Given on That Day</span></label>
+                            <input type="number" min="0" class="form-input" name="AntaraDosesGiven" placeholder="0" />
+                        </div>
+                        <!-- Q16 -->
+                        <div class="form-group question-field" data-qid="Q16">
+                            <label class="form-label"><i class="bi bi-person-video3 label-icon"></i><span>Q16. IPC Session Conducted at RC (Temporary Devices)</span></label>
+                            <select class="form-select" name="IPCSessionHeld">
+                                <option value="">-- Select --</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <!-- Q18 -->
+                        <div class="form-group question-field" data-qid="Q18">
+                            <label class="form-label"><i class="bi bi-telephone-plus-fill label-icon"></i><span>Q18. Number of Calls Made to Helpline</span></label>
+                            <input type="number" min="0" class="form-input" name="HelplineCalls" placeholder="0" />
+                        </div>
+                        <!-- Q19 -->
+                        <div class="form-group question-field" data-qid="Q19">
+                            <label class="form-label"><i class="bi bi-telephone-outbound-fill label-icon"></i><span>Q19. Number of New Antara Leads Sent to Helpline</span></label>
+                            <input type="number" min="0" class="form-input" name="AntaraLeadsSent" placeholder="0" />
+                        </div>
+                        <!-- Q20 -->
+                        <div class="form-group question-field" data-qid="Q20">
+                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q20. Number of Leaflets Distributed</span></label>
+                            <input type="number" min="0" class="form-input" name="LeafletsDistributed" placeholder="0" />
+                        </div>
+                        <!-- Q21 -->
+                        <div class="form-group question-field" data-qid="Q21">
+                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q21. Antara leaflet, NPK leaflet (Describe)</span></label>
+                            <input type="number" class="form-input" name="NPKLeafletCount" placeholder="0"></input>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form footer -->
+                <div class="form-footer">
+                    <div class="footer-note">
+                        Visible questions change automatically based on selected set.
+                    </div>
+                    <button type="submit" class="btn-save">Save</button>
+                    <a href="@Url.Action("Index", "EventActivities")" class="btn-back">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto set today's date label
+    (function () {
+        var todayLabel = document.getElementById('today-label');
+        if (todayLabel) {
+            var today = new Date();
+            var options = { day: '2-digit', month: 'short', year: 'numeric' };
+            todayLabel.textContent = today.toLocaleDateString('en-GB', options);
+        }
+    })();
+
+    // Question sets mapping based on your specification
+    var questionSets = {
+        1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q14','Q18','Q19','Q20','Q21'],
+        2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q21'],
+        3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q18','Q19','Q20','Q21'],
+        4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q18','Q19','Q20','Q21']
+    };
+
+    function applySetVisibility(activeSetKey) {
+        var allowed = questionSets[activeSetKey] || [];
+        var allFields = document.querySelectorAll('.question-field');
+        allFields.forEach(function (field) {
+            var qid = field.getAttribute('data-qid');
+            if (!qid) return;
+            if (allowed.indexOf(qid) !== -1) {
+                field.hidden = false;
+            } else {
+                field.hidden = true;
+            }
+        });
+    }
+
+    // Handle set switcher pill clicks
+        var switcher = document.getElementById('setSwitcher');
+
+    if (switcher) {
+
+        switcher.addEventListener('click', function (e) {
+
+            var target = e.target;
+
+            while (target && target !== switcher && !target.dataset.set) {
+                target = target.parentElement;
+            }
+
+            if (!target || !target.dataset.set) return;
+
+            var setKey = target.dataset.set;
+
+            // toggle active class
+            var pills = switcher.querySelectorAll('.pill');
+
+            pills.forEach(function (pill) {
+                pill.classList.toggle('active', pill === target);
+            });
+
+            applySetVisibility(setKey);
+
+        });
+
+        // ✅ FIX: load default active set
+        var defaultActive = switcher.querySelector('.pill.active');
+
+        if (defaultActive) {
+            applySetVisibility(defaultActive.dataset.set);
+        }
+
+    }
+
+    // ---------------- CASCADING DROPDOWNS ----------------
+
+            document.getElementById("StateId").addEventListener("change", function () {
+                let stateId = this.value;
+                resetDropdown("DistrictId", "-- Select District --");
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!stateId) return;
+
+                fetch(`/EventActivities/GetDistricts?stateId=${stateId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("DistrictId", data, "id", "name");
+         });
+            });
+
+            document.getElementById("DistrictId").addEventListener("change", function () {
+                let districtId = this.value;
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!districtId) return;
+
+                fetch(`/EventActivities/GetBlocks?districtId=${districtId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("BlockId", data, "id", "name");
+         });
+            });
+
+            document.getElementById("BlockId").addEventListener("change", function () {
+                let blockId = this.value;
+                resetDropdown("FacilityId", "-- Select Facility --");
+
+                if (!blockId) return;
+
+                fetch(`/EventActivities/GetFacilities?blockId=${blockId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("FacilityId", data, "id", "name");
+         });
+            });
+
+             document.getElementById("FacilityId").addEventListener("change", function () {
+                let blockId = document.getElementById("BlockId").value;
+                resetDropdown("SubcentreId", "-- Select Sub-centre --");
+
+                if (!blockId) return;
+
+                fetch(`/EventActivities/GetSubCentre?blockId=${blockId}`)
+         .then(res => res.json())
+         .then(data => {
+             fillDropdown("SubcentreId", data, "id", "name");
+         });
+            });
+
+            function resetDropdown(id, placeholder) {
+                let ddl = document.getElementById(id);
+                ddl.innerHTML = `<option value="">${placeholder}</option>`;
+            }
+
+            function fillDropdown(id, data, valueField, textField) {
+                let ddl = document.getElementById(id);
+                data.forEach(x => {
+         let opt = document.createElement("option");
+         opt.value = x[valueField];
+         opt.text = x[textField];
+         ddl.appendChild(opt);
+                });
+            }
+
+//======================== save data ===============================
+
+
+    document.getElementById("programForm")
+    .addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        const activeSet = document.querySelector(".pill.active");
+
+        const dto = {
+
+            EventId: 0,
+            EventGuid: null,
+
+            EventTypeId: activeSet ? parseInt(activeSet.dataset.set) : null,
+
+            EventDate: getDate("EventDate"),
+
+            StateId: getInt("StateId"),
+            DistrictId: getInt("DistrictId"),
+            BlockId: getInt("BlockId"),
+            FacilityId: getInt("FacilityId"),
+            SubcentreId: getInt("SubcentreId"),
+
+            VillageName: getString("VillageName"),
+
+            Women_0Children: getInt("Women_0Children"),
+            Women_1Child: getInt("Women_1Child"),
+            Women_2PlusChildren: getInt("Women_2PlusChildren"),
+
+            Men_0Children: getInt("Men_0Children"),
+            Men_1Child: getInt("Men_1Child"),
+            Men_2PlusChildren: getInt("Men_2PlusChildren"),
+
+            MotherInLawCount: getInt("MotherInLawCount"),
+
+            WomenAdopted_Parity0: getInt("WomenAdopted_Parity0"),
+            WomenAdopted_Parity1: getInt("WomenAdopted_Parity1"),
+
+            AntaraGiven_Parity0: getInt("AntaraGiven_Parity0"),
+            AntaraGiven_Parity1: getInt("AntaraGiven_Parity1"),
+
+            AntaraDosesGiven: getInt("AntaraDosesGiven"),
+
+            WomenReferred_TemporaryMethods:
+                getInt("WomenReferred_TemporaryMethods"),
+
+            MenReferred_TemporaryMethods:
+                getInt("MenReferred_TemporaryMethods"),
+
+            IPCSessionHeld: getBool("IPCSessionHeld"),
+
+            HelplineCalls: getInt("HelplineCalls"),
+            AntaraLeadsSent: getInt("AntaraLeadsSent"),
+
+            LeafletsDistributed: getInt("LeafletsDistributed"),
+
+            AntaraLeafletCount: null,
+            NPKLeafletCount: getInt("NPKLeafletCount"),
+
+            CreatedBy: null,
+            UpdatedBy: null
+        };
+
+        console.log("Sending DTO:", dto);
+
+        try {
+                const token =
+            document.querySelector("input[name='__RequestVerificationToken']").value;
+
+        const response = await fetch("/EventActivities/CreateJson", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": token
+            },
+            body: JSON.stringify(dto)
+        });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Saved Successfully ✅");
+                document.getElementById("programForm").reset();
+            }
+            else {
+                alert("Save Failed ❌");
+            }
+
+        } catch (err) {
+
+            console.error(err);
+            alert("Server error");
+
+        }
+
+    });
+
+
+    // ---------------------
+    // Helper Functions
+    // ---------------------
+
+    function getInt(name) {
+        const el = document.querySelector(`[name='${name}']`);
+        if (!el || el.value === "") return null;
+        return parseInt(el.value);
+    }
+
+    function getString(name) {
+        const el = document.querySelector(`[name='${name}']`);
+        if (!el || el.value === "") return null;
+        return el.value.trim();
+    }
+
+    function getDate(name) {
+        const el = document.querySelector(`[name='${name}']`);
+        if (!el || el.value === "") return null;
+        return el.value;
+    }
+
+    function getBool(name) {
+        const el = document.querySelector(`[name='${name}']`);
+        if (!el || el.value === "") return null;
+
+        if (el.value === "Yes") return true;
+        if (el.value === "No") return false;
+
+        return null;
+    }
+
+</script>
