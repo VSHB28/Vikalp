@@ -106,6 +106,70 @@ namespace Vikalp.Controllers
             return Json(new { success = result });
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            LoadMasters();
+            var dropdowns = await _dropdownService.GetCommonDropdownsAsync(userId: 1, languageId: 1);
+
+
+            ViewBag.ActivityTypeName = dropdowns["ActivityTypeName"];
+            ViewBag.ActivityType = dropdowns["ActivityType"];
+            ViewBag.ActivityFormat = dropdowns["ActivityFormat"];
+            ViewBag.Clinical = dropdowns["Clinical"];
+            ViewBag.NonClinical = dropdowns["NonClinical"];
+            ViewBag.FacilityType = dropdowns["FacilityType"];
+            ViewBag.ProviderType = dropdowns["ProviderType"];
+            ViewBag.YesNo = dropdowns["YesNo"];
+
+
+            //var model = await _service.GetParticipantsByIdAsync(id);
+
+            //if (model == null)
+            //    return NotFound();
+
+            //return View(model);
+            var model = await _service.GetParticipantsByIdAsync(id);
+            Console.WriteLine(model.Participants.First().InterventionFacility);
+            if (model?.Participants != null && model.Participants.Any())
+            {
+                model.InterventionFacility = model.Participants.First().InterventionFacility;
+            }
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateParticipantsJson([FromBody] HealthSystemParticipantSaveDto model)
+        {
+            if (model == null || model.Participants == null || !model.Participants.Any())
+                return Json(new { success = false });
+
+            int userId = 1;
+
+            bool result = await _service.UpdateParticipantsAsync(
+            model.ActivityDate ?? DateTime.Now,
+            model.StateId,
+            model.DistrictId,
+            model.FacilityTypeId,
+            model.ActivityTypeId,
+            model.FacilityTypeOther,
+            model.ActivityNameId,
+            model.ProviderTypeId,
+            model.Remarks,
+            model.Participants,
+            userId
+        );
+
+            return Json(new { success = result });
+        }
+
+
+
+
         // ===================== AJAX APIs =====================
 
         [HttpGet]

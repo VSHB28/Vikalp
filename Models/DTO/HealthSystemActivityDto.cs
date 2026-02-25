@@ -3,7 +3,7 @@
     public class HealthSystemActivityDto
     {
         public int ActivityId { get; set; }
-        public int ActivityNameId { get; set; }
+        public int? ActivityNameId { get; set; }
         public string ActivityName { get; set; }
         public string? OtherActivity { get; set; }
         public int? StateId { get; set; }

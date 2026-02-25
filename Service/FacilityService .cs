@@ -181,6 +181,7 @@ namespace Vikalp.Service.Implementations
 
                     parameters.Add("@ProfileId", model.ProfileId); // 👈 Important
                     parameters.Add("@FacilityId", model.FacilityId);
+                    parameters.Add("@SubCenterId", model.SubCenterId);
                     parameters.Add("@PopulationCoveredbyPHC", model.PopulationCoveredbyPHC);
                     parameters.Add("@NumberofHSC", model.NumberofHSC);
                     parameters.Add("@PopulationCoveredPHC_HWC", model.PopulationCoveredPHC_HWC);

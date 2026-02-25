@@ -1,0 +1,519 @@
+﻿@using Vikalp.Models.DTO
+@model Vikalp.Models.DTO.HealthSystemParticipantSaveDto
+
+@{
+    ViewData["Title"] = "Edit Participant";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    .card {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    .card-body-edit {
+        padding: 1px 10px;
+        flex: 1 1 auto;
+    }
+    .card-edit{
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+    .card-edit h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #F15A29;
+    }
+
+    .card-edit .col-md-4 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .card-edit .col-md-4 label {
+        white-space: nowrap;
+        margin: 0;
+        font-weight: 500;
+        min-width: 120px;
+    }
+
+    .btn-update {
+        border: 2px solid #f57b20;
+        border-radius: 0;
+        color: #f57b20;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 15px 45px;
+        padding: 12px 45px;
+    }
+
+        .btn-update:hover {
+            background: #f57b20;
+            color: #fff;
+        }
+</style>
+<form id="editForm" method="post">
+    @Html.AntiForgeryToken()
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-body-edit">
+                <div class="card-edit d-flex gap-5">
+                    <h3>Edit Participant</h3>
+                    <div class="col-md-4 d-flex">
+                        <label>Activity Date</label>
+                        <input type="date" name="DateofActivity" class="form-control"
+                               value="@(Model.ActivityDate?.ToString("yyyy-MM-dd"))" />
+                        <span asp-validation-for="DateofOrientation" class="text-danger"></span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+
+
+
+            @*    <div class="col-md-4 mt-2">
+                <label class="me-3">Facility Category</label> *@
+
+            @*    <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="intervention"
+                           name="InterventionFacilityHeader"
+                           value="1"
+                           @(Model.InterventionFacility == 1 ? "checked" : "") />
+                    <label class="form-check-label" for="intervention">
+                        Intervention
+                    </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="nonIntervention"
+                           name="InterventionFacilityHeader"
+                           value="0"
+                           @(Model.InterventionFacility == 0 ? "checked" : "") />
+                    <label class="form-check-label" for="nonIntervention">
+                        Non-Intervention
+                    </label>
+                </div> *@
+            @{
+                var interventionValue = Model?.Participants?.FirstOrDefault()?.InterventionFacility;
+            }
+
+            <div class="col-md-4 mt-2">
+                <label class="me-3">Facility Category</label>
+
+                <!-- Intervention = 0 -->
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="intervention"
+                           name="InterventionFacilityHeader"
+                           value="0"
+                           @(interventionValue == 0 ? "checked" : "") />
+                    <label class="form-check-label" for="intervention">
+                        Intervention
+                    </label>
+                </div>
+
+                <!-- Non-Intervention = 1 -->
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input"
+                           type="radio"
+                           id="nonIntervention"
+                           name="InterventionFacilityHeader"
+                           value="1"
+                           @(interventionValue == 1 ? "checked" : "") />
+                    <label class="form-check-label" for="nonIntervention">
+                        Non-Intervention
+                    </label>
+                </div>
+            </div>
+
+
+
+            <!-- State -->
+            <div class="col-md-3">
+                <label>State</label>
+                <select id="StateId" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.States)
+                    {
+                        <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                    }
+                </select>
+            </div>
+
+            <!-- District -->
+            <div class="col-md-3">
+                <label>District</label>
+                <select id="DistrictId" class="form-control"></select>
+            </div>
+
+            <!-- Block -->
+            <div class="col-md-3">
+                <label>Block</label>
+                <select id="BlockId" class="form-control"></select>
+            </div>
+
+            <!-- Facility Type -->
+            <div class="col-md-3 mt-2">
+                <label>Facility Type</label>
+                <select id="FacilityTypeId" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.FacilityType)
+                    {
+                        <option value="@s.Value" @(Model.FacilityTypeId?.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+
+            <div class="col-md-3 mt-2" id="facilityDropdownDiv">
+                <label>Facility</label>
+                <select id="FacilityId" class="form-control"></select>
+            </div>
+
+            @*    <div class="col-md-3 mt-2 d-none" id="manualFacilityDiv">
+                <label>Facility</label>
+                <input type="text"
+                       id="ManualFacilityName"
+                       class="form-control"
+                       value="@Model.FacilityName"
+                       placeholder="Enter Facility name" />
+            </div> *@ *
+            @*  <!-- Dropdown -->
+            <div class="col-md-3 mt-2 d-none" id="facilityDropdownDiv">
+                <label>Facility</label>
+                <select id="FacilityId" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var f in ViewBag.Facilities)
+                    {
+                        <option value="@f.Id"
+                                @(Model?.FacilityId == f.Id ? "selected" : "")>
+                            @f.Name
+                        </option>
+                    }
+                </select>
+            </div>
+ *@
+            <!-- Textbox -->
+            <div class="col-md-3 mt-2 d-none" id="manualFacilityDiv">
+                <label>Facility</label>
+                <input type="text"
+                       id="ManualFacilityName"
+                       class="form-control"
+                       value="@Model?.FacilityName"
+                       placeholder="Enter Facility Name" />
+            </div>
+
+            <!-- Provider Type -->
+            <div class="col-md-3 mt-2">
+                <label>Provider Type</label>
+                <select id="ProviderTypeId" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ProviderType)
+                    {
+                        <option value="@s.Value" @(Model.ProviderTypeId?.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Activity -->
+            <div class="col-md-3 mt-2">
+                <label>Activity</label>
+                @* <select id="ActivityTypeId" class="form-control"> *@
+                <select id="ActivityTypeId" name="ActivityTypeId" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityType)
+                    {
+                        <option value="@s.Value" @(Model.ActivityTypeId?.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Remarks -->
+            <div class="col-md-3 mt-2">
+                <label>Remarks</label>
+                <input type="text" id="Remarks" class="form-control" value="@Model.Remarks" />
+            </div>
+        </div>
+
+        <hr />
+        <h5 class="mb-3">Participants</h5>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle" id="participantTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Full Name</th>
+                        <th>Mobile</th>
+                        <th width="120">Pre Test</th>
+                        <th width="120">Post Test</th>
+                        <th width="100">Refresher</th>
+                        <th width="100">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.Participants != null && Model.Participants.Any())
+                    {
+                        foreach (var p in Model.Participants)
+                        {
+                            <tr>
+                                <td class="slno"></td>
+                                <td>
+                                    <input type="text" class="form-control hdFullName" value="@p.FullName" placeholder="Full Name" />
+                                    <input type="hidden" class="hdParticipantId" value="@p.ParticipantId" />
+
+                                    @*                                     <input type="hidden" class="hdFacilityName" value="@((p.FacilityName ?? " "))'' />
+ *@
+
+                                    <input type="hidden"
+                                           class="hdFacilityName"
+                                           value="@Html.Encode(p.FacilityName)" />
+
+                                    <input type="hidden" class="hdGenderId" value="@(p.GenderId ?? 0)" />
+                                    <input type="hidden" class="hdInterventionFacility" value="@(p.InterventionFacility ?? 0)" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control hdMobile" value="@p.Mobile" placeholder="Mobile" />
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control form-control-sm preScore" value="@(p.VCATScorePreTest ?? 0)" />
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control form-control-sm postScore" value="@(p.VCATScorePostTest ?? 0)" />
+                                </td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input refresherChk" @(p.RefresherTraining == 1 ? "checked" : "") />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm removeRow">Remove</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3">
+            <button type="button" class="btn btn-update" onclick="updateParticipants()">Update</button>
+            <a href="/HealthSystemParticipant/Index" class="btn btn-back">Back</a>
+        </div>
+    </div>
+</form>
+@section Scripts {
+    <script>
+
+        // ====== Null-safe Razor variables ======
+        let stateId = "@(Model.StateId.ToString() ?? "")";
+        let districtId = "@(Model.DistrictId?.ToString() ?? "")";
+        let blockId = "@(Model.BlockId?.ToString() ?? "")";
+        let facilityId = "@(Model.FacilityId?.ToString() ?? "")";
+
+        // ====== Utility: Update Serial Numbers ======
+        function updateSlNo() {
+            document.querySelectorAll("#participantTable tbody tr").forEach((row, index) => {
+                row.querySelector(".slno").textContent = index + 1;
+            });
+        }
+
+        // ====== Load Districts ======
+        function loadDistricts() {
+            fetch(`/HealthSystemParticipant/GetDistricts?stateId=${stateId || 0}`)
+                .then(r => r.json())
+                .then(data => {
+                    let dd = document.getElementById("DistrictId");
+                    dd.innerHTML = '<option value="">-- Select --</option>';
+
+                    data.forEach(d => {
+                        dd.innerHTML += `<option value="${d.id}" ${d.id == districtId ? "selected" : ""}>${d.name}</option>`;
+                    });
+
+                    loadBlocks();
+                });
+        }
+
+        // ====== Load Blocks ======
+        function loadBlocks() {
+            fetch(`/HealthSystemParticipant/GetBlocks?districtId=${districtId || 0}`)
+                .then(r => r.json())
+                .then(data => {
+                    let dd = document.getElementById("BlockId");
+                    dd.innerHTML = '<option value="">-- Select --</option>';
+
+                    data.forEach(b => {
+                        dd.innerHTML += `<option value="${b.id}" ${b.id == blockId ? "selected" : ""}>${b.name}</option>`;
+                    });
+
+                    loadFacilities();
+                });
+        }
+
+        // ====== Load Facilities ======
+        function loadFacilities() {
+            fetch(`/HealthSystemParticipant/GetFacilities?blockId=${blockId || 0}`)
+                .then(r => r.json())
+                .then(data => {
+                    let dd = document.getElementById("FacilityId");
+                    dd.innerHTML = '<option value="">-- Select --</option>';
+
+                    data.forEach(f => {
+                        dd.innerHTML += `<option value="${f.id}" ${f.id == facilityId ? "selected" : ""}>${f.name}</option>`;
+                    });
+                });
+        }
+
+        // ====== Update Participants ======
+        function updateParticipants() {
+
+            let isIntervention = document.getElementById("intervention")?.checked;
+
+            let facilityIdValue = null;
+            let facilityNameValue = null;
+
+            if (isIntervention) {
+                facilityIdValue = parseInt(document.getElementById("FacilityId").value) || null;
+            } else {
+                facilityNameValue = document.getElementById("ManualFacilityName").value.trim() || null;
+            }
+
+            let participants = [];
+
+            document.querySelectorAll("#participantTable tbody tr").forEach(row => {
+
+                let participantId = parseInt(row.querySelector(".hdParticipantId")?.value) || null;
+                let fullName = row.querySelector(".hdFullName")?.value.trim();
+                let mobile = row.querySelector(".hdMobile")?.value.trim();
+                let genderId = parseInt(row.querySelector(".hdGenderId")?.value) || null;
+                let preTest = parseInt(row.querySelector(".preScore")?.value) || null;
+                let postTest = parseInt(row.querySelector(".postScore")?.value) || null;
+                let refresher = row.querySelector(".refresherChk")?.checked ? 1 : 0;
+
+                participants.push({
+                    ParticipantId: participantId,
+                    FullName: fullName,
+                    Mobile: mobile,
+                    FacilityId: facilityIdValue,
+                    FacilityName: facilityNameValue,
+                    InterventionFacility: isIntervention ? 1 : 0,
+                    GenderId: genderId,
+                    VCATScorePreTest: preTest,
+                    VCATScorePostTest: postTest,
+                    RefresherTraining: refresher,
+                    BlockId: parseInt(document.getElementById("BlockId").value) || null
+                });
+            });
+
+            let model = {
+                ActivityDate: document.querySelector("[name='DateofActivity']").value
+                              || new Date().toISOString().split('T')[0],
+                StateId: parseInt(document.getElementById("StateId").value) || null,
+                DistrictId: parseInt(document.getElementById("DistrictId").value) || null,
+                BlockId: parseInt(document.getElementById("BlockId").value) || null,
+                FacilityId: facilityIdValue,
+                FacilityTypeId: parseInt(document.getElementById("FacilityTypeId").value) || null,
+                FacilityTypeOther: null,
+                ActivityNameId: @Model.ActivityNameId,
+                ActivityTypeId: parseInt(document.getElementById("ActivityTypeId").value) || null,
+                ProviderTypeId: parseInt(document.getElementById("ProviderTypeId").value) || null,
+                Remarks: document.getElementById("Remarks").value.trim() || "",
+                Participants: participants
+            };
+
+            console.log("Sending model:", JSON.stringify(model, null, 2));
+
+            fetch('/HealthSystemParticipant/UpdateParticipantsJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify(model)
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert("Updated successfully!");
+                    window.location.href = "/HealthSystemParticipant/Index";
+                } else {
+                    alert("Update failed: " + (result.message || "Unknown error"));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error during update.");
+            });
+        }
+
+                function handleFacilityToggle() {
+
+            let interventionRadio = document.getElementById("intervention");
+            let nonInterventionRadio = document.getElementById("nonIntervention");
+
+            let dropdownDiv = document.getElementById("facilityDropdownDiv");
+            let manualDiv = document.getElementById("manualFacilityDiv");
+
+            if (interventionRadio.checked) {
+                dropdownDiv.classList.remove("d-none");
+                manualDiv.classList.add("d-none");
+            }
+            else if (nonInterventionRadio.checked) {
+                dropdownDiv.classList.add("d-none");
+                manualDiv.classList.remove("d-none");
+            }
+        }
+
+        // ====== Page Load ======
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+        handleFacilityToggle(); // 👈 VERY IMPORTANT
+
+        document.getElementById("intervention")
+            .addEventListener("change", handleFacilityToggle);
+
+        document.getElementById("nonIntervention")
+            .addEventListener("change", handleFacilityToggle);
+
+
+            loadDistricts();
+
+            document.getElementById("StateId").addEventListener("change", function () {
+                stateId = this.value;
+                loadDistricts();
+            });
+
+            document.getElementById("DistrictId").addEventListener("change", function () {
+                districtId = this.value;
+                loadBlocks();
+            });
+
+            document.getElementById("BlockId").addEventListener("change", function () {
+                blockId = this.value;
+                loadFacilities();
+            });
+
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("removeRow")) {
+                    e.target.closest("tr").remove();
+                    updateSlNo();
+                }
+            });
+
+            updateSlNo();
+        });
+
+    </script>
+}

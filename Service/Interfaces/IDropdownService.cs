@@ -23,4 +23,5 @@ public interface IDropdownService
     Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsAsync(int userId, int languageId);
 
     Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsfamilyplanningAsync(int userId, int languageId);
+    List<SelectListItem>? GetDropdown(string v);
 }

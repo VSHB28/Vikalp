@@ -1,6 +1,6 @@
 ﻿@using Vikalp.Models.DTO
 @{
-    ViewData["Title"] = "Facilities";
+    ViewData["Title"] = "Sub Centres";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -19,8 +19,8 @@
 
     .um-table thead th {
         /* background: linear-gradient(90deg,#0d6efd, #6610f2);
-            color: #fff;
-            border: 0; */
+                color: #fff;
+                border: 0; */
         color: #fff;
         border: 1px dotted;
         background: var(--ipas-sidebar);
@@ -42,21 +42,22 @@
 
 
     /* modal-header */
-    .modal-header{
+    .modal-header {
         background: #f5a20c40;
         color: #000000;
     }
-    .modal-footer{
+
+    .modal-footer {
         background: #f5a20c40;
     }
-    .modal-body{
+
+    .modal-body {
         background: #e7dddd6b;
     }
+
     #facilityprofileModal .modal-body .form-label {
-        font-size:12px;
+        font-size: 12px;
     }
-
-
 
 </style>
 
@@ -64,7 +65,7 @@
 <style>
 
     <style >
-    /* ===== Facility Profile Modal Styles ===== */
+  
     #facilityprofileModal .modal-dialog {
         max-width: 960px;
     }
@@ -390,7 +391,7 @@
         gap: 12px;
     }
 
-    
+
 
     .btn-cancel {
         background-color: #FFEFD4;
@@ -421,27 +422,22 @@
 </style>
 
 <div class="container py-2">
-    <div class="card um-card">
+    <div class="card shadow-sm">
         <div class="card-body">
 
             @Html.AntiForgeryToken()
-            <div class="umcard-header">
-                <div class="d-flex justify-content-between align-items-start ">
-                        <h3 class="mb-0">Facilities</h3>
-                    <div class="um-toolbar">
-                        <a href="/Facility/Create" class="btn  btn-add btn-primary">
-                            Add Facility
-                        </a>
-                        @* <a href="/Facility/Index" class="btn btn-sm btn-outline-secondary">
-                            Refresh
-                        </a> *@
-                    </div>
-                </div>
+            <input type="hidden" id="hdnSubCenterId" />
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">Sub Centre </h3>
+                <a href="/SubCentre/Create" class="btn btn-primary">
+                    Add Sub Centre
+                </a>
             </div>
+
             <hr />
 
             <div class="row g-2 mb-3">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <select id="stateDropdown" class="form-control form-control-sm">
                         <option value="">Select State</option>
                         @foreach (var s in ViewBag.States)
@@ -451,43 +447,50 @@
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <select id="districtDropdown" class="form-control form-control-sm">
                         <option value="">Select District</option>
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <select id="blockDropdown" class="form-control form-control-sm">
                         <option value="">Select Block</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="facilityDropdown" class="form-control form-control-sm">
+                        <option value="">Select Facility</option>
                     </select>
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover um-table align-middle">
-                    <thead>
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
                         <tr>
-                            <th style="width:1%">#</th>
+                            <th>#</th>
                             <th>Facility Name</th>
-                            <th>Type</th>
-                            <th>NIN</th>
+                            <th>Sub Centre</th>
+                            <th>NIN Number</th>
+                            @* <th>Learning Site</th>
+                            <th>Status</th> *@
                             <th>+ Info</th>
-                            <th>+ Profile</th>
+                           <th>+ Profile</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="facilityList">
+                    <tbody id="subCentreList">
                         <tr>
-                            <td colspan="7" class="text-center text-muted">
-                                Select a block to see facilities
+                            <td colspan="6" class="text-center text-muted">
+                                Select a block to see sub centres
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <!-- FACILITY INFO MODAL -->
             <div class="modal fade" id="facilityprofileModal" tabindex="-1">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -650,7 +653,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
-                   
+
                         <div class="modal-body">
                             <form>
                                 <div class="section-wrapper">
@@ -728,15 +731,15 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-clipboard-pulse label-icon"></i><span>Trained In FPLMIS</span></label>
-                                                 <select name="TrainedInFPLMIS" id="TrainedInFPLMIS" class="form-select">
+                                                <select name="TrainedInFPLMIS" id="TrainedInFPLMIS" class="form-select">
                                                     <option value="">-- Select --</option>
                                                     @foreach (var s in ViewBag.yesNo)
                                                     {
                                                         <option value="@s.Value">@s.Text</option>
                                                     }
-                                                 </select>
+                                                </select>
                                             </div>
-                                           
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-capsule-pill label-icon"></i><span>Trained In IUCD</span></label>
                                                 <select name="TrainedInIUCD" id="TrainedInIUCD" class="form-select">
@@ -772,278 +775,186 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-        $(document).ready(function () {
+    $(document).ready(function () {
 
+        $('#stateDropdown').change(function () {
 
-            $('#stateDropdown').change(function () {
-                let stateId = $(this).val();
-                $('#districtDropdown').html('<option value="">Select District</option>');
-                $('#blockDropdown').html('<option value="">Select Block</option>');
-                $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
+            let stateId = $(this).val();
 
-                if (!stateId) return;
+            resetBelow('state');
 
-                $.getJSON('/Facility/GetDistricts', { stateId }, function (data) {
-                    $.each(data, function (i, d) {
-                        $('#districtDropdown').append(`<option value="${d.id}">${d.name}</option>`);
-                    });
+            if (!stateId) return;
+
+            $.getJSON('/SubCentre/GetDistricts', { stateId }, function (data) {
+                $.each(data, function (i, d) {
+                    $('#districtDropdown').append(`<option value="${d.id}">${d.name}</option>`);
                 });
             });
+        });
 
+        $('#districtDropdown').change(function () {
 
-            $('#districtDropdown').change(function () {
-                let districtId = $(this).val();
-                $('#blockDropdown').html('<option value="">Select Block</option>');
-                $('#facilityList').html('<tr><td colspan="7" class="text-center">Select a block to see facilities</td></tr>');
+            let districtId = $(this).val();
 
-                if (!districtId) return;
+            resetBelow('district');
 
-                $.getJSON('/Facility/GetBlocks', { districtId }, function (data) {
-                    $.each(data, function (i, b) {
-                        $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
-                    });
+            if (!districtId) return;
+
+            $.getJSON('/SubCentre/GetBlocks', { districtId }, function (data) {
+                $.each(data, function (i, b) {
+                    $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
                 });
             });
+        });
 
+        $('#blockDropdown').change(function () {
 
-            $('#blockDropdown').change(function () {
-                let blockId = $(this).val();
-                $('#facilityList').html('');
+        let blockId = $(this).val();
 
-                if (!blockId) return;
+        resetBelow('block');
 
-                $.getJSON('/Facility/GetFacilities', { blockId }, function (data) {
-                    let html = '';
-                    if (!data || data.length === 0) {
-                        html = `<tr><td colspan="7" class="text-center">No facilities found</td></tr>`;
-                    } else {
-                        $.each(data, function (i, f) {
-                            html += `<tr>
-                                <td>${i + 1}</td>
-                                <td>${f.facilityName}</td>
-                                <td>${f.facilityType}</td>
-                                <td>${f.ninNumber ?? ''}</td>
-                                <td>
+        if (!blockId) return;
 
+        $('#facilityDropdown').html(`
+            <option value="select">Select Facility</option>
+            <option value="na">NA</option>
+        `);
 
-                             <button class="btn btn-sm btn-outline-primary addfacility"
-                                    data-facility-id="${f.facilityId}"
-                                    data-profile-id="${f.profileId ?? 0}">
-                                <i class="bi bi-plus-circle"></i>
-                            </button>
-                            </td>
-                                <td>
-                            <button class="btn btn-sm btn-outline-primary addhrstatus"
-                                    data-facility-id="${f.facilityId}"
-                                    data-hr-id="${f.hrId ?? 0}">
-                                <i class="bi bi-person-plus"></i>
-                            </button>
-
-
-                                </td>
-
-                                <td class="text-end um-action">
-                                <a href="/Facility/Edit/${f.facilityId}" class="btn btn-sm btn-outline-primary" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteFacility(${f.facilityId})" title="Delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-
-                            </tr>`;
-                        });
-                    }
-                    $('#facilityList').html(html);
-                });
+        $.getJSON('/SubCentre/GetFacilities', { blockId }, function (data) {
+            $.each(data, function (i, f) {
+                $('#facilityDropdown').append(
+                    `<option value="${f.id}">${f.name}</option>`
+                );
             });
-
         });
 
-         // ---------------- OPEN MODAL ----------------
+        loadSubCentres(blockId, null);
+    });
+  
+        $('#facilityDropdown').change(function () {
+        let blockId = $('#blockDropdown').val();
+        let facilityId = $(this).val();
 
-        let selectedFacilityId = 0;
-        let selectedProfileId = 0;
-        let selectedHrId = 0;
+        if (!blockId) return;
 
-        $(document).on("click", ".addfacility", function () {
-
-            selectedFacilityId = $(this).data("facility-id");
-            selectedProfileId = $(this).data("profile-id");
-
-            if (selectedProfileId && selectedProfileId > 0) {
-
-                // EDIT MODE
-                $.getJSON('/Facility/GetFacilityProfile',
-                    { profileId: selectedProfileId },
-                    function (data) {
-
-                        $("#PopulationCoveredbyPHC").val(data.populationCoveredbyPHC);
-                        $("#NumberofHSC").val(data.numberofHSC);
-                        $("#PopulationCoveredPHC_HWC").val(data.populationCoveredPHC_HWC);
-                        $("#PopulationCoveredbyHWC").val(data.populationCoveredbyHWC);
-                        $("#AverageOPDperDay").val(data.averageOPDperDay);
-                        $("#NearestFacilityReferral").val(data.nearestFacilityReferral);
-                        $("#DistancefromPHC").val(data.distancefromPHC);
-                        $("#IsDeliveryPoint").val(data.isDeliveryPoint);
-                        $("#AvgdeliveryperMonth").val(data.avgdeliveryperMonth);
-                        $("#DistancefromDH").val(data.distancefromDH);
-                        $("#IsSeparateSpaceforFp").val(data.isSeparateSpaceforFp);
-
-                        $("#facilityprofileModal").modal("show");
-                    });
-            }
-            else {
-                // ADD MODE
-                clearModal();
-                $("#facilityprofileModal").modal("show");
-            }
-        });
-
-            function clearModal() {
-            $("#facilityprofileModal").find("input, select").val('');
-            selectedProfileId = 0;
+        if (facilityId === "select" || facilityId === "") {
+            facilityId = null;  
+        } else if (facilityId === "na") {
+            facilityId = -1; 
+        } else {
+            facilityId = parseInt(facilityId);  
         }
 
-
-
-        $(document).on("click", ".addhrstatus", function () {
-
-            selectedFacilityId = $(this).data("facility-id");
-            selectedHrId = $(this).data("hr-id");
-
-            if (selectedHrId && selectedHrId > 0) {
-
-                // EDIT MODE
-                $.getJSON('/Facility/GetHrStatus',
-                    { hrId: selectedHrId },
-                    function (data) {
-
-                        $("#HrId").val(data.hrId);
-                        $("#FacilityId").val(data.facilityId);
-                        $("#Name").val(data.name);
-                        $("#Mobile").val(data.mobile);
-                        $("#DesignationId").val(data.designationId);
-                        $("#GenderId").val(data.genderId);
-
-                        $("#TrainedAntaraGovt").val(data.trainedAntaraGovt);
-                        $("#TrainedAntaraIDF").val(data.trainedAntaraIDF);
-                        $("#AttendentVCAT").val(data.attendentVCAT);
-                        $("#TrainedInIUCD").val(data.trainedInIUCD);
-                        $("#TrainedInFPLMIS").val(data.trainedInFPLMIS);
-
-                        $("#hrStatusModal").modal("show");
-                    });
-            }
-            else {
-                // ADD MODE
-                clearhrModal();
-                $("#hrStatusModal").modal("show");
-            }
-        });
-
-        function clearhrModal() {
-            $("#hrStatusModal").find("input, select").val('');
-            selectedHrId = 0;
-        }
-
-    $(document).on("click", ".addhrstatus", function () {
-
-        let facilityId = $(this).data("facility-id");
-        let hrId = $(this).data("hr-id");
-
-        //clearhrModal();
-
-        $("#FacilityId").val(facilityId);
-
-        if (hrId && hrId > 0) {
-            // EDIT MODE
-            $("#hrModalTitle").text("Edit HR");
-        }
-        else {
-            // ADD MODE
-            $("#hrModalTitle").text("Add HR");
-            $("#HrId").val(0);
-        }
-
-        $("#hrStatusModal").modal("show");
+        loadSubCentres(blockId, facilityId);
     });
 
-                $(document).on("click", ".addfacility", function () {
+    });
 
-                let facilityId = $(this).data("facility-id");
-                let ptofileId = $(this).data("profile-id");
+    function loadSubCentres(blockId, facilityId) {
 
-                $("#FacilityId").val(facilityId);
+        $.getJSON('/SubCentre/GetByBlock',
+            { blockId: blockId, facilityId: facilityId },
+            function (data) {
 
-                if (ptofileId && ptofileId > 0) {
-                    // EDIT MODE
-                    $("#profileModalTitle").text("Edit Information");
+                let html = '';
+
+                if (!data || data.length === 0) {
+                    html = `<tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    No records found
+                                </td>
+                            </tr>`;
                 }
                 else {
-                   // ADD MODE
-                   $("#profileModalTitle").text("Add Information");
-                   $("#profileId").val(0);
-                }
+                    $.each(data, function (i, s) {
+                        html += `<tr>
+                                    <td>${i + 1}</td>
+                                    <td>${s.facilityName ?? ''}</td>
+                                    <td>${s.subCentre ?? ''}</td>
+                                    <td>${s.ninNumber ?? ''}</td>
 
-                    $("#facilityprofileModal").modal("show");
-            });
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info"
+                                                onclick="showInfo(${s.subCentreId})">
+                                            <i class="bi bi-plus-circle"></i>
+                                        </button>
+                                    </td>
 
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success"
+                                                onclick="showProfile(${s.subCentreId})">
+                                            <i class="bi bi-person-plus"></i>
+                                        </button>
+                                    </td>
 
-        //      $(document).ready(function () {
-        //     // ... your existing dropdown change code ...
+                                    <td>
+                                        <a href="/SubCentre/Edit/${s.subCentreId}"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
 
-        //     // Event delegation for dynamically added buttons
+                                          <button type="button"
+                                         class="btn btn-sm btn-outline-danger"
+                                       onclick="deleteFacility(${s.subCentreId})"
+                                          title="Delete">
+                                   <i class="bi bi-trash"></i>
+                                      </button>
 
-        // $(document).on("click", ".addfacility", function () {
-        //     selectedFacilityId = $(this).data("facility-id");
-        //     let modal = new bootstrap.Modal(document.getElementById("facilityprofileModal"));
-        //     modal.show();
-        // });
-        // });
-
-        function deleteFacility(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: 'This facility will be deleted',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/Facility/DeleteConfirmed',
-                        type: 'POST',
-                        data: {
-                            id: id,
-                            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                        },
-                        success: function () {
-                            Swal.fire('Deleted!', 'Facility deleted.', 'success');
-                            $('#blockDropdown').change();
-                        },
-                        error: function () {
-                            Swal.fire('Error!', 'Could not delete facility.', 'error');
-                        }
+                                    </td>
+                                </tr>`;
                     });
                 }
+
+                $('#subCentreList').html(html);
             });
+    }
+
+    function resetBelow(level) {
+
+        if (level === 'state') {
+            $('#districtDropdown').html('<option value="">Select District</option>');
         }
 
+        if (level === 'state' || level === 'district') {
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+        }
+
+        if (level === 'state' || level === 'district' || level === 'block') {
+            $('#facilityDropdown').html('<option value="">Select Facility</option>');
+            $('#subCentreList').html(`<tr>
+                                        <td colspan="7" class="text-center text-muted">
+                                            Select block to see records
+                                        </td>
+                                      </tr>`);
+        }
+    }
+
+
+      let selectedFacilityId = 0;
+      let selectedProfileId = 0;
+      let selectedHrId = 0;
+
+      function showInfo(item){
+          $("#hdnSubCenterId").val(item);
+          $("#facilityprofileModal").modal("show");
+      }
+
         $(document).on("click", "#modalOkBtn", function () {
+            var subCenterId = $("#hdnSubCenterId").val();
 
                 let model = {
         ProfileId: selectedProfileId || null,
         FacilityId: selectedFacilityId,
+        SubCenterId: subCenterId,
         PopulationCoveredbyPHC: parseInt($("#PopulationCoveredbyPHC").val()) || 0,
         NumberofHSC: parseInt($("#NumberofHSC").val()) || 0,
         PopulationCoveredPHC_HWC: parseInt($("#PopulationCoveredPHC_HWC").val()) || null,
@@ -1070,8 +981,12 @@
             });
         });
 
+    function showProfile(item){
+        selectedFacilityId = item;
+        $("#hrStatusModal").modal("show");
+    }
 
-        $(document).on("click", "#btnSaveHr", function () {
+    $(document).on("click", "#btnSaveHr", function () {
 
             let modelhr = {
                 HrId: selectedHrId || null,
@@ -1088,7 +1003,7 @@
             };
 
             $.ajax({
-                url: '/Facility/SaveHrStatus',
+                url: '/SubCentre/SaveHrStatus',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(modelhr),
@@ -1098,6 +1013,35 @@
                     $('#blockDropdown').change();
                 }
             });
-        });            
+        });
+
+           function deleteFacility(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This SubCenter will be deleted',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/SubCentre/DeleteConfirmed',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function () {
+                        Swal.fire('Deleted!', 'SubCentre deleted.', 'success');
+                        $('#blockDropdown').change();
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'Could not delete SubCentre.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
 
 </script>

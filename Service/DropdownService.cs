@@ -455,4 +455,61 @@ public class DropdownService : IDropdownService
 
         return result;
     }
+
+    //public List<SelectListItem>? GetDropdown(string v)
+    //{
+    //    switch (v)
+    //    {
+    //        case "YesNo":
+    //            return new List<SelectListItem>
+    //            {
+    //                new SelectListItem { Text = "Yes", Value = "1" },
+    //                new SelectListItem { Text = "No", Value = "0" }
+    //            };
+
+    //        case "Gender":
+    //            return new List<SelectListItem>
+    //            {
+    //                new SelectListItem { Text = "Male", Value = "1" },
+    //                new SelectListItem { Text = "Female", Value = "2" }
+    //            };
+
+    //        default:
+    //            return null;
+    //    }
+    //}
+
+    public List<SelectListItem>? GetDropdown(string key)
+    {
+        switch (key)
+        {
+            case "YesNo":
+                return new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Yes", Value = "1" },
+                new SelectListItem { Text = "No", Value = "0" }
+            };
+
+            case "Gender":
+                return new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Male", Value = "1" },
+                new SelectListItem { Text = "Female", Value = "2" },
+                new SelectListItem { Text = "Other", Value = "3" }   // optional
+            };
+
+            case "Designation":
+                return new List<SelectListItem>
+            {
+                new SelectListItem { Text = "State Director", Value = "1" },
+                new SelectListItem { Text = "Senior Coordinator", Value = "2" },
+                new SelectListItem { Text = "Specialist Program", Value = "3" },
+                new SelectListItem { Text = "Officer", Value = "4" },
+                new SelectListItem { Text = "Nursing Trainer", Value = "5" }
+            };
+
+            default:
+                return new List<SelectListItem>();   // better than null
+        }
+    }
 }
