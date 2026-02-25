@@ -11,6 +11,7 @@ public interface IDropdownService
     List<DropdownDto> GetDistricts(int stateId);
     List<DropdownDto> GetBlocks(int districtId);
     List<DropdownDto> GetFacilities(int blockId);
+    List<DropdownDto> GetEventActivities();
 
     List<DropdownDto> GetSubCentre(int blockId, int UserId);
     List<DropdownDto> GetFacilityTypes();

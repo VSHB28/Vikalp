@@ -85,6 +85,7 @@ builder.Services.AddScoped<IHealthSystemService, HealthSystemService>();
 builder.Services.AddScoped<IRoleMenuService, RoleMenuService>();
 builder.Services.AddScoped<ILineListingSurveyService, LineListingSurveyService>();
 builder.Services.AddScoped<IHomeVisitService, HomeVisitService>();
+builder.Services.AddScoped<IEventActivityService, EventActivityService>();
 
 
 // Register DbContext

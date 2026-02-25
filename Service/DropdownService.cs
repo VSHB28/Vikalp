@@ -117,6 +117,20 @@ public class DropdownService : IDropdownService
         }).ToList();
     }
 
+    public List<DropdownDto> GetEventActivities()
+    {
+        var param = new SqlParameter[]
+        {
+        new SqlParameter("@UserID", 1)
+        };
+        var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetEventActivityType", param);
+
+        return dt.AsEnumerable().Select(r => new DropdownDto
+        {
+            Id = r.Field<int>("Id"),
+            Name = r.Field<string>("Value")
+        }).ToList();
+    }
     public List<DropdownDto> GetSubCentre(int blockId, int UserId)
     {
         var param = new SqlParameter[]
