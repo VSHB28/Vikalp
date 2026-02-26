@@ -257,6 +257,22 @@
             background-color: #ffc37a;
         }
 
+    .btn-close {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #444c53;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #cacfd3;
+        color: #6c757d;
+    }
+
+    .btn-primary:hover {
+        background-color: #cacfd3;
+    }
     .question-field[hidden] {
         display: none !important;
     }
@@ -314,7 +330,8 @@
             </div>
             <form id="programForm" autocomplete="off">
                 @Html.AntiForgeryToken()
-                <input type="hidden" id="hdnVenueGuid" value="@Model.EventId" />
+                <input type="hidden" name="EventId" value="@Model.EventId" />
+                <input type="hidden" name="EventGuid" value="@Model.EventGuid" />
                 <input type="hidden" id="hdStateId" value="@Model.StateId" />
                 <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
                 <input type="hidden" id="hdnBlockId" value="@Model.BlockId" />
@@ -528,7 +545,12 @@
                         </div>
                         <!-- Q21 -->
                         <div class="form-group question-field" data-qid="Q21">
-                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q21. Antara leaflet, NPK leaflet (Describe)</span></label>
+                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q21. Number of Khushiyon Ki Potali Distributed</span></label>
+                            <input type="number" min="0" class="form-input" name="HappinessKitDistributed" value="@Model.HappinessKitDistributed" placeholder="0" />
+                        </div>
+                        <!-- Q22 -->
+                        <div class="form-group question-field" data-qid="Q22">
+                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q22. Antara leaflet, NPK leaflet (Describe)</span></label>
                             <input type="number" class="form-input" name="NPKLeafletCount" value="@Model.NPKLeafletCount" placeholder="0"/>
                         </div>
                     </div>
@@ -539,8 +561,8 @@
                     <div class="footer-note">
                         Visible questions change automatically based on selected set.
                     </div>
-                    <button type="submit" class="btn-save">Update</button>
-                    <a href="@Url.Action("Index", "EventActivities")" class="btn-back">Back</a>
+                    <button type="submit" class="btn-primary">Update</button>
+                    <a href="@Url.Action("Index", "EventActivities")" class="btn-close">Back</a>
                 </div>
             </form>
         </div>
@@ -560,10 +582,10 @@
 
         // Question sets mapping based on your specification
         var questionSets = {
-            1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q14','Q18','Q19','Q20','Q21'],
-            2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q21'],
-            3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q18','Q19','Q20','Q21'],
-            4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q18','Q19','Q20','Q21']
+        1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q14','Q18','Q19','Q20','Q21','Q22'],
+        2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q22'],
+        3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q18','Q19','Q20','Q21','Q22'],
+        4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q18','Q19','Q20','Q22']
         };
 
         function applySetVisibility(activeSetKey) {
@@ -750,104 +772,110 @@
         });
     }
 
-    //======================== save data ===============================
+    //======================== update data ===============================
 
+    document.getElementById("programForm")
+.addEventListener("submit", async function (e) {
 
-        document.getElementById("programForm")
-        .addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-            e.preventDefault();
+    const activeSet = document.querySelector(".pill.active");
 
-            const activeSet = document.querySelector(".pill.active");
+    const dto = {
 
-            const dto = {
+        // ✅ REQUIRED FOR UPDATE
+        EventId: getInt("EventId"),
+        EventGuid: getString("EventGuid"),
 
-                EventId: 0,
-                EventGuid: null,
+        EventTypeId: activeSet ? parseInt(activeSet.dataset.set) : null,
 
-                EventTypeId: activeSet ? parseInt(activeSet.dataset.set) : null,
+        EventDate: getDate("EventDate"),
 
-                EventDate: getDate("EventDate"),
+        StateId: getInt("StateId"),
+        DistrictId: getInt("DistrictId"),
+        BlockId: getInt("BlockId"),
+        FacilityId: getInt("FacilityId"),
+        SubcentreId: getInt("SubcentreId"),
 
-                StateId: getInt("StateId"),
-                DistrictId: getInt("DistrictId"),
-                BlockId: getInt("BlockId"),
-                FacilityId: getInt("FacilityId"),
-                SubcentreId: getInt("SubcentreId"),
+        VillageName: getString("VillageName"),
 
-                VillageName: getString("VillageName"),
+        Women_0Children: getInt("Women_0Children"),
+        Women_1Child: getInt("Women_1Child"),
+        Women_2PlusChildren: getInt("Women_2PlusChildren"),
 
-                Women_0Children: getInt("Women_0Children"),
-                Women_1Child: getInt("Women_1Child"),
-                Women_2PlusChildren: getInt("Women_2PlusChildren"),
+        Men_0Children: getInt("Men_0Children"),
+        Men_1Child: getInt("Men_1Child"),
+        Men_2PlusChildren: getInt("Men_2PlusChildren"),
 
-                Men_0Children: getInt("Men_0Children"),
-                Men_1Child: getInt("Men_1Child"),
-                Men_2PlusChildren: getInt("Men_2PlusChildren"),
+        MotherInLawCount: getInt("MotherInLawCount"),
 
-                MotherInLawCount: getInt("MotherInLawCount"),
+        WomenAdopted_Parity0: getInt("WomenAdopted_Parity0"),
+        WomenAdopted_Parity1: getInt("WomenAdopted_Parity1"),
 
-                WomenAdopted_Parity0: getInt("WomenAdopted_Parity0"),
-                WomenAdopted_Parity1: getInt("WomenAdopted_Parity1"),
+        AntaraGiven_Parity0: getInt("AntaraGiven_Parity0"),
+        AntaraGiven_Parity1: getInt("AntaraGiven_Parity1"),
 
-                AntaraGiven_Parity0: getInt("AntaraGiven_Parity0"),
-                AntaraGiven_Parity1: getInt("AntaraGiven_Parity1"),
+        AntaraDosesGiven: getInt("AntaraDosesGiven"),
 
-                AntaraDosesGiven: getInt("AntaraDosesGiven"),
+        WomenReferred_TemporaryMethods:
+            getInt("WomenReferred_TemporaryMethods"),
 
-                WomenReferred_TemporaryMethods:
-                    getInt("WomenReferred_TemporaryMethods"),
+        MenReferred_TemporaryMethods:
+            getInt("MenReferred_TemporaryMethods"),
 
-                MenReferred_TemporaryMethods:
-                    getInt("MenReferred_TemporaryMethods"),
+        IPCSessionHeld: getInt("IPCSessionHeld"), // integer in DB
 
-                IPCSessionHeld: getBool("IPCSessionHeld"),
+        HelplineCalls: getInt("HelplineCalls"),
+        AntaraLeadsSent: getInt("AntaraLeadsSent"),
 
-                HelplineCalls: getInt("HelplineCalls"),
-                AntaraLeadsSent: getInt("AntaraLeadsSent"),
+        LeafletsDistributed: getInt("LeafletsDistributed"),
+        HappinessKitDistributed : getInt("HappinessKitDistributed"),
 
-                LeafletsDistributed: getInt("LeafletsDistributed"),
+        AntaraLeafletCount: getInt("AntaraLeafletCount"),
+        NPKLeafletCount: getInt("NPKLeafletCount")
+    };
 
-                AntaraLeafletCount: null,
-                NPKLeafletCount: getInt("NPKLeafletCount"),
+    console.log("Updating DTO:", dto);
 
-                CreatedBy: null,
-                UpdatedBy: null
-            };
+    try {
 
-            console.log("Sending DTO:", dto);
+        const token =
+        document.querySelector("input[name='__RequestVerificationToken']").value;
 
-            try {
-                    const token =
-                document.querySelector("input[name='__RequestVerificationToken']").value;
+        const response = await fetch("/EventActivities/UpdateJson", {
 
-            const response = await fetch("/EventActivities/CreateJson", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "RequestVerificationToken": token
-                },
-                body: JSON.stringify(dto)
-            });
+            method: "POST",
 
-                const result = await response.json();
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": token
+            },
 
-                if (result.success) {
-                    alert("Saved Successfully ✅");
-                    document.getElementById("programForm").reset();
-                }
-                else {
-                    alert("Save Failed ❌");
-                }
-
-            } catch (err) {
-
-                console.error(err);
-                alert("Server error");
-
-            }
-
+            body: JSON.stringify(dto)
         });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            alert("Updated Successfully ✅");
+
+            window.location.href = "/EventActivities/Index";
+        }
+        else {
+
+            alert(result.message || "Update Failed ❌");
+        }
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        alert("Server error");
+    }
+
+});
 
 
         // ---------------------

@@ -135,14 +135,18 @@ namespace Vikalp.Controllers
         }
 
         // ===================== Edit (POST) =====================
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] EventActivityDto dto)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateJson([FromBody] EventActivityDto model)
         {
-            dto.EventId = id;
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var success = await _service.UpdateAsync(dto, userId);
-            if (!success) return NotFound();
-            return NoContent();
+            if (model == null || model.EventId == 0)
+                return BadRequest();
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var result = await _service.UpdateAsync(model, userId);
+
+            return Json(new { success = result });
         }
 
         [HttpDelete("{id}")]

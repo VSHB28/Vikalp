@@ -76,7 +76,7 @@ namespace Vikalp.Service
                     IsChildAvailable = r.Field<int?>("IsChildAvailable"),
                     ChildGender = r.Field<int?>("ChildGender"),
                     ChildDOB = r.Field<DateTime?>("ChildDOB"),
-                    MarriageDate = r.Field<DateTime?>("MarriageDate"),
+                    //MarriageDate = r.Field<DateTime?>("MarriageDate"),
 
                     IsCurrentlyPregnant = r.Field<int?>("IsCurrentlyPregnant"),
                     IsUsingFamilyPlanning = r.Field<int?>("IsUsingFamilyPlanning"),
