@@ -257,6 +257,23 @@
             background-color: #ffc37a;
         }
 
+    .btn-close {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #444c53;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #cacfd3;
+        color: #6c757d;
+    }
+
+        .btn-primary:hover {
+        background-color: #cacfd3;
+        }
+
     .question-field[hidden] {
         display: none !important;
     }
@@ -526,7 +543,12 @@
                         </div>
                         <!-- Q21 -->
                         <div class="form-group question-field" data-qid="Q21">
-                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q21. Antara leaflet, NPK leaflet (Describe)</span></label>
+                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q21. Number of Khushiyon Ki Potali Distributed</span></label>
+                            <input type="number" min="0" class="form-input" name="HappinessKitDistributed" placeholder="0" />
+                        </div>
+                        <!-- Q22 -->
+                        <div class="form-group question-field" data-qid="Q22">
+                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q22. Antara leaflet, NPK leaflet (Describe)</span></label>
                             <input type="number" class="form-input" name="NPKLeafletCount" placeholder="0"></input>
                         </div>
                     </div>
@@ -537,8 +559,8 @@
                     <div class="footer-note">
                         Visible questions change automatically based on selected set.
                     </div>
-                    <button type="submit" class="btn-save">Save</button>
-                    <a href="@Url.Action("Index", "EventActivities")" class="btn-back">Back</a>
+                    <button type="submit" class="btn-primary">Save</button>
+                    <a href="@Url.Action("Index", "EventActivities")" class="btn-close">Back</a>
                 </div>
             </form>
         </div>
@@ -558,10 +580,10 @@
 
     // Question sets mapping based on your specification
     var questionSets = {
-        1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q14','Q18','Q19','Q20','Q21'],
-        2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q21'],
-        3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q18','Q19','Q20','Q21'],
-        4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q18','Q19','Q20','Q21']
+        1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q14','Q18','Q19','Q20','Q21','Q22'],
+        2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q22'],
+        3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q18','Q19','Q20','Q21','Q22'],
+        4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q18','Q19','Q20','Q22']
     };
 
     function applySetVisibility(activeSetKey) {
@@ -744,6 +766,7 @@
             AntaraLeadsSent: getInt("AntaraLeadsSent"),
 
             LeafletsDistributed: getInt("LeafletsDistributed"),
+            HappinessKitDistributed : getInt("HappinessKitDistributed"),
 
             AntaraLeafletCount: null,
             NPKLeafletCount: getInt("NPKLeafletCount"),
@@ -772,6 +795,7 @@
             if (result.success) {
                 alert("Saved Successfully ✅");
                 document.getElementById("programForm").reset();
+                    window.location.href = "/EventActivities/Index";
             }
             else {
                 alert("Save Failed ❌");

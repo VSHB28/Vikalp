@@ -466,10 +466,37 @@
                                         <input type="tel" id="MobileNumber" maxlength="10" class="all-form-input" placeholder="Enter mobile number" required pattern="[0-9]{10}"/>
                                     </div>
                                     <div class="all-form-group">
-                                        <label class="all-form-label"><i class="bi bi-calendar-event all-label-icon"></i><span>Date of Marriage</span></label>
-                                        <input type="date" id="MarriageDate" max="@maxDate" class="all-form-input" />
-                                        <span asp-validation-for="MarriageDate" class="text-danger"></span>
+                                        <label class="all-form-label">
+                                            <i class="bi bi-calendar-event all-label-icon"></i>
+                                            <span>Month of Marriage</span>
+                                        </label>
+                                        <select id="MarriageMonth" name="MarriageMonth" class="all-form-input">
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                        <span asp-validation-for="MarriageMonth" class="text-danger"></span>
                                     </div>
+
+
+                                    <div class="all-form-group">
+                                        <label class="all-form-label">
+                                            <i class="bi bi-calendar-event all-label-icon"></i>
+                                            <span>Year of Marriage</span>
+                                        </label>
+                                        <input type="number" id="MarriageYear" min="2010" max="2099" step="1" class="all-form-input" />
+                                        <span asp-validation-for="MarriageYear" class="text-danger"></span>
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -658,7 +685,8 @@
         </td>
 
         <!-- HIDDEN EXTRA FIELDS -->
-        <input type="hidden" name="Beneficiaries[__index__].MarriageDate" class="hdMarriageDate" />
+        <input type="hidden" name="Beneficiaries[__index__].MarriageMonth" class="hdMarriageMonth" />
+        <input type="hidden" name="Beneficiaries[__index__].MarriageYear" class="hdMarriageYear" />
         <input type="hidden" name="Beneficiaries[__index__].IsChildAvailable" class="hdChild" />
         <input type="hidden" name="Beneficiaries[__index__].ChildAge" class="hdChildAge" />
         <input type="hidden" name="Beneficiaries[__index__].IsAwareOfAntara" class="hdAntara" />
@@ -818,7 +846,8 @@
                 const womanName = document.getElementById("WomanName").value.trim();
                 const husbandName = document.getElementById("HusbandName").value.trim();
                 const mobile = document.getElementById("MobileNumber").value.trim();
-                const marriageDate = document.getElementById("MarriageDate").value;
+                const marriageMonth = document.getElementById("MarriageMonth").value;
+                const marriageYear = document.getElementById("MarriageYear").value;
 
                 const isChild = document.getElementById("IsChildAvailable").value;
                 const childAge = document.getElementById("ChildAge").value;
@@ -856,7 +885,8 @@
                 row.querySelector(".hdWomanName").value = womanName;
                 row.querySelector(".hdHusbandName").value = husbandName;
                 row.querySelector(".hdMobile").value = mobile;
-                row.querySelector(".hdMarriageDate").value = marriageDate;
+                row.querySelector(".hdMarriageMonth").value = marriageMonth;
+                row.querySelector(".hdMarriageYear").value = marriageYear;
                 row.querySelector(".hdChild").value = isChild;
                 row.querySelector(".hdChildAge").value = childAge
                 row.querySelector(".hdPregnant").value = isPregnant;
@@ -953,7 +983,8 @@
                     HusbandName: row.querySelector(".hdHusbandName")?.value,
                     MobileNumber: row.querySelector(".hdMobile")?.value,
 
-                    MarriageDate: row.querySelector(".hdMarriageDate")?.value || null,
+                    MarriageMonth: row.querySelector(".hdMarriageMonth")?.value || null,
+                    MarriageYear: row.querySelector(".hdMarriageYear")?.value || null,
                     IsChildAvailable: row.querySelector(".hdChild")?.value || null,
                     ChildAge: row.querySelector(".hdChildAge")?.value || null,
                     IsCurrentlyPregnant: row.querySelector(".hdPregnant")?.value || null,
