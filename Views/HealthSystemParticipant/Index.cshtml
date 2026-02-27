@@ -196,25 +196,24 @@
                 </div>
             }
             <nav>
-                <ul class="pagination justify-content-end">
+    <ul class="pagination justify-content-end">
 
-        @if (ViewBag.CurrentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   href="@Url.Action("Index", new {
-                       page = ViewBag.CurrentPage - 1,
-                       pageSize = ViewBag.PageSize,
-                       StateId = ViewBag.StateId,
-                       DistrictId = ViewBag.DistrictId,
-                       BlockId = ViewBag.BlockId,
-                       FacilityId = ViewBag.FacilityId
-                   })">
-                    Previous
-                </a>
-            </li>
-        }
+        <!-- Previous button (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage <= 1 ? "#" : Url.Action("Index", new {
+                   page = ViewBag.CurrentPage - 1,
+                   pageSize = ViewBag.PageSize,
+                   StateId = ViewBag.StateId,
+                   DistrictId = ViewBag.DistrictId,
+                   BlockId = ViewBag.BlockId,
+                   FacilityId = ViewBag.FacilityId
+               }))">
+                Previous
+            </a>
+        </li>
 
+        <!-- Page numbers -->
         @for (int p = 1; p <= ViewBag.TotalPages; p++)
         {
             <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
@@ -232,25 +231,23 @@
             </li>
         }
 
-        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   href="@Url.Action("Index", new {
-                       page = ViewBag.CurrentPage + 1,
-                       pageSize = ViewBag.PageSize,
-                       StateId = ViewBag.StateId,
-                       DistrictId = ViewBag.DistrictId,
-                       BlockId = ViewBag.BlockId,
-                       FacilityId = ViewBag.FacilityId
-                   })">
-                    Next
-                </a>
-            </li>
-        }
+        <!-- Next button (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage >= ViewBag.TotalPages ? "#" : Url.Action("Index", new {
+                   page = ViewBag.CurrentPage + 1,
+                   pageSize = ViewBag.PageSize,
+                   StateId = ViewBag.StateId,
+                   DistrictId = ViewBag.DistrictId,
+                   BlockId = ViewBag.BlockId,
+                   FacilityId = ViewBag.FacilityId
+               }))">
+                Next
+            </a>
+        </li>
 
     </ul>
-            </nav>
+</nav>
         </div>
     </div>
 </div>

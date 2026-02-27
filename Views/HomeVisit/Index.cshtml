@@ -187,9 +187,9 @@
                                 <td>@item.HusbandName</td>
                                 <td>@item.MobileNumber</td>
                                 <td>@item.FacilityName</td>
-                                <td>@(item.VisitGuid != "" ? "Visited" : "Not Visited")</td>
+                                <td>@item.HomeVisit</td>
                                 <td class="text-end um-action">
-                                    <a class="btn btn-sm btn-outline-primary me-1 @(item.VisitGuid != "" ? "disabled" : "")"
+                                    <a class="btn btn-sm btn-outline-primary me-1 @(item.HomeVisit != "Non-Visited" ? "disabled" : "")"
                                        asp-controller="HomeVisit"
                                        asp-action="Edit"
                                        onclick="goToEdit('@item.LineListGuid')"
@@ -227,64 +227,61 @@
                 </table>
             </div>
             <nav>
-                <ul class="pagination justify-content-end">
+    <ul class="pagination justify-content-end">
 
-        @if (ViewBag.CurrentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   href="@Url.Action("Index", new {
-    page = ViewBag.CurrentPage - 1,
-    pageSize = ViewBag.PageSize,
-    StateId = ViewBag.StateId,
-    DistrictId = ViewBag.DistrictId,
-    BlockId = ViewBag.BlockId,
-    FacilityId = ViewBag.FacilityId,
-    SubCenterId = ViewBag.SubCenterId
-})">
-                    Previous
-                </a>
-            </li>
-        }
+        <!-- Previous (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage <= 1 ? "#" : Url.Action("Index", new {
+                   page = ViewBag.CurrentPage - 1,
+                   pageSize = ViewBag.PageSize,
+                   StateId = ViewBag.StateId,
+                   DistrictId = ViewBag.DistrictId,
+                   BlockId = ViewBag.BlockId,
+                   FacilityId = ViewBag.FacilityId,
+                   SubCenterId = ViewBag.SubCenterId
+               }))">
+                Previous
+            </a>
+        </li>
 
+        <!-- Page Numbers -->
         @for (int p = 1; p <= ViewBag.TotalPages; p++)
         {
             <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
                 <a class="page-link"
                    href="@Url.Action("Index", new {
-    page = p,
-    pageSize = ViewBag.PageSize,
-    StateId = ViewBag.StateId,
-    DistrictId = ViewBag.DistrictId,
-    BlockId = ViewBag.BlockId,
-    FacilityId = ViewBag.FacilityId,
-    SubCenterId = ViewBag.SubCenterId
-})">
+                       page = p,
+                       pageSize = ViewBag.PageSize,
+                       StateId = ViewBag.StateId,
+                       DistrictId = ViewBag.DistrictId,
+                       BlockId = ViewBag.BlockId,
+                       FacilityId = ViewBag.FacilityId,
+                       SubCenterId = ViewBag.SubCenterId
+                   })">
                     @p
                 </a>
             </li>
         }
 
-        @if (ViewBag.CurrentPage < ViewBag.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link"
-                   href="@Url.Action("Index", new {
-    page = ViewBag.CurrentPage + 1,
-    pageSize = ViewBag.PageSize,
-    StateId = ViewBag.StateId,
-    DistrictId = ViewBag.DistrictId,
-    BlockId = ViewBag.BlockId,
-    FacilityId = ViewBag.FacilityId,
-    SubCenterId = ViewBag.SubCenterId
-})">
-                    Next
-                </a>
-            </li>
-        }
+        <!-- Next (always visible) -->
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage >= ViewBag.TotalPages ? "#" : Url.Action("Index", new {
+                   page = ViewBag.CurrentPage + 1,
+                   pageSize = ViewBag.PageSize,
+                   StateId = ViewBag.StateId,
+                   DistrictId = ViewBag.DistrictId,
+                   BlockId = ViewBag.BlockId,
+                   FacilityId = ViewBag.FacilityId,
+                   SubCenterId = ViewBag.SubCenterId
+               }))">
+                Next
+            </a>
+        </li>
 
     </ul>
-            </nav>
+</nav>
         </div>
     </div>
 </div>

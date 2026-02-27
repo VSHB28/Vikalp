@@ -120,7 +120,8 @@ public class HomeVisitService : IHomeVisitService
                 UpdatedOn = r.Field<DateTime?>("UpdatedOn"),
                 UpdatedBy = r.Field<int?>("UpdatedBy"),
 
-                SubCenterName = r.Field<string>("SubCenterName")
+                SubCenterName = r.Field<string>("SubCenterName"),
+                HomeVisit = r.Field<string>("HomeVisit")
             };
         }).ToList();
 

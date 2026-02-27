@@ -163,6 +163,7 @@
                                         <a class="btn btn-sm btn-outline-primary me-1"
                                            asp-controller="HealthSystemActivity"
                                            asp-action="Edit"
+                                           onclick="goToEdit('@item.ActivityId')"
                                            asp-route-id="@item.ActivityId"
                                            title="Edit">
                                             <i class="bi bi-pencil"></i>
@@ -186,12 +187,62 @@
                     </table>
                 </div>
             }
+            <nav>
+    <ul class="pagination justify-content-end">
+
+        <!-- Previous -->
+        <li class="page-item @(ViewBag.CurrentPage <= 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage <= 1 ? "#" : Url.Action("Index", new {
+                   page = ViewBag.CurrentPage - 1,
+                   pageSize = ViewBag.PageSize,
+                   StateId = ViewBag.StateId,
+                   DistrictId = ViewBag.DistrictId,
+                   ActivityNameId = ViewBag.ActivityNameId
+               }))">
+                Previous
+            </a>
+        </li>
+
+        <!-- Page numbers -->
+        @for (int p = 1; p <= ViewBag.TotalPages; p++)
+        {
+            <li class="page-item @(p == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link"
+                   href="@Url.Action("Index", new {
+                       page = p,
+                       pageSize = ViewBag.PageSize,
+                       StateId = ViewBag.StateId,
+                       DistrictId = ViewBag.DistrictId,
+                       ActivityNameId = ViewBag.ActivityNameId
+                   })">
+                    @p
+                </a>
+            </li>
+        }
+
+        <!-- Next -->
+        <li class="page-item @(ViewBag.CurrentPage >= ViewBag.TotalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@(ViewBag.CurrentPage >= ViewBag.TotalPages ? "#" : Url.Action("Index", new {
+                   page = ViewBag.CurrentPage + 1,
+                   pageSize = ViewBag.PageSize,
+                   StateId = ViewBag.StateId,
+                   DistrictId = ViewBag.DistrictId,
+                   ActivityNameId = ViewBag.ActivityNameId
+               }))">
+                Next
+            </a>
+        </li>
+
+    </ul>
+</nav>
         </div>
     </div>
 </div>
 <script>
-    function goToEdit(id) {
-        window.location.href = '/User/Edit/' + id;
+    function goToEdit(ActivityId) {
+        window.location.href = '/HealthSystemActivity/Edit/' + ActivityId;
     }
 
 
@@ -227,7 +278,7 @@
             async function searchActivity() {
         const term = document.getElementById("searchTerm").value;
 
-        const response = await fetch(`/User/Search?q=${encodeURIComponent(term)}`);
+        const response = await fetch(`/HealthSystemActivity/Search?q=${encodeURIComponent(term)}`);
         const html = await response.text();
 
         document.querySelector("#usersTable tbody").innerHTML = html;

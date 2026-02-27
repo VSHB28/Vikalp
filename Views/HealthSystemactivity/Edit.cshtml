@@ -1,0 +1,365 @@
+﻿@using Vikalp.Models.DTO
+@model HealthSystemActivityDto
+
+@{
+    ViewData["Title"] = "Health Systems Activity Form";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .dropdown-menu.show {
+        display: block;
+    }
+
+    #activityDropdownBtn {
+        cursor: pointer;
+    }
+
+</style>
+
+<div class="container py-2">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="umcard-header">
+                <h3 class="">Update Activity</h3>
+            </div>
+            <form asp-action="Create" method="post" class="mt-2 g-3">
+                <div class="row">
+
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">State </label>
+                        <select name="StateId" class="form-control" id="StateId">
+                            <option value="">-- Select State --</option>
+                            @foreach (var s in ViewBag.States)
+                            {
+                                <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">District</label>
+                        <select name="DistrictId" class="form-control" id="DistrictId">
+                            <option value="">-- Select District --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">Activity Name</label>
+                        <select name="ActivityNameId" class="form-control" id="ActivityNameId">
+                            <option value="">-- Select ActivityName --</option>
+                            @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityTypeName)
+                            {
+                                <option value="@s.Value" @(Model.ActivityNameId.ToString() == s.Value ? "selected" : "")>
+                                    @s.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-1" id="otherActivityDiv">
+                        <label class="form-label">Other Activity</label>
+                        <input name="OtherActivity" value="@Model.OtherActivity" class="form-control" id="OtherActivity" disabled />
+                    </div>
+
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">Training Venue</label>
+                        <input name="TrainingVenue" class="form-control" value="@Model.TrainingVenue" id="TrainingVenue" maxlength="100" />
+                        <span asp-validation-for="TrainingVenue" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">Activity Type</label>
+                        <select name="ActivityTypeId" class="form-control" id="ActivityTypeId">
+                            <option value="">-- Select ActivityType --</option>
+                            @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityType)
+                            {
+                                <option value="@s.Value" @(Model.ActivityTypeId.ToString() == s.Value ? "selected" : "")>
+                                    @s.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">Activity List</label>
+
+                        <div class="dropdown w-100">
+                            <button class="form-control text-start d-flex justify-content-between align-items-center"
+                                    type="button"
+                                    id="activityDropdownBtn">
+                                <span id="activityDropdownText" class="text-muted">Select Activities</span>
+                                <span class="ms-2">▼</span>
+                            </button>
+
+                            <div class="dropdown-menu w-100 p-2"
+                                 id="ActivitiesContainer"
+                                 style="max-height:250px; overflow-y:auto;">
+                                <span class="text-muted">Select Activity Type first</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">Activity Format</label>
+                        <select name="ActivityFormatId" class="form-control" id="ActivityFormatId">
+                            <option value="">-- Select ActivityFormat --</option>
+                            @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.ActivityFormat)
+                            {
+                                <option value="@s.Value" @(Model.ActivityFormatId.ToString() == s.Value ? "selected" : "")>
+                                    @s.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-1 d-none">
+                        <label class="form-label">No of Participants</label>
+                        <input name="NoOfParticipants" value="@Model.NoOfParticipants" class="form-control" type="number" id="NoOfParticipants" />
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label name="StartDate" class="form-label">Start Date</label>
+                        <input name="StartDate" type="date" value="@Model.StartDate" class="form-control" id="StartDate" />
+                    </div>
+                    <div class="col-md-3 mb-1">
+                        <label class="form-label">End Date</label>
+                        <input name="EndDate" type="date" value="@Model.EndDate" class="form-control" id="EndDate" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Observations/Remarks</label>
+                            <textarea name="Remarks" class="form-control" rows="1" id="Remarks">@Model.Remarks</textarea>
+                        </div>
+                    </div>
+                </div>
+                @* <div class="row">
+                <div class="mb-3">
+                    <label>Observations/Remarks</label>
+                    <textarea name="Remarks" class="form-control" rows="3" id="Remarks"></textarea>
+                </div>
+            </div> *@
+                <div class="d-flex justify-content-start gap-2">
+                    <button type="button" class="btn btn-save btn" onclick="saveHealthSystemActivity()">Save</button>
+                    <a href="@Url.Action("Index", "HealthSystemActivity")" class="btn btn-back ">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+                document.addEventListener("DOMContentLoaded", function () {
+
+            if (activityType.value) {
+                activityType.dispatchEvent(new Event("change"));
+
+                setTimeout(() => {
+                    updateSelectedText();
+                }, 200);
+            }
+        });
+                document.addEventListener("DOMContentLoaded", function () {
+
+            const selectedState = "@Model.StateId";
+            const selectedDistrict = "@Model.DistrictId";
+
+            if (selectedState) {
+                fetch(`/HealthSystemActivity/GetDistricts?stateId=${selectedState}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        fillDropdown("DistrictId", data, "id", "name");
+
+                        if (selectedDistrict) {
+                            document.getElementById("DistrictId").value = selectedDistrict;
+                        }
+                    });
+            }
+        });
+
+        document.getElementById("StateId").addEventListener("change", function () {
+                    let stateId = this.value;
+                    resetDropdown("DistrictId", "-- Select District --");
+
+                    if (!stateId) return;
+
+                    fetch(`/HealthSystemActivity/GetDistricts?stateId=${stateId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            fillDropdown("DistrictId", data, "id", "name");
+                        });
+                });
+
+                         function resetDropdown(id, placeholder) {
+                            let ddl = document.getElementById(id);
+                            ddl.innerHTML = `<option value="">${placeholder}</option>`;
+                        }
+
+                function fillDropdown(id, data, valueField, textField) {
+                            let ddl = document.getElementById(id);
+                            data.forEach(x => {
+                                let opt = document.createElement("option");
+                                opt.value = x[valueField];
+                                opt.text = x[textField];
+                                ddl.appendChild(opt);
+                            });
+                        }
+                        const activityNameSelect = document.getElementById("ActivityNameId");
+                    const otherDiv = document.getElementById("otherActivityDiv");
+                    const otherInput = document.getElementById("OtherActivity");
+
+                    function toggleOtherActivity() {
+                        const selectedText =
+                            activityNameSelect.options[activityNameSelect.selectedIndex]?.text;
+
+                        if (selectedText === "Others") {
+                            otherDiv.style.display = "block";
+                            otherInput.disabled = false;
+                        } else {
+                            otherDiv.style.display = "none";
+                            otherInput.value = "";
+                            otherInput.disabled = true;
+                        }
+                    }
+
+                    activityNameSelect.addEventListener("change", toggleOtherActivity);
+
+                    // Run once on page load (for edit case)
+                    toggleOtherActivity();
+
+        const activityType = document.getElementById("ActivityTypeId");
+        const container = document.getElementById("ActivitiesContainer");
+        const dropdownBtn = document.getElementById("activityDropdownBtn");
+        const dropdownText = document.getElementById("activityDropdownText");
+
+        const clinicalList = @Html.Raw(Json.Serialize(ViewBag.Clinical));
+        const nonClinicalList = @Html.Raw(Json.Serialize(ViewBag.NonClinical));
+
+        dropdownBtn.addEventListener("click", function () {
+            container.classList.toggle("show");
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!dropdownBtn.contains(e.target) && !container.contains(e.target)) {
+                container.classList.remove("show");
+            }
+        });
+
+        function clearActivities() {
+            container.innerHTML = "";
+        }
+
+        function updateSelectedText() {
+            const checked = container.querySelectorAll("input[type='checkbox']:checked");
+
+            if (checked.length === 0) {
+                dropdownText.innerText = "Select Activities";
+                dropdownText.classList.add("text-muted");
+            } else if (checked.length <= 2) {
+                dropdownText.innerText = [...checked].map(x => x.nextElementSibling.innerText).join(", ");
+                dropdownText.classList.remove("text-muted");
+            } else {
+                dropdownText.innerText = `${checked.length} activities selected`;
+                dropdownText.classList.remove("text-muted");
+            }
+        }
+
+        function renderCheckboxes(list, heading) {
+            if (!list || list.length === 0) return;
+
+            const title = document.createElement("div");
+            title.className = "fw-bold mt-2";
+            title.innerText = heading;
+            container.appendChild(title);
+
+            list.forEach(item => {
+                const div = document.createElement("div");
+                div.className = "form-check";
+
+                        const isChecked = selectedActivities.includes(parseInt(item.value));
+
+        div.innerHTML = `
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="Activities"
+                   value="${item.value}"
+                   id="act_${item.value}"
+                   ${isChecked ? "checked" : ""}>
+            <label class="form-check-label" for="act_${item.value}">
+                ${item.text}
+            </label>
+        `;
+
+                div.querySelector("input").addEventListener("change", updateSelectedText);
+                container.appendChild(div);
+            });
+        }
+
+        activityType.addEventListener("change", function () {
+            clearActivities();
+            dropdownText.innerText = "Select Activities";
+            dropdownText.classList.add("text-muted");
+
+            switch (this.value) {
+                case "1": // Clinical
+                    renderCheckboxes(clinicalList, "Clinical Activities");
+                    break;
+
+                case "2": // Non-Clinical
+                    renderCheckboxes(nonClinicalList, "Non-Clinical Activities");
+                    break;
+
+                case "3": // Both
+                    renderCheckboxes(clinicalList, "Clinical Activities");
+                    renderCheckboxes(nonClinicalList, "Non-Clinical Activities");
+                    break;
+
+                default:
+                    container.innerHTML = `<span class="text-muted">Select Activity Type first</span>`;
+            }
+        });
+
+                function updateHealthSystemActivity() {
+
+            const token = document.querySelector(
+                'input[name="__RequestVerificationToken"]'
+            ).value;
+
+            const activities = [...document.querySelectorAll(
+                'input[name="Activities"]:checked'
+            )].map(x => parseInt(x.value));
+
+            const data = {
+                activityId: parseInt(document.getElementById("ActivityId").value),
+                activityNameId: parseInt(document.getElementById("ActivityNameId").value),
+                otherActivity: document.getElementById("OtherActivity")?.value,
+                stateId: parseInt(document.getElementById("StateId").value) || null,
+                districtId: parseInt(document.getElementById("DistrictId").value) || null,
+                trainingVenue: document.getElementById("TrainingVenue").value,
+                activityTypeId: parseInt(document.getElementById("ActivityTypeId").value),
+                activities: activities,
+                activityFormatId: parseInt(document.getElementById("ActivityFormatId").value),
+                noOfParticipants: parseInt(document.getElementById("NoOfParticipants").value),
+                startDate: document.getElementById("StartDate").value,
+                endDate: document.getElementById("EndDate").value,
+                remarks: document.getElementById("Remarks").value
+            };
+
+            fetch('/HealthSystemActivity/UpdateJson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    alert("Updated successfully");
+                    window.location.href = '/HealthSystemActivity/Index';
+                } else {
+                    alert("Update failed");
+                }
+            })
+            .catch(() => alert("Something went wrong"));
+        }
+    </script>
+
+}
