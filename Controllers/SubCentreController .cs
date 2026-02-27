@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
+using System.Data;
 using System.Security.Claims;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Implementations;
@@ -114,21 +117,58 @@ public class SubCentreController : Controller
 
 
 
+    public async Task<IActionResult> Edit(int id)
+    {
+        var subCentre = await _service.GetByIdAsync(id);
+        if (subCentre == null)
+            return NotFound();
+
+        ViewBag.States = _dropdownService.GetStates();
+
+        if (subCentre.BlockId > 0)
+        {
+            var block = await _blockService.GetByIdAsync(subCentre.BlockId.Value);
+            if (block != null)
+           
+ {
+                subCentre.RegionId = block.RegionId;
+                subCentre.DistrictId = block.DistrictId;
+
+                ViewBag.Districts = _dropdownService.GetDistricts(block.RegionId);
+                ViewBag.Blocks = _dropdownService.GetBlocks(block.DistrictId);
+            }
+        }
+        return View(subCentre);
+    }
+
+
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(SubCentreDto dto)
     {
+
+        if (dto == null)
+            return BadRequest("DTO is null");
+
+     
+
         if (!ModelState.IsValid)
         {
             ViewBag.States = _dropdownService.GetStates();
+            if (dto.RegionId > 0) ViewBag.Districts = _dropdownService.GetDistricts(dto.RegionId);
+            if (dto.DistrictId > 0) ViewBag.Blocks = _dropdownService.GetBlocks(dto.DistrictId);
+            if (dto.DistrictId > 0) ViewBag.Facilities = _dropdownService.GetFacilities((int)dto.FacilityId);
             return View(dto);
         }
+
+        if (dto.SubCentreId <= 0) return BadRequest("SebCenter ID missing");
 
         await _service.UpdateAsync(dto);
         return RedirectToAction(nameof(Index));
     }
 
-  
+
 
     [HttpGet]
     public async Task<IActionResult> Delete(int id)
@@ -184,5 +224,7 @@ public class SubCentreController : Controller
         await _service.SaveHrStatusAsync(model);
         return Ok();
     }
+
+
 
 }

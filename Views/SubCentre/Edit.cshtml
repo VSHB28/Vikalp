@@ -1,0 +1,189 @@
+﻿@model Vikalp.Models.DTO.SubCentreDto
+
+@{
+    ViewData["Title"] = "Edit Sub Centre";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-2">
+    <div class="card">
+        <div class="card-body">
+
+            <h3>Edit Sub Centre</h3>
+
+            <form asp-action="Edit" method="post" class="row g-3">
+
+                @Html.AntiForgeryToken()
+
+                <!-- HIDDEN SUBCENTRE ID -->
+                <input type="hidden" name="SubCentreId" value="@Model.SubCentreId" />
+
+                <!-- STATE -->
+                <div class="col-md-3">
+                    <label class="form-label">State</label>
+                    <select name="RegionId" id="stateDropdown" class="form-control" required>
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            var selected = s.Id == Model.RegionId ? "selected" : "";
+                            <option value="@s.Id" @selected>@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- DISTRICT -->
+                <div class="col-md-3">
+                    <label class="form-label">District</label>
+                    <select name="DistrictId" id="districtDropdown" class="form-control" required>
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+
+                <!-- BLOCK -->
+                <div class="col-md-3">
+                    <label class="form-label">Block</label>
+                    <select name="BlockId" id="blockDropdown" class="form-control" required>
+                        <option value="">Select Block</option>
+                    </select>
+                </div>
+
+                <!-- FACILITY -->
+                <div class="col-md-3">
+                    <label class="form-label">Facility</label>
+                    <select name="FacilityId" id="facilityDropdown" class="form-control">
+                        <option value="">Select Facility</option>
+                    </select>
+                </div>
+
+                <!-- SUBCENTRE NAME -->
+                <div class="col-md-3">
+                    <label class="form-label">Sub Centre Name</label>
+                    <input type="text" name="SubCentre" class="form-control" value="@Model.SubCentre" required />
+                </div>
+
+                <!-- NIN NUMBER -->
+                <div class="col-md-3">
+                    <label class="form-label">NIN Number</label>
+                    <input type="text" name="NinNumber" class="form-control" value="@Model.NinNumber"
+                           maxlength="12" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+                </div>
+
+                <!-- ANM ID -->
+                <div class="col-md-3">
+                    <label class="form-label">ANM Id</label>
+                    <input type="text" name="AnmId" class="form-control" value="@Model.AnmId" />
+                </div>
+
+                <!-- STATUS CHECKBOXES -->
+                <div class="col-md-3">
+                    <label class="form-label d-block">Status</label>
+
+                    <!-- Hidden fields to post false if unchecked -->
+                    <input type="hidden" name="IsActive" value="false" />
+                    <input type="hidden" name="IsLearningSite" value="false" />
+
+                    <div class="form-check">
+                        <input type="checkbox" name="IsActive" value="true" class="form-check-input"
+                               @(Model.IsActive ? "checked" : "") />
+                        <label class="form-check-label">Active</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" name="IsLearningSite" value="true" class="form-check-input"
+                               @(Model.IsLearningSite ? "checked" : "") />
+                        <label class="form-check-label">Learning Site</label>
+                    </div>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/SubCentre/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var selectedState = @Model.RegionId ?? 0;
+        var selectedDistrict = @Model.DistrictId ?? 0;
+        var selectedBlock = @Model.BlockId ?? 0;
+        var selectedFacility = @Model.FacilityId ?? 0;
+
+        // STATE CHANGE
+        $('#stateDropdown').change(function () {
+            var stateId = $(this).val();
+
+            $('#districtDropdown').html('<option value="">Select District</option>');
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+            $('#facilityDropdown').html('<option value="">Select Facility</option>');
+
+            if (!stateId) return;
+
+            $.getJSON('/SubCentre/GetDistricts', { stateId: stateId }, function (data) {
+                $.each(data, function (i, d) {
+                    var sel = d.id == selectedDistrict ? 'selected' : '';
+                    $('#districtDropdown').append(`<option value="${d.id}" ${sel}>${d.name}</option>`);
+                });
+
+                if (selectedDistrict) {
+                    $('#districtDropdown').trigger('change');
+                    selectedDistrict = 0; // prevent loop
+                }
+            });
+        });
+
+        // DISTRICT CHANGE
+        $('#districtDropdown').change(function () {
+            var districtId = $(this).val();
+
+            $('#blockDropdown').html('<option value="">Select Block</option>');
+            $('#facilityDropdown').html('<option value="">Select Facility</option>');
+
+            if (!districtId) return;
+
+            $.getJSON('/SubCentre/GetBlocks', { districtId: districtId }, function (data) {
+                $.each(data, function (i, b) {
+                    var sel = b.id == selectedBlock ? 'selected' : '';
+                    $('#blockDropdown').append(`<option value="${b.id}" ${sel}>${b.name}</option>`);
+                });
+
+                if (selectedBlock) {
+                    $('#blockDropdown').trigger('change');
+                    selectedBlock = 0;
+                }
+            });
+        });
+
+        // BLOCK CHANGE
+        $('#blockDropdown').change(function () {
+            var blockId = $(this).val();
+
+            $('#facilityDropdown').html('<option value="">Select Facility</option>');
+
+            if (!blockId) return;
+
+            $.getJSON('/SubCentre/GetFacilities', { blockId: blockId }, function (data) {
+                $.each(data, function (i, f) {
+                    var sel = f.id == selectedFacility ? 'selected' : '';
+                    $('#facilityDropdown').append(`<option value="${f.id}" ${sel}>${f.name}</option>`);
+                });
+
+                selectedFacility = 0;
+            });
+        });
+
+        // INITIAL TRIGGER
+        if (selectedState) {
+            $('#stateDropdown').val(selectedState).trigger('change');
+        }
+    });
+</script>
