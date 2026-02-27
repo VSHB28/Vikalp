@@ -1,4 +1,13 @@
-﻿/* --- FORM STYLING --- */
+﻿:root {
+    --ipas-primary: #F15A29;
+    --ipas-primary-soft: rgba(241, 90, 41, 0.08);
+    --ipas-light: #F8F6F3;
+    --ipas-text-dark: #2C2C2C;
+    --ipas-text-muted: #666666;
+    --ipas-white: #FFFFFF;
+    --border-soft: #F3D2B8;
+}
+/* --- FORM STYLING --- */
 .content-body {
     padding: 20px;
     background: var(--ipas-light);
@@ -16,9 +25,9 @@
     background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232C2C2C' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e);
     border-color: #ffbfab !important;
 }
-.form-select {
+/*.form-select {
     border-color: #ffbfab !important;
-}
+}*/
 
     .section-title {
         color: var(--ipas-flamingo);
@@ -38,7 +47,7 @@
     margin-bottom: 5px;
 }
 
-.form-control, .form-select {
+/*.form-control, .form-select {
     background-color: var(--ipas-white);
     border: 2px solid #E8E4E0;
     border-radius: 8px;
@@ -46,15 +55,15 @@
     padding: 12px;
     font-size: 0.9rem;
     height: auto;
-}
+}*/
 
-    .form-control:focus, .form-select:focus {
+/*    .form-control:focus, .form-select:focus {
         background-color: var(--ipas-white);
         border-color: var(--ipas-primary);
         box-shadow: 0 0 0 0.2rem rgba(241, 90, 41, 0.25);
         color: var(--ipas-text-dark);
     }
-
+*/
 /* Customizing placeholder color */
 ::placeholder {
     color: #999 !important;
@@ -62,14 +71,14 @@
 }
 
 /* Fix select dropdown arrow and background */
-.form-select {
+/*.form-select {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232C2C2C' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
 }
 
     .form-select option {
         background-color: var(--ipas-white);
         color: var(--ipas-text-dark);
-    }
+    }*/
 
 /* Radio Buttons Customization */
 .form-check-input {
@@ -142,4 +151,29 @@
 }
 .form-control {
     border-color: #ffbfab !important;
+}
+
+
+/*css for form-control*/
+.form-control,
+.form-select,
+.form-textarea {
+    padding: 9px 11px;
+    border-radius: 6px;
+    border: 1px solid var(--border-soft);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;  
+}
+
+    .form-control:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        border-color: var(--ipas-primary);
+        box-shadow: 0 0 0 2px rgba(241, 90, 41, 0.18);
+    }
+
+.form-textarea {
+    min-height: 70px;
+    resize: vertical;
 }
