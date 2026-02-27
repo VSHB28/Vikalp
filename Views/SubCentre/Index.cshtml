@@ -196,6 +196,11 @@
     }
 
     /* Save Button */
+
+    .btn-add {
+        background-color: #3F0C11;
+        color: white;
+    }
     #facilityprofileModal .btn.btn-save {
         min-width: 120px;
         padding: 10px 26px;
@@ -398,9 +403,9 @@
         color: #7c6a55;
     }
 
-    .btn:hover {
+   /*  .btn:hover {
         background-color: #ffc37a;
-    }
+    } */
 
     @@media (max-width: 900px) {
         .form-grid,
@@ -429,7 +434,7 @@
             <input type="hidden" id="hdnSubCenterId" />
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="mb-0">Sub Centre </h3>
-                <a href="/SubCentre/Create" class="btn btn-primary">
+                <a href="/SubCentre/Create" class="btn btn-add btn-primary">
                     Add Sub Centre
                 </a>
             </div>
@@ -467,7 +472,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="table table-hover um-table align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>#</th>

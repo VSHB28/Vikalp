@@ -1,7 +1,6 @@
-﻿// Service/SubCentreService.cs
-
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Vikalp.Models.DTO;
 using Vikalp.Service.Interfaces;
@@ -76,7 +75,7 @@ public class SubCentreService : ISubCentreService
     }
 
     // ================= GET BY ID =================
-    public async Task<string?> GetByIdAsync(int id)
+    public async Task<SubCentreDto?> GetByIdAsync(int id)
     {
         using var conn = Conn();
         using var cmd = new SqlCommand("USP_SubCentre_CRUD", conn)
@@ -92,9 +91,7 @@ public class SubCentreService : ISubCentreService
 
         if (await reader.ReadAsync())
         {
-            var dto = MapSubCentre(reader);
-           
-            return System.Text.Json.JsonSerializer.Serialize(dto);
+            return MapSubCentre(reader);
         }
 
         return null;
@@ -126,7 +123,45 @@ public class SubCentreService : ISubCentreService
         await cmd.ExecuteNonQueryAsync();
     }
 
-    // ================= UPDATE =================
+
+    public async Task SaveSubCentreProfileAsync(SubCentreProfileDto model)
+    {
+        try
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var parameters = new DynamicParameters();
+
+                parameters.Add("@ProfileId", model.ProfileId);   // For Update
+                parameters.Add("@SubCenterId", model.SubCenterId);
+
+                parameters.Add("@PopulationCoveredbyPHC", model.PopulationCoveredbyPHC);
+                parameters.Add("@NumberofHSC", model.NumberofHSC);
+                parameters.Add("@PopulationCoveredPHC_HWC", model.PopulationCoveredPHC_HWC);
+                parameters.Add("@PopulationCoveredbyHWC", model.PopulationCoveredbyHWC);
+                parameters.Add("@AverageOPDperDay", model.AverageOPDperDay);
+                parameters.Add("@NearestFacilityReferral", model.NearestFacilityReferral);
+                parameters.Add("@DistancefromPHC", model.DistancefromPHC);
+                parameters.Add("@IsDeliveryPoint", model.IsDeliveryPoint);
+                parameters.Add("@AvgdeliveryperMonth", model.AvgdeliveryperMonth);
+                parameters.Add("@DistancefromDH", model.DistancefromDH);
+                parameters.Add("@IsSeparateSpaceforFp", model.IsSeparateSpaceforFp);
+
+             
+
+                await connection.ExecuteAsync(
+                    "sp_SaveSubCentreProfile",   // 👈 Your SubCentre SP name
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+
     public async Task UpdateAsync(SubCentreDto dto)
     {
         using var conn = Conn();
@@ -148,6 +183,7 @@ public class SubCentreService : ISubCentreService
         await conn.OpenAsync();
         await cmd.ExecuteNonQueryAsync();
     }
+
 
     // ================= DELETE =================
     public async Task DeleteAsync(int id)
@@ -266,5 +302,21 @@ public class SubCentreService : ISubCentreService
         }
 
     }
+
+    public Task<SubCentreProfileDto?> GetSubCentreProfileAsync(int subCenterId)
+    {
+        throw new NotImplementedException();
+    }
+
+    Task ISubCentreService.GetSubCentreProfileAsync(int subCenterId)
+    {
+        return GetSubCentreProfileAsync(subCenterId);
+    }
+
+
+  
 }
+
+
+
 
