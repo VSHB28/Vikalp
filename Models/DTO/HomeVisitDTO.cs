@@ -50,6 +50,8 @@ namespace Vikalp.Models.DTO
         // Extra naming consistency
         public string? SubCenterName { get; set; }
 
+        public string? HomeVisit { get; set; }
+
         public int UserId { get; set; }
 
         public List<HomevisitFollowUpDto> FollowUpHistory { get; set; }

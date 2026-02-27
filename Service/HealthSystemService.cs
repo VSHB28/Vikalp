@@ -56,6 +56,43 @@ namespace Vikalp.Service
             return (list, totalRecords);
         }
 
+        public async Task<HealthSystemActivityDto?> GetByIdAsync(int userId, int ActivityId)
+        {
+            var parameters = new[]
+            {
+        new SqlParameter("@UserId", userId),
+        new SqlParameter("@ActivityId", ActivityId)
+    };
+
+            var dt = await Task.Run(() =>
+                SqlUtils.ExecuteSP(Conn(), "dbo.sp_getHealthSystemActivtybyId", parameters));
+
+            var row = dt.AsEnumerable().FirstOrDefault();
+            if (row == null) return null;
+
+            return new HealthSystemActivityDto
+            {
+                ActivityId = Convert.ToInt32(row["ActivityId"]),
+                ActivityName = row["ActivityName"]?.ToString(),
+                TrainingVenue = row["TrainingVenue"]?.ToString(),
+                ActivityTypeId = row["ActivityTypeId"] != DBNull.Value
+                                    ? Convert.ToInt32(row["ActivityTypeId"])
+                                    : null,
+                Activities = row["Activities"] != DBNull.Value
+                                    ? row["Activities"].ToString().Split(',').Select(int.Parse).ToList()
+                                    : new List<int>(),
+                ActivityFormatId = row["ActivityFormatId"] != DBNull.Value
+                                    ? Convert.ToInt32(row["ActivityFormatId"])
+                                    : null,
+                NoOfParticipants = row["NoofParticipants"] != DBNull.Value
+                                    ? Convert.ToInt32(row["NoofParticipants"])
+                                    : 0,
+                OtherActivity = row["OtherActivity"]?.ToString(),
+                StartDate = row.Field<DateTime?>("StartDate"),
+                EndDate = row.Field<DateTime?>("EndDate"),
+                Remarks = row["Remarks"]?.ToString()
+            };
+        }
 
         public async Task<bool> SaveHealthSystemActivityJsonAsync(HealthSystemActivityDto model, int userId)
         {

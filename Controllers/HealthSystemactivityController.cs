@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
 using System.Security.Claims;
 using Vikalp.Models.DTO;
 using Vikalp.Service;
@@ -77,6 +78,52 @@ namespace Vikalp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateJson([FromBody] HealthSystemActivityDto model)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            if (model == null)
+                return BadRequest("Invalid data");
+
+            if (model.Activities == null || model.Activities.Count == 0)
+                return BadRequest("At least one Activity is required");
+
+            var result = await _service.SaveHealthSystemActivityJsonAsync(model, userId);
+
+            if (!result)
+                return StatusCode(500, "Save failed");
+
+            return Ok(new { success = true });
+        }
+
+        // ===================== UPDATE (GET) =====================
+        [HttpGet]
+        public async Task<IActionResult> Edit(int ActivityId)
+        {
+            LoadMasters();
+            var dropdowns = await _dropdownService.GetCommonDropdownsAsync(userId: 1, languageId: 1);
+
+            ViewBag.ActivityTypeName = dropdowns["ActivityTypeName"];
+            ViewBag.ActivityType = dropdowns["ActivityType"];
+            ViewBag.ActivityFormat = dropdowns["ActivityFormat"];
+            ViewBag.Clinical = dropdowns["Clinical"];
+            ViewBag.NonClinical = dropdowns["NonClinical"];
+
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var result = await _service.GetByIdAsync(userId, ActivityId);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return View("Edit", result);
+        }
+
+        // ===================== UPDATE (POST) =====================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateJson([FromBody] HealthSystemActivityDto model)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
