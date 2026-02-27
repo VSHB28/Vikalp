@@ -22,6 +22,6 @@ namespace Vikalp.Models.DTO
       
         public string? FacilityType { get; set; }
         public int RegionId { get; set; }
-        public int DistrictId { get; set; }
+        public int  DistrictId { get; set; }
     }
 }

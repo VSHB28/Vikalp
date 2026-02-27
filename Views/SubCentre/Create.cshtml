@@ -30,7 +30,7 @@
                         <option value="">Select State</option>
                         @foreach (var s in ViewBag.States)
                         {
-                            <option value="@s.Id" @(Model.SubCentreId == s.Id ? "selected" : "")>
+                            <option value="@s.Id" @(Model.RegionId == s.Id ? "selected" : "")>
                                 @s.Name
                             </option>
                         }
@@ -46,7 +46,7 @@
                         {
                             foreach (var d in ViewBag.Districts)
                             {
-                                <option value="@d.Id" @(Model.SubCentreId == d.Id ? "selected" : "")>
+                                <option value="@d.Id" @(Model.RegionId == d.Id ? "selected" : "")>
                                     @d.Name
                                 </option>
                             }
@@ -71,6 +71,14 @@
                     </select>
                 </div>
 
+                <!-- FACILITY -->
+                @*     <div class="col-md-3">
+                    <label class="form-label">Facility</label>
+                    <input name="FacilityId"
+                           class="form-control"
+                           value="@Model.FacilityId" />
+                </div> *@
+
                 <div class="col-md-3">
                     <label class="form-label">Facility</label>
                     <select name="FacilityId" id="facilityDropdown" class="form-control" required>
@@ -78,6 +86,10 @@
                     </select>
                 </div>
 
+
+
+
+                <!-- SUBCENTRE NAME -->
                 <div class="col-md-3">
                     <label class="form-label">Sub Centre Name</label>
                     <input name="SubCentre"
@@ -92,9 +104,15 @@
                            class="form-control"
                            value="@Model.NinNumber"
                            maxlength="12"
+                           required
                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                 </div>
 
+
+
+
+
+                <!-- ANM -->
                 <div class="col-md-3">
                     <label class="form-label">ANM Id</label>
                     <input name="AnmId"
@@ -102,6 +120,7 @@
                            value="@Model.AnmId" />
                 </div>
 
+                <!-- STATUS -->
                 <div class="col-md-3">
                     <label class="form-label d-block">Status</label>
 
@@ -143,6 +162,7 @@
 <script>
     $(function () {
 
+        // STATE CHANGE
         $('#stateDropdown').change(function () {
             var stateId = $(this).val();
             $('#districtDropdown').html('<option value="">Select District</option>');
@@ -159,6 +179,7 @@
             });
         });
 
+        // DISTRICT CHANGE
         $('#districtDropdown').change(function () {
             var districtId = $(this).val();
             $('#blockDropdown').html('<option value="">Select Block</option>');
@@ -177,6 +198,7 @@
 
     });
 
+        // BLOCK CHANGE → load facilities
     $('#blockDropdown').change(function () {
         var blockId = $(this).val();
         $('#facilityDropdown').html('<option value="">Select Facility</option>');
@@ -190,6 +212,9 @@
             });
         });
     });
+
+
+
 
 
 </script>
