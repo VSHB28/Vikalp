@@ -43,6 +43,10 @@
         background-color: #3F0C11;
         color: white;
     } */
+  .modal-header{
+      background-color:#33b5b3;
+      color: white;
+  }
 </style>
 
 <div class="container py-2">
@@ -52,7 +56,6 @@
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
                         <h3 class="mb-0">Users</h3>
-                        <div class="text-muted small">Manage application users and their roles</div>
                     </div>
 
                     <div class="um-toolbar">
@@ -72,7 +75,7 @@
 
             <div class="row mb-3">
                 <div class="col-md-2">
-                    <label>State</label>
+                    @* <label>State</label> *@
                     <select name="StateId" class="form-control" id="StateId">
                         <option value="">-- Select State --</option>
                         @foreach (var s in ViewBag.States)
@@ -82,7 +85,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label>District</label>
+                   @*  <label>District</label> *@
                     <select name="DistrictId" class="form-control" id="DistrictId">
                         <option value="">-- Select District --</option>
                     </select>
@@ -102,12 +105,13 @@
                     <table id="usersTable" class="table table-hover um-table align-middle">
                         <thead>
                             <tr>
-                                <th style="width:1%;">#</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th class="text-center" style="width:8%;">Active</th>
-                                <th class="text-end" style="width:18%;">Actions</th>
+                               <th style="width:1%;">#</th>
+                               <th><i class="bi bi-person me-2"></i>Username</th>
+                                <th><i class="bi bi-envelope me-2"></i>Email</th>
+                                <th><i class="bi bi-briefcase me-2"></i>Role</th>
+                                <th><i class="bi bi-check-circle me-2"></i>Active</th>
+                                <th><i class="bi bi-pencil-square me-2"></i>Actions</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -161,6 +165,15 @@
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
+
+                                        <!-- Update Password Button -->
+                                        <a class="btn btn-sm btn-outline-warning ms-1"
+                                           href="javascript:void(0);"
+                                           onclick="openPasswordModal(@user.UserId)"
+                                           title="Update Password">
+                                           <i class="bi bi-key"></i>
+                                        </a>
+
                                     </td>
                             </tr>
                         }
@@ -218,9 +231,93 @@
 </nav>
         </div>
     </div>
+    <!-- Update Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="passwordUserId" />
+
+               <div class="mb-3">
+    <label>Old Password</label>
+    <div class="input-group">
+        <input type="password" id="oldPassword"
+               class="form-control" />
+
+        <span class="input-group-text"
+              onclick="togglePassword('oldPassword', this)"
+              style="cursor:pointer;">
+            <i class="bi bi-eye"></i>
+        </span>
+    </div>
+    <small id="oldPasswordError" class="text-danger"></small>
 </div>
 
+               <div class="mb-3">
+    <label>New Password</label>
+    <div class="input-group">
+        <input type="password" id="newPassword"
+               class="form-control"
+               oninput="validateNewPassword()" />
+
+        <span class="input-group-text"
+              onclick="togglePassword('newPassword', this)"
+              style="cursor:pointer;">
+            <i class="bi bi-eye"></i>
+        </span>
+    </div>
+    <small id="newPasswordError" class="text-danger"></small>
+</div>
+
+                <div class="mb-3">
+    <label>Confirm Password</label>
+    <div class="input-group">
+        <input type="password" id="confirmPassword"
+               class="form-control"
+               oninput="validateConfirmPassword()" />
+
+        <span class="input-group-text"
+              onclick="togglePassword('confirmPassword', this)"
+              style="cursor:pointer;">
+            <i class="bi bi-eye"></i>
+        </span>
+    </div>
+    <small id="confirmPasswordError" class="text-danger"></small>
+</div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-save" onclick="updatePassword()">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <script>
+    function togglePassword(fieldId, element) {
+
+    let input = document.getElementById(fieldId);
+    let icon = element.querySelector("i");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+    }
+    else {
+        input.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+    }
+}
+
     function goToEdit(id) {
         window.location.href = '/User/Edit/' + id;
     }
@@ -269,7 +366,8 @@
             document.getElementById("StateId").addEventListener("change", function () {
                 let stateId = this.value;
                 resetDropdown("DistrictId", "-- Select District --");
-
+                
+             searchData();
                 if (!stateId) return;
 
                 fetch(`/User/GetDistricts?stateId=${stateId}`)
@@ -331,4 +429,85 @@
     }
     });
 
+    function openPasswordModal(userId) {
+    document.getElementById("passwordUserId").value = userId;
+
+    // clear fields
+    document.getElementById("oldPassword").value = "";
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+    var modal = new bootstrap.Modal(document.getElementById('passwordModal'));
+    modal.show();
+}
+
+function validateNewPassword() {
+
+    let password = document.getElementById("newPassword").value;
+    let error = document.getElementById("newPasswordError");
+
+    let regex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+
+    if (password === "") {
+        error.innerText = "Password is required";
+    }
+    else if (!regex.test(password)) {
+        error.innerText = "Minimum 6 characters, include letters & numbers";
+    }
+    else {
+        error.innerText = "";
+    }
+
+    validateConfirmPassword();
+}
+
+function validateConfirmPassword() {
+
+    let password = document.getElementById("newPassword").value;
+    let confirmPassword = document.getElementById("confirmPassword").value;
+    let error = document.getElementById("confirmPasswordError");
+
+    if (confirmPassword === "") {
+        error.innerText = "";
+        return;
+    }
+
+    if (confirmPassword !== password) {
+        error.innerText = "Passwords do not match";
+    }
+    else {
+        error.innerText = "";
+    }
+}
+
+function updatePassword() {
+
+    let userId = document.getElementById("passwordUserId").value;
+    let oldPassword = document.getElementById("oldPassword").value;
+    let newPassword = document.getElementById("newPassword").value;
+
+    fetch('/User/UpdatePassword', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            UserId: userId,
+            OldPassword: oldPassword,
+            NewPassword: newPassword
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success) {
+            alert("Password updated successfully");
+            location.reload();
+        }
+        else {
+            document.getElementById("oldPasswordError").innerText = data.message;
+        }
+
+    });
+}
 </script>

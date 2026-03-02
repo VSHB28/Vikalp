@@ -23,7 +23,14 @@
             <div class="umcard-header">
                 <h3 class="">Update Activity</h3>
             </div>
-            <form asp-action="Create" method="post" class="mt-2 g-3">
+            <form asp-action="Create" method="post" class="mt-2 g-3">                
+                <input type="hidden" id="hdStateId" value="@Model.StateId" />
+                <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
+                <input type="hidden" id="hdnActivityId" value="@Model.ActivityId" />
+                <input type="hidden" id="hdnActivityTypeId" value="@Model.ActivityTypeId" />
+                <input type="hidden" id="hdnActivitynameId" value="@Model.ActivityNameId" />
+                <input type="hidden" id="hdnActivities" value="@string.Join(",", Model.Activities ?? new List<int>())" />
+
                 <div class="row">
 
                     <div class="col-md-3 mb-1">
@@ -115,12 +122,21 @@
                         <input name="NoOfParticipants" value="@Model.NoOfParticipants" class="form-control" type="number" id="NoOfParticipants" />
                     </div>
                     <div class="col-md-3 mb-1">
-                        <label name="StartDate" class="form-label">Start Date</label>
-                        <input name="StartDate" type="date" value="@Model.StartDate" class="form-control" id="StartDate" />
+                        <label class="form-label">Start Date</label>
+                        <input type="date"
+                               name="StartDate"
+                               id="StartDate"
+                               class="form-control"
+                               value="@(Model.StartDate?.ToString("yyyy-MM-dd"))" />
                     </div>
+
                     <div class="col-md-3 mb-1">
                         <label class="form-label">End Date</label>
-                        <input name="EndDate" type="date" value="@Model.EndDate" class="form-control" id="EndDate" />
+                        <input type="date"
+                               name="EndDate"
+                               id="EndDate"
+                               class="form-control"
+                               value="@(Model.EndDate?.ToString("yyyy-MM-dd"))" />
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -136,7 +152,7 @@
                 </div>
             </div> *@
                 <div class="d-flex justify-content-start gap-2">
-                    <button type="button" class="btn btn-save btn" onclick="saveHealthSystemActivity()">Save</button>
+                    <button type="button" class="btn btn-save btn" onclick="updateHealthSystemActivity()">Save</button>
                     <a href="@Url.Action("Index", "HealthSystemActivity")" class="btn btn-back ">Back to List</a>
                 </div>
             </form>
@@ -145,33 +161,6 @@
 </div>
 @section Scripts {
     <script>
-                document.addEventListener("DOMContentLoaded", function () {
-
-            if (activityType.value) {
-                activityType.dispatchEvent(new Event("change"));
-
-                setTimeout(() => {
-                    updateSelectedText();
-                }, 200);
-            }
-        });
-                document.addEventListener("DOMContentLoaded", function () {
-
-            const selectedState = "@Model.StateId";
-            const selectedDistrict = "@Model.DistrictId";
-
-            if (selectedState) {
-                fetch(`/HealthSystemActivity/GetDistricts?stateId=${selectedState}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        fillDropdown("DistrictId", data, "id", "name");
-
-                        if (selectedDistrict) {
-                            document.getElementById("DistrictId").value = selectedDistrict;
-                        }
-                    });
-            }
-        });
 
         document.getElementById("StateId").addEventListener("change", function () {
                     let stateId = this.value;
@@ -245,22 +234,30 @@
             container.innerHTML = "";
         }
 
-        function updateSelectedText() {
+                function updateSelectedText() {
+
             const checked = container.querySelectorAll("input[type='checkbox']:checked");
 
             if (checked.length === 0) {
                 dropdownText.innerText = "Select Activities";
                 dropdownText.classList.add("text-muted");
-            } else if (checked.length <= 2) {
-                dropdownText.innerText = [...checked].map(x => x.nextElementSibling.innerText).join(", ");
-                dropdownText.classList.remove("text-muted");
+                return;
+            }
+
+            const selectedNames = [...checked]
+                .map(x => x.nextElementSibling.textContent.trim()); // 🔥 FIX
+
+            if (checked.length <= 2) {
+                dropdownText.innerText = selectedNames.join(", ");
             } else {
                 dropdownText.innerText = `${checked.length} activities selected`;
-                dropdownText.classList.remove("text-muted");
             }
+
+            dropdownText.classList.remove("text-muted");
         }
 
         function renderCheckboxes(list, heading) {
+
             if (!list || list.length === 0) return;
 
             const title = document.createElement("div");
@@ -268,27 +265,41 @@
             title.innerText = heading;
             container.appendChild(title);
 
+        const selectedActivitiesRaw =
+            document.getElementById("hdnActivities")?.value || "";
+
+        const selectedActivities = selectedActivitiesRaw
+            .split(',')
+            .map(x => x.trim())
+            .filter(x => x !== "")          // 🔥 remove empty values
+            .map(x => parseInt(x))
+            .filter(x => !isNaN(x));        // 🔥 remove NaN
+
             list.forEach(item => {
+                const isChecked = selectedActivities.includes(parseInt(item.value));
+
                 const div = document.createElement("div");
                 div.className = "form-check";
 
-                        const isChecked = selectedActivities.includes(parseInt(item.value));
+                div.innerHTML = `
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="Activities"
+                           value="${item.value}"
+                           id="act_${item.value}"
+                           ${isChecked ? "checked" : ""}>
+                    <label class="form-check-label" for="act_${item.value}">
+                        ${item.text}
+                    </label>
+                `;
 
-        div.innerHTML = `
-            <input class="form-check-input"
-                   type="checkbox"
-                   name="Activities"
-                   value="${item.value}"
-                   id="act_${item.value}"
-                   ${isChecked ? "checked" : ""}>
-            <label class="form-check-label" for="act_${item.value}">
-                ${item.text}
-            </label>
-        `;
+                div.querySelector("input")
+                    .addEventListener("change", updateSelectedText);
 
-                div.querySelector("input").addEventListener("change", updateSelectedText);
                 container.appendChild(div);
             });
+
+            updateSelectedText();
         }
 
         activityType.addEventListener("change", function () {
@@ -315,7 +326,7 @@
             }
         });
 
-                function updateHealthSystemActivity() {
+        function updateHealthSystemActivity() {
 
             const token = document.querySelector(
                 'input[name="__RequestVerificationToken"]'
@@ -326,19 +337,31 @@
             )].map(x => parseInt(x.value));
 
             const data = {
-                activityId: parseInt(document.getElementById("ActivityId").value),
-                activityNameId: parseInt(document.getElementById("ActivityNameId").value),
-                otherActivity: document.getElementById("OtherActivity")?.value,
+                activityId: parseInt(document.getElementById("hdnActivityId").value),
+
+                activityNameId: parseInt(document.getElementById("ActivityNameId").value) || null,
+
+                otherActivity: document.getElementById("OtherActivity")?.value || null,
+
                 stateId: parseInt(document.getElementById("StateId").value) || null,
+
                 districtId: parseInt(document.getElementById("DistrictId").value) || null,
-                trainingVenue: document.getElementById("TrainingVenue").value,
-                activityTypeId: parseInt(document.getElementById("ActivityTypeId").value),
+
+                trainingVenue: document.getElementById("TrainingVenue").value || null,
+
+                activityTypeId: parseInt(document.getElementById("ActivityTypeId").value) || null,
+
                 activities: activities,
-                activityFormatId: parseInt(document.getElementById("ActivityFormatId").value),
-                noOfParticipants: parseInt(document.getElementById("NoOfParticipants").value),
-                startDate: document.getElementById("StartDate").value,
-                endDate: document.getElementById("EndDate").value,
-                remarks: document.getElementById("Remarks").value
+
+                activityFormatId: parseInt(document.getElementById("ActivityFormatId").value) || null,
+
+                noOfParticipants: parseInt(document.getElementById("NoOfParticipants").value) || 0,
+
+                startDate: document.getElementById("StartDate").value || null,
+
+                endDate: document.getElementById("EndDate").value || null,
+
+                remarks: document.getElementById("Remarks").value || null
             };
 
             fetch('/HealthSystemActivity/UpdateJson', {
@@ -355,11 +378,52 @@
                     alert("Updated successfully");
                     window.location.href = '/HealthSystemActivity/Index';
                 } else {
-                    alert("Update failed");
+                    alert(res.message || "Update failed");
                 }
             })
             .catch(() => alert("Something went wrong"));
         }
+
+                 document.addEventListener("DOMContentLoaded", async function () {
+
+            const selectedState = document.getElementById("hdStateId").value;
+            const selectedDistrict = document.getElementById("hdnDistrictId").value;
+            const selectedActivityType = document.getElementById("hdnActivityTypeId").value;
+            const selectedActivityName = document.getElementById("hdnActivitynameId").value;
+
+            // ✅ 1️⃣ Load Districts
+            if (selectedState) {
+
+                document.getElementById("StateId").value = selectedState;
+
+                const res = await fetch(`/HealthSystemActivity/GetDistricts?stateId=${selectedState}`);
+                const data = await res.json();
+
+                resetDropdown("DistrictId", "-- Select District --");
+                fillDropdown("DistrictId", data, "id", "name");
+
+                if (selectedDistrict) {
+                    document.getElementById("DistrictId").value = selectedDistrict;
+                }
+            }
+
+            // ✅ 2️⃣ Set Activity Name
+            if (selectedActivityName) {
+                document.getElementById("ActivityNameId").value = selectedActivityName;
+            }
+
+            // ✅ 3️⃣ Load Activities (IMPORTANT)
+            if (selectedActivityType) {
+
+                document.getElementById("ActivityTypeId").value = selectedActivityType;
+
+                activityType.dispatchEvent(new Event("change"));
+            }
+
+            // ✅ 4️⃣ Toggle Other Activity
+            toggleOtherActivity();
+
+        });
     </script>
 
 }

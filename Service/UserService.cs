@@ -151,6 +151,8 @@ public class UserService : IUserService
                         .Select(x => x.Value)
                         .ToList(),
             BlockId = row.Field<int?>("BlockId") ?? 0,
+            Password = row.Field<string>("Password"),
+            PasswordHash = row.Field<string>("PasswordHash"),
         };
     }
 
@@ -277,6 +279,45 @@ public class UserService : IUserService
                     };
 
         SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateUser", parameters);
+
+        return true;
+    }
+
+    public bool UpdatePassword(UpdatePasswordDto model)
+    {
+        // Get existing user from DB
+        var parameters = new SqlParameter[]
+        {
+        new SqlParameter("@UserId", model.UserId)
+        };
+
+        var dt = SqlUtils.ExecuteSP(Conn(), "dbo.sp_GetUserById", parameters);
+
+        if (dt.Rows.Count == 0)
+            return false;
+
+        string existingHash = dt.Rows[0]["PasswordHash"]?.ToString();
+
+        // Encrypt old password entered by user
+        string oldPasswordHash = CommonController.EncryptSHAHash(model.OldPassword);
+
+        // Compare hashes
+        if (existingHash != oldPasswordHash)
+        {
+            return false; // old password incorrect
+        }
+
+        // Encrypt new password
+        string newPasswordHash = CommonController.EncryptSHAHash(model.NewPassword);
+
+        var updateParams = new SqlParameter[]
+        {
+        new SqlParameter("@UserId", model.UserId),
+        new SqlParameter("@PasswordHash", newPasswordHash),
+        new SqlParameter("@Password", model.NewPassword)
+        };
+
+        SqlUtils.ExecuteSP(Conn(), "dbo.sp_UpdateUserPassword", updateParams);
 
         return true;
     }

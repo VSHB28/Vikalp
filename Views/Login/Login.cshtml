@@ -251,21 +251,34 @@
                         <img src="~/assets/images/vikalp-logo.png"
                              alt="Vikalp"
                              class="brand-logo" />
-                        <p class="brand-subtitle">Empowering Choices, Building Futures</p>
+                        @* <p class="brand-subtitle">Empowering Choices, Building Futures</p> *@
                     </div>
 
                     <form asp-action="Login" asp-controller="Auth" method="post">
                         @Html.AntiForgeryToken()
 
                         <div class="mb-3">
-                            <label class="form-label">Mobile number</label>
+                            <label class="form-label">Mobile Number</label>
                             <input name="MobileNumber" class="form-control" />
                             <span asp-validation-for="MobileNumber" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input name="Password" type="password" class="form-control" />
+
+                            <div class="input-group">
+                                <input name="Password"
+                                       id="Password"
+                                       type="password"
+                                       class="form-control" />
+
+                                <span class="input-group-text"
+                                      onclick="togglePassword('Password', this)"
+                                      style="cursor:pointer;">
+                                    <i class="bi bi-eye text-dark"></i>
+                                </span>
+                            </div>
+
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
@@ -289,7 +302,7 @@
                     </form>
 
                     <div class="text-center mt-5">
-                        <small class="text-muted">&copy; 2024 Vikalp Project. All rights reserved.</small>
+                        <small class="text-muted">&copy; 2026 Vikalp Project. All rights reserved.</small>
                     </div>
                 </div>
             </div>
@@ -307,4 +320,21 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-}
+    }
+    <script>
+            function togglePassword(fieldId, element) {
+
+        let input = document.getElementById(fieldId);
+        let icon = element.querySelector("i");
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        }
+    }
+</script>
