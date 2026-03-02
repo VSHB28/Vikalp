@@ -494,12 +494,13 @@
                     <input name="ConcentDate" type="date" max="@maxDate" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label>Upload Signature</label>
-                    <div class="signature-box">
+                    <label>Signature</label>
+                    <input type="text" name="Signature" id="Signature" class="all-form-input" placeholder="Enter name" />
+                    @* <div class="signature-box">
                         <i class="fa-solid fa-camera"></i>
                         <div style="font-size: 10px; margin-top: 5px;">Tap to Upload</div>
                         <input name="Signature" type="file" style="display: none;" id="sig-upload">
-                    </div>
+                    </div> *@
                 </div>
             </div>
         </div>
@@ -519,15 +520,27 @@
                 return;
             }
 
-            const model = {
-                LineListGuid: document.getElementById("LineListGuid").value,
-                IsConcent: isConsentEl.value,
-                ConcentDate: document.querySelector('[name="ConcentDate"]').value || null,
-                Signature: document.querySelector('[name="Signature"]').value || null,
-                MobileNumber : document.querySelector('[name="MobileNumber"]').value || null,
-                MobileHandledBy : document.querySelector('[name="MobileHandledBy"]').value || null
+                    const model = {
+            LineListGuid: document.getElementById("LineListGuid").value,
+            IsConcent: isConsentEl.value,
+        };
 
-            };
+        if (isConsentEl.value === "1") {
+            model.ConsentDate = document.querySelector('#ConsentDate')?.value || null;
+            model.MobileNumber = document.querySelector('#MobileNumber')?.value || null;
+            model.MobileHandledBy = document.querySelector('#MobileHandledBy')?.value || null;
+            model.Signature = document.querySelector('#Signature')?.value || null;
+        }
+
+            // const model = {
+            //     LineListGuid: document.getElementById("LineListGuid").value,
+            //     IsConcent: isConsentEl.value,
+            //     ConcentDate: document.querySelector('[name="ConcentDate"]').value || null,
+            //     Signature: document.querySelector('[name="Signature"]').value || null,
+            //     MobileNumber : document.querySelector('[name="MobileNumber"]').value || null,
+            //     MobileHandledBy : document.querySelector('[name="MobileHandledBy"]').value || null
+
+            // };
 
             console.log("Posting consent:", model);
 

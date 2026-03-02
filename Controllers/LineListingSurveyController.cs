@@ -180,6 +180,13 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveConsentJson([FromBody] LineListingConsentDto model)
         {
+            if (model.IsConcent == 2)
+            {
+                model.ConcentDate = null;
+                model.MobileNumber = null;
+                model.MobileHandledBy = null;
+                model.Signature = null;
+            }
             if (model == null)
                 return Json(new { success = false, message = "Invalid data" });
 
