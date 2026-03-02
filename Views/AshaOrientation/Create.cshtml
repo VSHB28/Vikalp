@@ -213,6 +213,7 @@
                     <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
                 }
             </select>
+            <span class="text-danger" id="StateError"></span>
         </div>
 
         <div class="col-md-2">
@@ -220,6 +221,7 @@
             <select name="DistrictId" class="form-control" id="DistrictId">
                 <option value="">-- Select District --</option>
             </select>
+            <span class="text-danger" id="DistrictError"></span>
         </div>
 
         <div class="col-md-2">
@@ -227,6 +229,7 @@
             <select name="BlockId" class="form-control" id="BlockId">
                 <option value="">-- Select Block --</option>
             </select>
+            <span class="text-danger" id="BlockError"></span>
         </div>
 
         <div class="col-md-2" id="facilityDropdownDiv">
@@ -234,6 +237,7 @@
             <select name="FacilityId" class="form-control" id="FacilityId">
                 <option value="">-- Select Facility --</option>
             </select>
+            <span class="text-danger" id="FacilityError"></span>
         </div>
 
         <div class="col-md-2 d-none" id="manualFacilityDiv">
@@ -359,6 +363,7 @@
                                     <!-- ASHAs loaded dynamically -->
                                 </tbody>
                             </table>
+                            <span id="AshaError" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -710,7 +715,7 @@
             });
         }
 
-                        document.getElementById("modalFacilityType").addEventListener("change", function () {
+          document.getElementById("modalFacilityType").addEventListener("change", function () {
             let type = this.value;
 
             let facilityDiv = document.getElementById("modalFacilityDiv");
@@ -750,7 +755,56 @@
 
                 function saveOrientation() {
 
-                            let selectedTopicIds = Array.from(
+               // Clear all errors first
+        document.getElementById("StateError").innerText = "";
+        document.getElementById("DistrictError").innerText = "";
+        document.getElementById("BlockError").innerText = "";
+        document.getElementById("FacilityError").innerText = "";
+
+        let DateofOrientation = document.querySelector('[name="DateofOrientation"]').value;
+        let StateId = document.getElementById("StateId").value;
+        let DistrictId = document.getElementById("DistrictId").value;
+        let BlockId = document.getElementById("BlockId").value;
+        let FacilityId = document.getElementById("FacilityId").value;
+
+         if (!DateofOrientation) {
+             alert("Please Select Orientation Date.");
+             document.querySelector('[name="DateofOrientation"]').focus();
+             return false;
+         }
+
+        if (!StateId) {
+            document.getElementById("StateError").innerText = "State is required.";
+            document.getElementById("StateId").focus();
+            return false;
+        }
+
+        if (!DistrictId) {
+            document.getElementById("DistrictError").innerText = "District is required.";
+            document.getElementById("DistrictId").focus();
+            return false;
+        }
+
+        if (!BlockId) {
+            document.getElementById("BlockError").innerText = "Block is required.";
+            document.getElementById("BlockId").focus();
+            return false;
+        }
+
+        if (!FacilityId) {
+            document.getElementById("FacilityError").innerText = "Facility is required.";
+            document.getElementById("FacilityId").focus();
+            return false;
+        }
+
+        let rows = document.querySelectorAll("#ashaListBody tr");
+
+        if (rows.length === 0) {
+            alert("Please add at least one ASHA attendee.");
+            return false;
+        }
+
+         let selectedTopicIds = Array.from(
             document.querySelectorAll(".topic-checkbox:checked")
         ).map(x => x.value);
 

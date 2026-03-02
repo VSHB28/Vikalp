@@ -131,7 +131,7 @@
         public string WomanName { get; set; }
         public string? HusbandName { get; set; }
         public string? MobileNumber { get; set; }
-         public int MobileHandledBy { get; set; }
+         public int? MobileHandledBy { get; set; }
         // Editable
         public int? IsConcent { get; set; }
         public DateTime? ConcentDate { get; set; }
