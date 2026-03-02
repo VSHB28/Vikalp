@@ -52,7 +52,240 @@
         padding: 15px 45px;
         padding: 12px 45px;
     }
+
+    .fh-cardBody {
+        padding: 1px 10px;
+        flex: 1 1 auto;
+    }
+
+    .fh-cardHeader {
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+        .fh-cardHeader h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #F15A29;
+        }
+
+        .fh-cardHeader .col-md-4 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+            .fh-cardHeader .col-md-4 label {
+                white-space: nowrap;
+                margin: 0;
+                font-weight: 500;
+                min-width: 120px;
+            }
+
+            .fh-cardHeader .col-md-4 input {
+                flex: 1;
+            }
 </style>
+
+
+<style>
+    :root {
+        --all-ipas-primary: #F15A29;
+        --all-ipas-light: #F8F6F3;
+        --all-ipas-text-dark: #2C2C2C;
+        --all-ipas-text-muted: #666666;
+        --all-ipas-white: #FFFFFF;
+        --all-border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+
+    .all-modal-container {
+        background-color: var(--all-ipas-white);
+        border-radius: 10px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .all-modal-header {
+        background-color: #FBD9A5;
+        color: var(--all-ipas-text-dark);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .all-modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+    .all-close-btn {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        color: #b08968;
+    }
+
+    .all-modal-body {
+        padding: 20px 24px 24px;
+        background-color: var(--all-ipas-light);
+    }
+
+    .all-section-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .all-section-card {
+        background: var(--all-ipas-white);
+        border-radius: 8px;
+        border: 1px solid #F0E0D2;
+        padding: 14px 16px 16px;
+    }
+
+    .all-section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .all-section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(241, 90, 41, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--all-ipas-primary);
+        font-size: 15px;
+    }
+
+    .all-section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--all-ipas-text-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .all-section-subtitle {
+        font-size: 11px;
+        color: var(--all-ipas-text-muted);
+        margin-top: 2px;
+    }
+
+    .all-form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .all-form-grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .all-form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .all-form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--all-ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .all-label-icon {
+        color: var(--all-ipas-primary);
+        font-size: 14px;
+    }
+
+    .all-form-input,
+    .all-form-select,
+    .all-form-textarea {
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--all-border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .all-form-textarea {
+        min-height: 70px;
+        resize: vertical;
+    }
+
+        .all-form-input:focus,
+        .all-form-select:focus,
+        .all-form-textarea:focus {
+            border-color: var(--all-ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241,90,41,0.18);
+        }
+
+    .all-modal-footer {
+        padding: 14px 24px 18px;
+        background-color: #FBD9A5;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .all-btn-add {
+        min-width: 130px;
+        padding: 10px 26px;
+        border-radius: 4px;
+        border: 1px solid #f1a259;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #FFD8A6;
+        color: #e46b29;
+    }
+
+        .all-btn-add:hover {
+            background-color: #ffc37a;
+        }
+
+    @@media (max-width: 900px) {
+        .all-form-grid,
+        .all-form-grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .all-modal-shell {
+            padding: 12px;
+        }
+
+        .all-form-grid,
+        .all-form-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 <form id="linelistForm" method="post">
 
 
@@ -69,169 +302,302 @@
     <input type="hidden" asp-for="LineListGuid" />
 
 
+   
+
+
     <div class="card">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 style="color: #F15A29;">Edit Details</h2>
-                <div class="col-md-3">
-                    <label class="fw-bold">Survey Date</label>
+        <div class="fh-cardBody">
+            <div class="fh-cardHeader d-flex gap-5">
+                <h2 class="mb-3">Edit Details</h2>
+               
+                <div class="col-md-4 d-flex">
+                    <label>Survey Date</label>
                     <input type="date" class="form-control" id="CreatedOn" value="@(Model.CreatedOn.HasValue? Model.CreatedOn.Value.ToString("yyyy-MM-dd") : "")" />
-                </div>
-            </div>
-
-            <div class="row g-3">
-
-                <div class="col-md-2">
-                    <label class="fw-bold">State</label>
-                    <select id="StateId" class="form-control">
-                        <option value="">-- Select State --</option>
-                        @foreach (var item in (IEnumerable<dynamic>)ViewBag.States)
-                        {
-                            var isSelected = Model.StateId == item.Id ? "selected" : "";
-                            <option value="@item.Id" @isSelected>@item.Name</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="fw-bold">District</label>
-                    <select id="DistrictId" class="form-control">
-                        <option value="">-- Select District --</option>
-                        @if (ViewBag.Districts != null)
-                        {
-                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Districts)
-                            {
-                                var isSelected = Model.DistrictId == item.Id ? "selected" : "";
-                                <option value="@item.Id" @isSelected>@item.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="fw-bold">Block</label>
-                    <select id="BlockId" class="form-control">
-                        <option value="">-- Select Block --</option>
-                        @if (ViewBag.Blocks != null)
-                        {
-                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Blocks)
-                            {
-                                var isSelected = Model.BlockId == item.Id ? "selected" : "";
-                                <option value="@item.Id" @isSelected>@item.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-
-                <div class="col-md-2">
-                    <label>Facility</label>
-                    <select name="FacilityId" class="form-control" id="FacilityId">
-                        <option value="">-- Select Facility --</option>
-                        @if (ViewBag.Facilities != null)
-                        {
-                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Facilities)
-                            {
-                                var isSelected = Model.FacilityId == item.Id ? "selected" : "";
-                                <option value="@item.Id" @isSelected>@item.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-
-                <div class="col-md-2">
-                    <label class="fw-bold">Sub Centre</label>
-                    <select id="SubCenterId" class="form-control">
-                        <option value="">-- Select Sub-centre --</option>
-                        @if (ViewBag.SubCentres != null)
-                        {
-                            foreach (var item in (IEnumerable<dynamic>)ViewBag.SubCentres)
-                            {
-                                var isSelected = Model.SubCenterId == item.Id ? "selected" : "";
-                                <option value="@item.Id" @isSelected>@item.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="fw-bold">ASHA Name</label>
-                    <select id="ASHAId" class="form-control">
-                        <option value="">-- Select ASHA --</option>
-                        @if (ViewBag.Ashas != null)
-                        {
-                            foreach (var item in (IEnumerable<dynamic>)ViewBag.Ashas)
-                            {
-                                var isSelected = Model.ASHAId == item.Id ? "selected" : "";
-                                <option value="@item.Id" @isSelected>@item.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-3 mt-3">
-                    <label class="fw-bold">Village Name</label>
-                    <input type="text" id="VillageName" class="form-control" value="@Model.VillageName" />
-                </div>
-                <div class="col-md-3 mt-3">
-                    <label class="fw-bold">Anganwadi Worker</label>
-                    <input type="text" id="AnganwadiWorkerName" class="form-control" value="@Model.AnganwadiWorkerName" />
                 </div>
             </div>
         </div>
     </div>
+    <div class="row g-3">
 
-    <div class="card">
-        <div class="card-body">
-            <h5>Beneficiaries List</h5>
-            <table class="table table-bordered mt-3" id="memberTable">
-                <thead class="table-light">
-                    <tr>
-                        <th>Woman Name</th>
-                        <th>Husband Name</th>
-                        <th>Mobile</th>
-                        <th>Pregnant</th>
-                        <th>FP Using</th>
-                    </tr>
-                </thead>
-                <tbody id="beneficiaryRows">
-                    @if (Model.Women != null)
+        <div class="col-md-2">
+            <label class="fw-bold">State</label>
+            <select id="StateId" class="form-control">
+                <option value="">-- Select State --</option>
+                @foreach (var item in (IEnumerable<dynamic>)ViewBag.States)
+                {
+                    var isSelected = Model.StateId == item.Id ? "selected" : "";
+                    <option value="@item.Id" @isSelected>@item.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="fw-bold">District</label>
+            <select id="DistrictId" class="form-control">
+                <option value="">-- Select District --</option>
+                @if (ViewBag.Districts != null)
+                {
+                    foreach (var item in (IEnumerable<dynamic>)ViewBag.Districts)
                     {
-                        foreach (var woman in Model.Women)
-                        {
-                            <tr>
-                                <td><input type="text" class="form-control txtWomanName" value="@woman.WomanName" /></td>
-                                <td><input type="text" class="form-control txtHusbandName" value="@woman.HusbandName" /></td>
-                                <td><input type="text" class="form-control txtMobile" value="@woman.MobileNumber" /></td>
-                                <td>
-                                    <select class="form-select selPregnant">
-                                        @{
-                                            var pregnantYesSelected = woman.IsCurrentlyPregnant == 1 ? "selected" : "";
-                                            var pregnantNoSelected = woman.IsCurrentlyPregnant == 0 ? "selected" : "";
-                                        }
-                                        <option value="1" @pregnantYesSelected>Yes</option>
-                                        <option value="0" @pregnantNoSelected>No</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select selFP">
-                                        @{
-                                            var fpYesSelected = woman.IsUsingFamilyPlanning == 1 ? "selected" : "";
-                                            var fpNoSelected = woman.IsUsingFamilyPlanning == 0 ? "selected" : "";
-                                        }
-                                        <option value="1" @fpYesSelected>Yes</option>
-                                        <option value="0" @fpNoSelected>No</option>
-                                    </select>
-
-
-
-                                </td>
-                            </tr>
-                        }
+                        var isSelected = Model.DistrictId == item.Id ? "selected" : "";
+                        <option value="@item.Id" @isSelected>@item.Name</option>
                     }
-                </tbody>
-            </table>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="fw-bold">Block</label>
+            <select id="BlockId" class="form-control">
+                <option value="">-- Select Block --</option>
+                @if (ViewBag.Blocks != null)
+                {
+                    foreach (var item in (IEnumerable<dynamic>)ViewBag.Blocks)
+                    {
+                        var isSelected = Model.BlockId == item.Id ? "selected" : "";
+                        <option value="@item.Id" @isSelected>@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+
+        <div class="col-md-2">
+            <label>Facility</label>
+            <select name="FacilityId" class="form-control" id="FacilityId">
+                <option value="">-- Select Facility --</option>
+                @if (ViewBag.Facilities != null)
+                {
+                    foreach (var item in (IEnumerable<dynamic>)ViewBag.Facilities)
+                    {
+                        var isSelected = Model.FacilityId == item.Id ? "selected" : "";
+                        <option value="@item.Id" @isSelected>@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+
+        <div class="col-md-2">
+            <label class="fw-bold">Sub Centre</label>
+            <select id="SubCenterId" class="form-control">
+                <option value="">-- Select Sub-centre --</option>
+                @if (ViewBag.SubCentres != null)
+                {
+                    foreach (var item in (IEnumerable<dynamic>)ViewBag.SubCentres)
+                    {
+                        var isSelected = Model.SubCenterId == item.Id ? "selected" : "";
+                        <option value="@item.Id" @isSelected>@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="fw-bold">ASHA Name</label>
+            <select id="ASHAId" class="form-control">
+                <option value="">-- Select ASHA --</option>
+                @if (ViewBag.Ashas != null)
+                {
+                    foreach (var item in (IEnumerable<dynamic>)ViewBag.Ashas)
+                    {
+                        var isSelected = Model.ASHAId == item.Id ? "selected" : "";
+                        <option value="@item.Id" @isSelected>@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3 mt-3">
+            <label class="fw-bold">Village Name</label>
+            <input type="text" id="VillageName" class="form-control" value="@Model.VillageName" />
+        </div>
+        <div class="col-md-3 mt-3">
+            <label class="fw-bold">Anganwadi Worker</label>
+            <input type="text" id="AnganwadiWorkerName" class="form-control" value="@Model.AnganwadiWorkerName" />
+        </div>
+    </div>
+
+    <div class="all-modal-shell mt-3">
+        <div class="all-modal-container">
+            <div class="all-modal-header">
+                <h2>Add Line Listing Member</h2> 
+            </div>
+
+            <div class="all-modal-body">
+                <div class="all-section-wrapper">
+
+                    <!-- Woman & Husband Details -->
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">👤</div>
+                            <div>
+                                <div class="all-section-title">Woman & Husband Details</div>
+                                <div class="all-section-subtitle">Basic identification information</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Name of Woman</span>
+                                </label>
+                                <input type="text" id="WomanName" class="all-form-input" placeholder="Enter name" />
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Husband's Name</span>
+                                </label>
+                                <input type="text" id="HusbandName" class="all-form-input" placeholder="Enter husband's name" />
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Mobile Number</span>
+                                </label>
+                                <input type="tel" id="MobileNumber" maxlength="10" class="all-form-input" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Month of Marriage</span>
+                                </label>
+                                <select id="MarriageMonth" name="MarriageMonth" class="all-form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Year of Marriage</span>
+                                </label>
+                                <input type="number" id="MarriageYear" min="2010" max="2099" step="1" class="all-form-input" placeholder="Enter year" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Children & Pregnancy -->
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">👶</div>
+                            <div>
+                                <div class="all-section-title">Children & Pregnancy</div>
+                                <div class="all-section-subtitle">Parity and current pregnancy status</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Do you have any children?</span>
+                                </label>
+                                <select id="IsChildAvailable" class="all-form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Age of the youngest child</span>
+                                </label>
+                                <input type="number" id="ChildAge" class="all-form-input" maxlength="1" placeholder="Enter age in years" />
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Are you currently pregnant?</span>
+                                </label>
+                                <select id="IsCurrentlyPregnant" class="all-form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Family Planning & Antara -->
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">💊</div>
+                            <div>
+                                <div class="all-section-title">Family Planning & Antara</div>
+                                <div class="all-section-subtitle">Current method usage and awareness</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Are you using any family planning method?</span>
+                                </label>
+                                <select id="IsUsingFamilyPlanning" class="all-form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Which family planning method are you using?</span>
+                                </label>
+                                <select id="FamilyPlanningMethod" class="all-form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="method1">Method 1</option>
+                                    <option value="method2">Method 2</option>
+                                </select>
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Are you aware of Antara?</span>
+                                </label>
+                                <select id="IsAwareOfAntara" class="all-form-select">
+                                    <option value="">-- Select --</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label">
+                                    <span>Selected Method Today</span>
+                                </label>
+                                <input type="text" id="SelectedMethodName" class="all-form-input" placeholder="Enter selected method" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reason For Non Usage -->
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">💬</div>
+                            <div>
+                                <div class="all-section-title">Reason For Non Usage</div>
+                                <div class="all-section-subtitle">Note down any key reasons</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid">
+                            <div class="all-form-group" style="grid-column: 1 / -1;">
+                                <label class="all-form-label">
+                                    <span>Reason For Non Usage</span>
+                                </label>
+                                <textarea class="all-form-textarea" id="ReasonForNonUsage" placeholder="Enter reason"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="all-modal-footer">
+                <button type="button" id="modalOkBtn" class="all-btn-add">ADD MEMBER</button>
+            </div>
         </div>
     </div>
 
