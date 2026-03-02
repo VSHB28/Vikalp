@@ -13,6 +13,7 @@ namespace Vikalp.Service.Interfaces
         UserDto? GetById(int id);
         int Create(UserDto user);
         bool Update(UserDto user);
+        bool UpdatePassword(UpdatePasswordDto user);
         bool Delete(int id);
         Task<List<UserDto>> SearchUser(string term);
 

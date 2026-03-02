@@ -438,6 +438,254 @@ namespace Vikalp.Controllers.Api
             }            
         }
 
+        [HttpPost("SaveUpdateFacilityProfile")]
+        public async Task<IActionResult> SaveUpdateFacilityProfile()
+        {
+            try
+            {
+                if (!(User?.Identity?.IsAuthenticated ?? false))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid or expired token"
+                    });
+                }
+
+                var userIdClaim = User.Claims.FirstOrDefault(c =>
+                    c.Type == "uid" ||
+                    c.Type == ClaimTypes.NameIdentifier ||
+                    c.Type == "sub");
+
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid user token"
+                    });
+                }
+
+                string rawJson;
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    rawJson = await reader.ReadToEndAsync();
+                }
+
+                if (string.IsNullOrWhiteSpace(rawJson))
+                {
+                    return BadRequest(new
+                    {
+                        statusCode = 400,
+                        message = "Request payload is required"
+                    });
+                }
+
+                Log(userId, rawJson, "SaveUpdateFacilityProfile");
+
+                var connStr = _config.GetConnectionString("DefaultConnection");
+
+                using (var conn = new SqlConnection(connStr))
+                using (var cmd = new SqlCommand("dbo.sp_InsertFacilityProfileSync", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return Ok(new
+                {
+                    statusCode = 200,
+                    message = "Sync completed successfully"
+                });
+            }
+            catch (SqlException ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Database error during sync",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Internal server error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("SaveUpdateHrStatus")]
+        public async Task<IActionResult> SaveUpdateHrStatus()
+        {
+            try
+            {
+                if (!(User?.Identity?.IsAuthenticated ?? false))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid or expired token"
+                    });
+                }
+
+                var userIdClaim = User.Claims.FirstOrDefault(c =>
+                    c.Type == "uid" ||
+                    c.Type == ClaimTypes.NameIdentifier ||
+                    c.Type == "sub");
+
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid user token"
+                    });
+                }
+
+                string rawJson;
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    rawJson = await reader.ReadToEndAsync();
+                }
+
+                if (string.IsNullOrWhiteSpace(rawJson))
+                {
+                    return BadRequest(new
+                    {
+                        statusCode = 400,
+                        message = "Request payload is required"
+                    });
+                }
+
+                Log(userId, rawJson, "SaveUpdateHrStatus");
+
+                var connStr = _config.GetConnectionString("DefaultConnection");
+
+                using (var conn = new SqlConnection(connStr))
+                using (var cmd = new SqlCommand("dbo.sp_InsertHRstatusSync", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return Ok(new
+                {
+                    statusCode = 200,
+                    message = "Sync completed successfully"
+                });
+            }
+            catch (SqlException ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Database error during sync",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Internal server error",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("SaveUpdateEventActivity")]
+        public async Task<IActionResult> SaveUpdateEventActivity()
+        {
+            try
+            {
+                if (!(User?.Identity?.IsAuthenticated ?? false))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid or expired token"
+                    });
+                }
+
+                var userIdClaim = User.Claims.FirstOrDefault(c =>
+                    c.Type == "uid" ||
+                    c.Type == ClaimTypes.NameIdentifier ||
+                    c.Type == "sub");
+
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid user token"
+                    });
+                }
+
+                string rawJson;
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    rawJson = await reader.ReadToEndAsync();
+                }
+
+                if (string.IsNullOrWhiteSpace(rawJson))
+                {
+                    return BadRequest(new
+                    {
+                        statusCode = 400,
+                        message = "Request payload is required"
+                    });
+                }
+
+                Log(userId, rawJson, "SaveUpdateEventActivity");
+
+                var connStr = _config.GetConnectionString("DefaultConnection");
+
+                using (var conn = new SqlConnection(connStr))
+                using (var cmd = new SqlCommand("dbo.sp_InsertEventActivitiesSync", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                return Ok(new
+                {
+                    statusCode = 200,
+                    message = "Sync completed successfully"
+                });
+            }
+            catch (SqlException ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Database error during sync",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Internal server error",
+                    error = ex.Message
+                });
+            }
+        }
 
         //============================= = LOGGING METHOD =============================
         public void Log(int userId, string jsonPayload, string api)

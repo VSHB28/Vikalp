@@ -38,4 +38,11 @@ namespace Vikalp.Models.DTO
         public List<int> DistrictIds { get; set; }
         public int? BlockId { get; set; }
     }
+
+    public class UpdatePasswordDto
+    {
+        public int UserId { get; set; }
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
+    }
 }

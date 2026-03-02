@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Vikalp.Models;
 using Vikalp.Models.DTO;
@@ -129,6 +130,19 @@ namespace Vikalp.Controllers
                     message = ex.Message
                 });
             }
+        }
+
+
+        //============================ Update Password (POST) ============================
+        [HttpPost]
+        public IActionResult UpdatePassword([FromBody] UpdatePasswordDto model)
+        {
+            var result = _service.UpdatePassword(model);
+
+            if (!result)
+                return Json(new { success = false, message = "Old password is incorrect" });
+
+            return Json(new { success = true });
         }
 
         //============================ DELETE (POST) ============================

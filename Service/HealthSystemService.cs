@@ -75,12 +75,21 @@ namespace Vikalp.Service
                 ActivityId = Convert.ToInt32(row["ActivityId"]),
                 ActivityName = row["ActivityName"]?.ToString(),
                 TrainingVenue = row["TrainingVenue"]?.ToString(),
+                ActivityNameId = Convert.ToInt32(row["ActivityNameId"]),
                 ActivityTypeId = row["ActivityTypeId"] != DBNull.Value
                                     ? Convert.ToInt32(row["ActivityTypeId"])
                                     : null,
-                Activities = row["Activities"] != DBNull.Value
-                                    ? row["Activities"].ToString().Split(',').Select(int.Parse).ToList()
-                                    : new List<int>(),
+                Activities =
+                row["Activities"] == DBNull.Value
+                    ? new List<int>()
+                    : row["Activities"]
+                        .ToString()!
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => int.TryParse(s, out var id) ? id : (int?)null)
+                        .Where(x => x.HasValue)
+                        .Select(x => x.Value)
+                        .ToList(),
+
                 ActivityFormatId = row["ActivityFormatId"] != DBNull.Value
                                     ? Convert.ToInt32(row["ActivityFormatId"])
                                     : null,
@@ -90,7 +99,12 @@ namespace Vikalp.Service
                 OtherActivity = row["OtherActivity"]?.ToString(),
                 StartDate = row.Field<DateTime?>("StartDate"),
                 EndDate = row.Field<DateTime?>("EndDate"),
-                Remarks = row["Remarks"]?.ToString()
+                Remarks = row["Remarks"]?.ToString(),
+                StateId = row["StateId"] != DBNull.Value
+                                    ? Convert.ToInt32(row["StateId"])
+                                    : null,
+                DistrictId = row["DistrictId"] != DBNull.Value
+                ? Convert.ToInt32(row["DistrictId"]) : null,
             };
         }
 
@@ -141,6 +155,62 @@ namespace Vikalp.Service
             });
         }
 
+        public async Task<bool> UpdateHealthSystemActivityJsonAsync(HealthSystemActivityDto model, int userId)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    // Convert Activities list to CSV
+                    string activitiesCsv =
+                        model.Activities != null && model.Activities.Any()
+                            ? string.Join(",", model.Activities)
+                            : null;
+
+                    var parameters = new SqlParameter[]
+                    {
+                new SqlParameter("@ActivityId", model.ActivityId),
+
+                new SqlParameter("@ActivityNameId", model.ActivityNameId),
+
+                new SqlParameter("@OtherActivity", (object?)model.OtherActivity ?? DBNull.Value),
+
+                new SqlParameter("@StateId", (object?)model.StateId ?? DBNull.Value),
+
+                new SqlParameter("@DistrictId", (object?)model.DistrictId ?? DBNull.Value),
+
+                new SqlParameter("@TrainingVenue", (object?)model.TrainingVenue ?? DBNull.Value),
+
+                new SqlParameter("@ActivityTypeId", (object?)model.ActivityTypeId ?? DBNull.Value),
+
+                new SqlParameter("@Activities", (object?)activitiesCsv ?? DBNull.Value),
+
+                new SqlParameter("@ActivityFormatId", (object?)model.ActivityFormatId ?? DBNull.Value),
+
+                new SqlParameter("@StartDate", (object?)model.StartDate ?? DBNull.Value),
+
+                new SqlParameter("@EndDate", (object?)model.EndDate ?? DBNull.Value),
+
+                new SqlParameter("@Remarks", (object?)model.Remarks ?? DBNull.Value),
+
+                new SqlParameter("@UpdatedBy", userId)
+                    };
+
+                    SqlUtils.ExecuteSP(
+                        Conn(),
+                        "sp_UpdateHealthSystemActivity",
+                        parameters
+                    );
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    // TODO: log ex properly
+                    return false;
+                }
+            });
+        }
         public async Task<List<DropdownDto>> SearchFacilitiesAsync(string term)
         {
             return await Task.Run(() =>

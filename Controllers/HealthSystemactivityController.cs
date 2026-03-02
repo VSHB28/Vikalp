@@ -133,10 +133,10 @@ namespace Vikalp.Controllers
             if (model.Activities == null || model.Activities.Count == 0)
                 return BadRequest("At least one Activity is required");
 
-            var result = await _service.SaveHealthSystemActivityJsonAsync(model, userId);
+            var result = await _service.UpdateHealthSystemActivityJsonAsync(model, userId);
 
             if (!result)
-                return StatusCode(500, "Save failed");
+                return StatusCode(500, "Update failed");
 
             return Ok(new { success = true });
         }

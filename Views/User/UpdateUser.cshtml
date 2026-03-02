@@ -21,22 +21,32 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Full name</label>
-                    <input name="FullName" value="@Model.FullName" class="form-control" />
+                    <input name="FullName" value="@Model.FullName" class="form-control" oninput="validateFullName(this)" maxlength="50" required />
+                    <small id="fullNameError" class="text-danger"></small>
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Email</label>
-                    <input name="Email" value="@Model.Email" class="form-control" />
+                    <input name="Email" value="@Model.Email" class="form-control" maxlength="100" oninput="validateEmail(this)" required />
+                    <small class="text-danger" id="emailError"></small>
                 </div>
 
                 <div class="col-md-3">
                     <label class="form-label">Mobile</label>
-                    <input name="MobileNumber" value="@Model.MobileNumber" class="form-control" maxlength="10" pattern="\d{10}" />
+                    <input name="MobileNumber" value="@Model.MobileNumber" class="form-control" maxlength="10" pattern="\d{10}" oninput="validateMobile(this)" required />
+                    <small class="text-danger" id="mobileError"></small>
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">New password</label>
+                @* <div class="col-md-3">
+                    <label class="form-label">password</label>
                     <input name="Password" type="password" class="form-control" />
+                </div> *@
+                <div class="col-md-3 d-none">
+                    <label class="form-label">Password</label>
+                    <input name="Password" type="password" value="@Model.Password" class="form-control" oninput="validatePassword(this)" required />
+                    <small id="passwordError" class="text-danger"></small>
+                    <input type="hidden" id="hdnPassword" value="@Model.Password" />
+                    <input type="hidden" id="hdnPasswordHash" value="@Model.PasswordHash" />
                 </div>
 
                 <div class="col-md-3">
@@ -298,7 +308,8 @@
             FullName: document.querySelector('[name="FullName"]').value || null,
             Email: document.querySelector('[name="Email"]').value || null,
             MobileNumber: document.querySelector('[name="MobileNumber"]').value || null,
-            Password: document.querySelector('[name="Password"]').value || null,
+            Password: document.getElementById("hdnPassword").value, //document.querySelector('[name="Password"]').value || null,
+            PasswordHash : document.getElementById("hdnPasswordHash").value,
             RoleId: document.querySelector('[name="RoleId"]').value || null,
             GenderId: document.querySelector('[name="GenderId"]').value || null,
             IsActive: document.querySelector('[name="IsActive"]')?.checked ? 1 : 0,
@@ -333,4 +344,80 @@
             alert("Error occurred while updating user");
         });
     }
+
+    //==================== Mobile Validation ===================================
+
+
+                    function validateMobile(input) {
+
+                // Remove non-digit characters
+                input.value = input.value.replace(/[^0-9]/g, '');
+
+                let error = document.getElementById("mobileError");
+
+                // First digit restriction
+                if (input.value.length > 0 && !['6','7','8','9'].includes(input.value[0])) {
+
+
+                    input.value = input.value.substring(1);
+
+                    error.innerText = "Mobile must start with 6,7,8,9";
+
+                }
+
+                else if (input.value.length < 10) {
+
+                    error.innerText = "";
+
+                }
+                else {
+
+                    error.innerText = "";
+                }
+            }
+
+            //============================= Email Validation =====================================
+
+                   function validateEmail(input) {
+
+                let email = input.value.trim();
+
+                let error = document.getElementById("emailError");
+
+
+                let regex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+
+                if (email === "") {
+
+                    error.innerText = "Email is required";
+
+                }
+                else if (!regex.test(email)) {
+
+                    error.innerText = "Enter valid email";
+
+                }
+                else {
+
+                    error.innerText = "";
+
+                }
+            }
+
+        //============================ Full Name Validation ==================================
+                function validateFullName(input) {
+                let name = input.value.trim();
+                let error = document.getElementById("fullNameError");
+                let regex = /^[a-zA-Z\s]{3,}$/;
+                if (name === "") {
+                    error.innerText = "Full Name is required";
+                }
+                else if (!regex.test(name)) {
+                    error.innerText = "Enter valid Full Name (only alphabets, min 3 characters)";
+                }
+                else {
+                    error.innerText = "";
+                }
+            }        
 </script>
