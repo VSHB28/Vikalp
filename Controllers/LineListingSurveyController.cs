@@ -147,17 +147,31 @@ namespace Vikalp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([FromBody] LineListingSurveyUpdateDto model)
         {
-            if (model == null || model.Women == null)
+            try
             {
-                return Json(new { success = false, message = "Invalid data" });
+                if (model == null)
+                    return Json(new { success = false, message = "Model is null" });
+
+                var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (claim == null)
+                    return Json(new { success = false, message = "User not found" });
+
+                int userId = int.Parse(claim.Value);
+
+                bool result = await _service.UpdateSurvey(model, userId);
+                return Json(new { success = result });
             }
+            catch (Exception ex)
+            {
 
-
-            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
-            bool result = await _service.UpdateSurvey(model, userId);
-
-            return Json(new { success = result, message = result ? "Updated successfully" : "Update failed" });
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = ex.Message,
+                    inner = ex.InnerException?.Message,
+                    stack = ex.StackTrace
+                });
+            }
         }
 
 

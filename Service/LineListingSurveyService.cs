@@ -184,61 +184,50 @@ namespace Vikalp.Service
 
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    survey = new LineListingSurveyDto
+                    if (await reader.ReadAsync())
                     {
-                        Women = new List<LineListingWomanDto>()
-                    };
-
-                    while (await reader.ReadAsync())
-                    {
-                        // ================= HEADER (repeat ok) =================
-                        survey.LineListId = Convert.ToInt32(reader["Id"]);
-                        survey.StateId = reader["StateId"] != DBNull.Value ? Convert.ToInt32(reader["StateId"]) : 0;
-                        survey.DistrictId = reader["DistrictId"] != DBNull.Value ? Convert.ToInt32(reader["DistrictId"]) : 0;
-                        survey.BlockId = reader["BlockId"] != DBNull.Value ? Convert.ToInt32(reader["BlockId"]) : 0;
-                        survey.VillageName = reader["VillageName"]?.ToString();
-
-
-                        survey.FacilityId = reader["FacilityId"] != DBNull.Value
-     ? Convert.ToInt32(reader["FacilityId"]) : null;
-
-                        survey.SubCenterId = reader["SubCenterId"] != DBNull.Value
-                            ? Convert.ToInt32(reader["SubCenterId"]) : null;
-
-                        survey.ASHAId = reader["ASHAId"] != DBNull.Value
-                            ? Convert.ToInt32(reader["ASHAId"]) : null;
-
-
-
-                        survey.AnganwadiWorkerName = reader["AnganwadiWorkerName"]?.ToString();
-
-                        survey.IsChildAvailable = reader["IsChildAvailable"] != DBNull.Value
-                            ? Convert.ToInt32(reader["IsChildAvailable"])
-                            : null;
-
-                        survey.IsAwareOfAntara = reader["IsAwareOfAntara"] != DBNull.Value
-                            ? Convert.ToInt32(reader["IsAwareOfAntara"])
-                            : null;
-
-                        survey.ReasonForNonUsage = reader["ReasonForNonUsage"]?.ToString();
-
-                        // ================= WOMEN LIST =================
-                        survey.Women.Add(new LineListingWomanDto
+                        survey = new LineListingSurveyDto
                         {
+                            LineListId = Convert.ToInt32(reader["Id"]),
+                            StateId = reader["StateId"] != DBNull.Value ? Convert.ToInt32(reader["StateId"]) : null,
+                            DistrictId = reader["DistrictId"] != DBNull.Value ? Convert.ToInt32(reader["DistrictId"]) : null,
+                            BlockId = reader["BlockId"] != DBNull.Value ? Convert.ToInt32(reader["BlockId"]) : null,
+                            VillageName = reader["VillageName"]?.ToString(),
+
+                            FacilityId = reader["FacilityId"] != DBNull.Value ? Convert.ToInt32(reader["FacilityId"]) : null,
+                            SubCenterId = reader["SubCenterId"] != DBNull.Value ? Convert.ToInt32(reader["SubCenterId"]) : null,
+                            ASHAId = reader["ASHAId"] != DBNull.Value ? Convert.ToInt32(reader["ASHAId"]) : null,
+                            AnganwadiWorkerName = reader["AnganwadiWorkerName"]?.ToString(),
+
                             WomanName = reader["WomanName"]?.ToString(),
                             HusbandName = reader["HusbandName"]?.ToString(),
                             MobileNumber = reader["MobileNumber"]?.ToString(),
-                            IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] != DBNull.Value
-    ? Convert.ToInt32(reader["IsCurrentlyPregnant"])
-    : null,
 
-                            IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] != DBNull.Value
-    ? Convert.ToInt32(reader["IsUsingFamilyPlanning"])
-    : null
+                            // ✅ ADDED MISSING FIELDS
+                            MarriageMonth = reader["MarriageMonth"] != DBNull.Value ? Convert.ToInt32(reader["MarriageMonth"]) : null,
+                            MarriageYear = reader["MarriageYear"] != DBNull.Value ? Convert.ToInt32(reader["MarriageYear"]) : null,
 
+                            IsChildAvailable = reader["IsChildAvailable"] != DBNull.Value ? Convert.ToInt32(reader["IsChildAvailable"]) : null,
+                            ChildAge = reader["ChildAge"] != DBNull.Value ? Convert.ToInt32(reader["ChildAge"]) : null,
+                            ChildGender = reader["ChildGender"] != DBNull.Value ? Convert.ToInt32(reader["ChildGender"]) : null,
+                            ChildDOB = reader["ChildDOB"] != DBNull.Value ? Convert.ToDateTime(reader["ChildDOB"]) : null,
 
+                            IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] != DBNull.Value ? Convert.ToInt32(reader["IsCurrentlyPregnant"]) : null,
+                            IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] != DBNull.Value ? Convert.ToInt32(reader["IsUsingFamilyPlanning"]) : null,
+                            FamilyPlanningMethod = reader["FamilyPlanningMethod"] != DBNull.Value ? Convert.ToInt32(reader["FamilyPlanningMethod"]) : null,
+                            IsAwareOfAntara = reader["IsAwareOfAntara"] != DBNull.Value ? Convert.ToInt32(reader["IsAwareOfAntara"]) : null,
+                            SelectedMethodName = reader["SelectedMethodName"]?.ToString(),
+                            ReasonForNonUsage = reader["ReasonForNonUsage"]?.ToString(),
 
-                        });
+                            IsConcent = reader["IsConcent"] != DBNull.Value ? Convert.ToInt32(reader["IsConcent"]) : null,
+                            ConcentDate = reader["ConcentDate"] != DBNull.Value ? Convert.ToDateTime(reader["ConcentDate"]) : null,
+                            Signature = reader["Signature"]?.ToString(),
+
+                            CreatedOn = reader["CreatedOn"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedOn"]) : null,
+                            CreatedBy = reader["CreatedBy"] != DBNull.Value ? Convert.ToInt32(reader["CreatedBy"]) : null,
+                            UpdatedOn = reader["UpdatedOn"] != DBNull.Value ? Convert.ToDateTime(reader["UpdatedOn"]) : null,
+                            UpdatedBy = reader["UpdatedBy"] != DBNull.Value ? Convert.ToInt32(reader["UpdatedBy"]) : null,
+                        };
                     }
                 }
             }
@@ -248,29 +237,33 @@ namespace Vikalp.Service
 
         public async Task<bool> UpdateSurvey(LineListingSurveyUpdateDto model, int userId)
         {
-            using var conn = new SqlConnection(Conn());
-            using var cmd = new SqlCommand("dbo.sp_UpdateLineListingSurvey_Json", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                using var conn = new SqlConnection(Conn());
+                using var cmd = new SqlCommand("dbo.sp_UpdateLineListingSurvey_Json", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-            string json = JsonSerializer.Serialize(model);
+                string json = JsonSerializer.Serialize(model);
 
-            cmd.Parameters.Add("@Json", SqlDbType.NVarChar).Value = json;
-            cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                Console.WriteLine("=== JSON TO SP ===");
+                Console.WriteLine(json);
 
-            Console.WriteLine("JSON being sent:");
-            Console.WriteLine(json);
+                cmd.Parameters.Add("@Json", SqlDbType.NVarChar).Value = json;
+                cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
 
-            await conn.OpenAsync();
+                await conn.OpenAsync();
+                var result = await cmd.ExecuteScalarAsync();
 
-
-            var result = await cmd.ExecuteScalarAsync();
-            int rowsAffected = Convert.ToInt32(result);
-
-            Console.WriteLine($"Rows affected: {rowsAffected}");
-
-            return rowsAffected > 0;
+                Console.WriteLine("=== SP RESULT: " + result);
+                return result != null && Convert.ToInt32(result) > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("=== UPDATE ERROR: " + ex.Message);
+                Console.WriteLine("=== INNER: " + ex.InnerException?.Message);
+                throw;
+            }
         }
-
 
         // ===================== DELETE =====================
         public void DeleteSurvey(int id, int userId)
