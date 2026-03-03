@@ -150,8 +150,8 @@
 
     public class LineListingSurveyUpdateDto
     {
-        public string LineListGuid { get; set; } = Guid.NewGuid().ToString();
         public int LineListId { get; set; }
+        public string? LineListGuid { get; set; }  // ✅ no default Guid.NewGuid()
 
         public int? StateId { get; set; }
         public int? DistrictId { get; set; }
@@ -163,24 +163,27 @@
         public int? ASHAId { get; set; }
         public string? AnganwadiWorkerName { get; set; }
 
-        public List<LineListingWomanDto> Women { get; set; } = new();
+        public string? WomanName { get; set; }
+        public string? HusbandName { get; set; }
+        public string? MobileNumber { get; set; }
 
-        public int? CreatedBy { get; set; }
+        // ✅ All missing fields added
+        public int? MarriageMonth { get; set; }
+        public int? MarriageYear { get; set; }
+        public int? IsChildAvailable { get; set; }
+        public int? ChildAge { get; set; }
+        public int? ChildGender { get; set; }
+        public string? ChildDOB { get; set; }
 
-        // SubCenter details
+        public int? IsCurrentlyPregnant { get; set; }
+        public int? IsUsingFamilyPlanning { get; set; }
+        public int? FamilyPlanningMethod { get; set; }  // ✅ int not string
+        public int? IsAwareOfAntara { get; set; }
+        public string? SelectedMethodName { get; set; }
+        public string? ReasonForNonUsage { get; set; }
 
-        public string? SubCenterName { get; set; }
-
-        // Facility details
-        public string? FacilityName { get; set; }
-
-        // Block details
-        public string? BlockName { get; set; }
-
-        // District details
-        public string? DistrictName { get; set; }
-
-        // State details
-        public string? StateName { get; set; }
+        public int? IsConcent { get; set; }
+        public string? ConcentDate { get; set; }
+        public string? Signature { get; set; }
     }
 }
