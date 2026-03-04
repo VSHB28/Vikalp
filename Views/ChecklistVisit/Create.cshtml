@@ -1,0 +1,1344 @@
+﻿@model Vikalp.Models.DTO.ChecklistVisitDTO
+@{
+    ViewData["Title"] = "Add CheckList Visit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-primary-soft: rgba(241, 90, 41, 0.08);
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        background: rgba(0,0,0,0.05);
+    }
+
+    .shell {
+        width: 100%;
+        /* max-width: 1100px; */
+        padding: 10px;
+    }
+
+    .container {
+        background: var(--ipas-white);
+        border-radius: 12px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+        overflow: hidden;
+    }
+
+    .left-panel {
+        padding: 22px 24px 20px;
+        background: var(--ipas-light);
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: var(--ipas-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 18px;
+    }
+
+    .header-text-main {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+    }
+
+    .header-text-sub {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .badge-date {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #ffe3c4;
+        font-size: 11px;
+        color: var(--ipas-text-dark);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .section-switcher {
+        margin-bottom: 16px;
+    }
+
+    .section-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 6px;
+    }
+
+    .pill-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .pill {
+        border-radius: 999px;
+        border: 1px solid #f3d2b8;
+        padding: 6px 12px;
+        font-size: 11px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--ipas-white);
+        color: var(--ipas-text-muted);
+    }
+
+        .pill i {
+            font-size: 13px;
+        }
+
+        .pill.active {
+            background: #ffd7aa;
+            border-color: #f1a259;
+            color: var(--ipas-text-dark);
+            font-weight: 600;
+        }
+
+    .form-section {
+        background: var(--ipas-white);
+        border-radius: 8px;
+        border: 1px solid #f0e0d2;
+        padding: 14px 14px 16px;
+        margin-bottom: 10px;
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ipas-text-dark);
+    }
+
+    .form-section-title-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: var(--ipas-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 13px;
+    }
+
+    .form-section-subtitle {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        padding: 9px 11px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241, 90, 41, 0.18);
+        }
+
+    .form-textarea {
+        min-height: 70px;
+        resize: vertical;
+    }
+
+    .form-footer {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .footer-note {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .btn-primary {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #f1a259;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #FFD8A6;
+        color: #e46b29;
+    }
+
+        .btn-primary:hover {
+            background-color: #ffc37a;
+        }
+
+    .btn-close {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #444c53;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #cacfd3;
+        color: #6c757d;
+    }
+
+    .btn-primary:hover {
+        background-color: #cacfd3;
+    }
+
+    .question-field[hidden] {
+        display: none !important;
+    }
+
+    @@media (max-width: 900px) {
+        .container {
+            border-radius: 0;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .shell {
+            padding: 14px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="shell">
+    <div class="container">
+        <div class="left-panel">
+            <div class="header-bar">
+                <div class="header-title">
+                    <div class="header-icon"><i class="bi bi-clipboard2-check"></i></div>
+                    <div>
+                        <div class="header-text-main">Check List Visit</div>
+                        <div class="header-text-sub">Capture checklist visit details</div>
+                    </div>
+                </div>
+                <div class="badge-date">
+                    <i class="bi bi-calendar-event"></i>
+                    <span id="today-label">Today</span>
+                </div>
+            </div>
+
+            <!-- Set / Section Switcher -->
+            <div class="section-switcher">
+                <div class="section-label">Select Section / Visit Type</div>
+
+                <div class="pill-group" id="setSwitcher">
+                    @foreach (var ev in ViewBag.Checklistvist)
+                    {
+                        var isActive = ev.Id == 1 ? "active" : ""; // first one active by default
+                        <button type="button" class="pill @isActive" data-set="@ev.Id">
+                        <i class="bi bi-@ev.Id-circle"></i>
+                        <span>@ev.Name</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <form id="programForm" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <!-- Basic Details -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-info-circle"></i></div>
+                            <span>Basic Details</span>
+                        </div>
+                        <div class="form-section-subtitle">Visit date and location</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q1 Program Date -->
+                        <div class="form-group question-field" data-qid="Q1">
+                            <label class="form-label"><i class="bi bi-calendar-date label-icon"></i><span>Q1. Visit Date</span></label>
+                            <input type="date" class="form-input" name="VisitDate" />
+                        </div>
+                        <!-- Q2 Name of State -->
+                        <div class="form-group question-field" data-qid="Q2.1">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.1 Name of State</span></label>
+                            <select name="StateId" class="form-input" id="StateId">
+                                <option value="">-- Select State --</option>
+                                @foreach (var s in ViewBag.States)
+                                {
+                                    <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q2 Name of District -->
+                        <div class="form-group question-field" data-qid="Q2.2">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.2 Name of District</span></label>
+                            <select name="DistrictId" class="form-input" id="DistrictId">
+                                <option value="">-- Select District --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of Block -->
+                        <div class="form-group question-field" data-qid="Q2.3">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.3 Name of Block</span></label>
+                            <select name="BlockId" class="form-input" id="BlockId">
+                                <option value="">-- Select Block --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of PHC -->
+                        <div class="form-group question-field" data-qid="Q2.4">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.4 Name of PHC</span></label>
+                            <select name="FacilityId" class="form-input" id="FacilityId">
+                                <option value="">-- Select Facility --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of SC -->
+                        <div class="form-group question-field" data-qid="Q2.5">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.5 Name of Sub Centre</span></label>
+                            <select name="SubcentreId" class="form-input" id="SubcentreId">
+                                <option value="">-- Select SubCentre --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of SC -->
+                        <div class="form-group question-field" data-qid="Q2.6">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.6 Visitor Role</span></label>
+                            <select name="VisitorDesignation" class="form-input" id="VisitorDesignation">
+                                <option value="">-- Select Designation --</option>
+                                @foreach (var s in ViewBag.Role)
+                                {
+                                    <option value="@s.Id" @(Model.VisitorDesignation == s.Id ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q2 Name of SC -->
+                        <div class="form-group question-field" data-qid="Q2.7">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.7 Visitor Name</span></label>
+                            <input type="text" class="form-input" name="VisitorName" placeholder="Enter name of Visitor" />
+                        </div>
+                        <!-- Q2 Name of SC -->
+                        <div class="form-group question-field" data-qid="Q2.8">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Q2.7 Other Visitor Name</span></label>
+                            <input type="text" class="form-input" name="OtherVisitorName" placeholder="Enter name of other Visitor" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- District Visit -->
+                <div class="form-section question-field" data-qid="Q3">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <span>District Level Visit</span>
+                        </div>
+                        <div class="form-section-subtitle">District monitoring indicators</div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-mortarboard-fill label-icon"></i>
+                                District officials oriented about Vikalp project
+                            </label>
+                            <select class="form-select" name="DistrictOfficialsOriented">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-journal-medical label-icon"></i>
+                                Oriented on Health Manager Protocols
+                            </label>
+                            <select class="form-select" name="DistrictOfficialsHMProtocol">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-box-seam label-icon"></i>
+                                No stock-out of FP commodities
+                            </label>
+                            <select class="form-select" name="DistrictNoStockOut">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-award-fill label-icon"></i>
+                                ASHAs felicitated in current FY
+                            </label>
+                            <select class="form-select" name="DistrictASHAFelicitated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-envelope-paper-fill label-icon"></i>
+                                ELAs issued to all blocks
+                            </label>
+                            <select class="form-select" name="DistrictELAsIssued">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-clipboard-check-fill label-icon"></i>
+                                District reviews conducted
+                            </label>
+                            <select class="form-select" name="DistrictReviewsConducted">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-bar-chart-fill label-icon"></i>
+                                Reviews conducted in DHS
+                            </label>
+                            <select class="form-select" name="DistrictReviewsInDHS">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <i class="bi bi-file-earmark-text-fill label-icon"></i>
+                                Follow-up letter issued
+                            </label>
+                            <select class="form-select" name="DistrictFollowupLetterIssued">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Block Visit -->
+                <div class="form-section question-field" data-qid="Q4">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon">
+                                <i class="bi bi-diagram-3-fill"></i>
+                            </div>
+                            <span>Block Level Visit</span>
+                        </div>
+                        <div class="form-section-subtitle">Block Monitoring Checklist</div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- 1 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>1.</strong>
+                                <i class="bi bi-mortarboard-fill label-icon"></i>
+                                Block officials oriented about Vikalp project
+                            </label>
+                            <select class="form-select" name="BlockOfficialsOriented">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 2 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>2.</strong>
+                                <i class="bi bi-journal-medical label-icon"></i>
+                                Officials oriented on HM Protocol
+                            </label>
+                            <select class="form-select" name="BlockOfficialsHMProtocol">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 3 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>3.</strong>
+                                <i class="bi bi-speedometer2 label-icon"></i>
+                                Dashboard used at block level
+                            </label>
+                            <select class="form-select" name="BlockDashboardUsed">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 4 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>4.</strong>
+                                <i class="bi bi-database-check label-icon"></i>
+                                Data entry completed & updated
+                            </label>
+                            <select class="form-select" name="BlockDataEntryCompleted">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 5 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>5.</strong>
+                                <i class="bi bi-box-seam-fill label-icon"></i>
+                                No stock-out of FP commodities
+                            </label>
+                            <select class="form-select" name="BlockNoStockOut">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 6 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>6.</strong>
+                                <i class="bi bi-award-fill label-icon"></i>
+                                ASHAs felicitated in current FY
+                            </label>
+                            <select class="form-select" name="BlockASHAFelicitated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 7 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>7.</strong>
+                                <i class="bi bi-envelope-paper-fill label-icon"></i>
+                                ELAs issued to facilities
+                            </label>
+                            <select class="form-select" name="BlockELAsIssued">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PHC Visit -->
+                <div class="form-section question-field" data-qid="Q5">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon">
+                                <i class="bi bi-hospital-fill"></i>
+                            </div>
+                            <span>Primary Health Centre (PHC) Visit</span>
+                        </div>
+                        <div class="form-section-subtitle">PHC Monitoring Checklist</div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- 1 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>1.</strong>
+                                <i class="bi bi-person-check-fill label-icon"></i>
+                                Trained provider available
+                            </label>
+                            <select class="form-select" name="PHCTrainedProviderAvailable">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 2 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>2.</strong>
+                                <i class="bi bi-play-circle-fill label-icon"></i>
+                                Explainer video used
+                            </label>
+                            <select class="form-select" name="PHCExplainerVideoUsed">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 3 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>3.</strong>
+                                <i class="bi bi-megaphone-fill label-icon"></i>
+                                IEC materials available
+                            </label>
+                            <select class="form-select" name="PHCIECMaterialsAvailable">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 4 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>4.</strong>
+                                <i class="bi bi-box2-heart-fill label-icon"></i>
+                                Selfcare kits installed
+                            </label>
+                            <select class="form-select" name="PHCSelfcareKitsInstalled">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 5 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>5.</strong>
+                                <i class="bi bi-journal-check label-icon"></i>
+                                Records updated till visit date
+                            </label>
+                            <select class="form-select" name="PHCRecordsUpdated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 6 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>6.</strong>
+                                <i class="bi bi-box-seam-fill label-icon"></i>
+                                No stock-out of FP commodities
+                            </label>
+                            <select class="form-select" name="PHCNoStockOut">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 7 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>7.</strong>
+                                <i class="bi bi-speedometer2 label-icon"></i>
+                                Dashboard used by SP
+                            </label>
+                            <select class="form-select" name="PHCDashboardUsed">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 8 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>8.</strong>
+                                <i class="bi bi-chat-square-text-fill label-icon"></i>
+                                MO can articulate protocol
+                            </label>
+                            <select class="form-select" name="PHCMOProtocolArticulated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 9 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>9.</strong>
+                                <i class="bi bi-chat-left-dots-fill label-icon"></i>
+                                SP can articulate protocol
+                            </label>
+                            <select class="form-select" name="PHCSPProtocolArticulated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 10 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>10.</strong>
+                                <i class="bi bi-send-check-fill label-icon"></i>
+                                ELAs disseminated
+                            </label>
+                            <select class="form-select" name="PHCELAsDisseminated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 11 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>11.</strong>
+                                <i class="bi bi-people-fill label-icon"></i>
+                                ASHAs trained on VCAT & incentives
+                            </label>
+                            <select class="form-select" name="PHCASHATrained">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- HWC Visit -->
+                <div class="form-section question-field" data-qid="Q6">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <span>Health & Wellness Centre (HWC) Visit</span>
+                        </div>
+                        <div class="form-section-subtitle">HWC Monitoring Checklist</div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <!-- 1 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>1.</strong>
+                                <i class="bi bi-person-check-fill label-icon"></i>
+                                At least one trained provider on Antara and VCAT available
+                            </label>
+                            <select class="form-select" name="HWCTrainedProviderAvailable">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 2 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>2.</strong>
+                                <i class="bi bi-play-circle-fill label-icon"></i>
+                                Explainer video used by CHOs for teleconsultation
+                            </label>
+                            <select class="form-select" name="HWCExplainerVideoUsed">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 3 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>3.</strong>
+                                <i class="bi bi-megaphone-fill label-icon"></i>
+                                IEC materials available and distributed including MCHN point
+                            </label>
+                            <select class="form-select" name="HWCIECMaterialsAvailable">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 4 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>4.</strong>
+                                <i class="bi bi-box2-heart-fill label-icon"></i>
+                                Selfcare kits installed & recorded in register
+                            </label>
+                            <select class="form-select" name="HWCSelfcareKitsInstalled">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 5 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>5.</strong>
+                                <i class="bi bi-journal-check label-icon"></i>
+                                Records & registers updated till visit date
+                            </label>
+                            <select class="form-select" name="HWCRecordsUpdated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 6 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>6.</strong>
+                                <i class="bi bi-box-seam-fill label-icon"></i>
+                                No stock-out of any FP commodity
+                            </label>
+                            <select class="form-select" name="HWCNoStockOut">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 7 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>7.</strong>
+                                <i class="bi bi-speedometer2 label-icon"></i>
+                                Updated dashboard used by SP
+                            </label>
+                            <select class="form-select" name="HWCDashboardUsed">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 8 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>8.</strong>
+                                <i class="bi bi-capsule-pill label-icon"></i>
+                                Antara doses provided in VHSNDs
+                            </label>
+                            <select class="form-select" name="HWCAntaraDosesProvided">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 9 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>9.</strong>
+                                <i class="bi bi-send-check-fill label-icon"></i>
+                                ELAs disseminated to all linked ASHAs
+                            </label>
+                            <select class="form-select" name="HWCELAsDisseminated">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- 10 -->
+                        <div class="form-group question-field">
+                            <label class="form-label">
+                                <strong>10.</strong>
+                                <i class="bi bi-people-fill label-icon"></i>
+                                All linked ASHAs trained on incentives & VCAT
+                            </label>
+                            <select class="form-select" name="HWCASHATrained">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value">@s.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Form footer -->
+                <div class="form-footer">
+                    @* <div class="footer-note">
+                        Visible questions change automatically based on selected set.
+                    </div> *@
+                    <button type="submit" class="btn-save">Save</button>
+                    <a href="@Url.Action("Index", "ChecklistVisit")" class="btn-back">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+        // Auto set today's date label
+        (function () {
+            var todayLabel = document.getElementById('today-label');
+            if (todayLabel) {
+                var today = new Date();
+                var options = { day: '2-digit', month: 'short', year: 'numeric' };
+                todayLabel.textContent = today.toLocaleDateString('en-GB', options);
+            }
+        })();
+
+        // Question sets mapping based on your specification
+        var questionSets = {
+            1: ['Q1','Q2.1','Q2.2','Q2.6','Q2.7','Q2.8','Q3'],
+            2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.6','Q2.7','Q2.8','Q4'],
+            3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.6','Q2.7','Q2.8','Q5'],
+            4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q2.7','Q2.8','Q6']
+        };
+
+        function applySetVisibility(activeSetKey) {
+            var allowed = questionSets[activeSetKey] || [];
+            var allFields = document.querySelectorAll('.question-field');
+            allFields.forEach(function (field) {
+                var qid = field.getAttribute('data-qid');
+                if (!qid) return;
+                if (allowed.indexOf(qid) !== -1) {
+                    field.hidden = false;
+                } else {
+                    field.hidden = true;
+                }
+            });
+        }
+
+        // Handle set switcher pill clicks
+            var switcher = document.getElementById('setSwitcher');
+
+        if (switcher) {
+
+            switcher.addEventListener('click', function (e) {
+
+                var target = e.target;
+
+                while (target && target !== switcher && !target.dataset.set) {
+                    target = target.parentElement;
+                }
+
+                if (!target || !target.dataset.set) return;
+
+                var setKey = target.dataset.set;
+
+                // toggle active class
+                var pills = switcher.querySelectorAll('.pill');
+
+                pills.forEach(function (pill) {
+                    pill.classList.toggle('active', pill === target);
+                });
+
+                applySetVisibility(setKey);
+
+            });
+
+            // ✅ FIX: load default active set
+            var defaultActive = switcher.querySelector('.pill.active');
+
+            if (defaultActive) {
+                applySetVisibility(defaultActive.dataset.set);
+            }
+
+        }
+
+        // ---------------- CASCADING DROPDOWNS ----------------
+
+                document.getElementById("StateId").addEventListener("change", function () {
+                    let stateId = this.value;
+                    resetDropdown("DistrictId", "-- Select District --");
+                    resetDropdown("BlockId", "-- Select Block --");
+                    resetDropdown("FacilityId", "-- Select Facility --");
+
+                    if (!stateId) return;
+
+                    fetch(`/ChecklistVisit/GetDistricts?stateId=${stateId}`)
+             .then(res => res.json())
+             .then(data => {
+                 fillDropdown("DistrictId", data, "id", "name");
+             });
+                });
+
+                document.getElementById("DistrictId").addEventListener("change", function () {
+                    let districtId = this.value;
+                    resetDropdown("BlockId", "-- Select Block --");
+                    resetDropdown("FacilityId", "-- Select Facility --");
+
+                    if (!districtId) return;
+
+                    fetch(`/ChecklistVisit/GetBlocks?districtId=${districtId}`)
+             .then(res => res.json())
+             .then(data => {
+                 fillDropdown("BlockId", data, "id", "name");
+             });
+                });
+
+                document.getElementById("BlockId").addEventListener("change", function () {
+                    let blockId = this.value;
+                    resetDropdown("FacilityId", "-- Select Facility --");
+
+                    if (!blockId) return;
+
+                    fetch(`/ChecklistVisit/GetFacilities?blockId=${blockId}`)
+             .then(res => res.json())
+             .then(data => {
+                 fillDropdown("FacilityId", data, "id", "name");
+             });
+                });
+
+                 document.getElementById("FacilityId").addEventListener("change", function () {
+                    let blockId = document.getElementById("BlockId").value;
+                    resetDropdown("SubcentreId", "-- Select Sub-centre --");
+
+                    if (!blockId) return;
+
+                    fetch(`/ChecklistVisit/GetSubCentre?blockId=${blockId}`)
+             .then(res => res.json())
+             .then(data => {
+                 fillDropdown("SubcentreId", data, "id", "name");
+             });
+                });
+
+                function resetDropdown(id, placeholder) {
+                    let ddl = document.getElementById(id);
+                    ddl.innerHTML = `<option value="">${placeholder}</option>`;
+                }
+
+                function fillDropdown(id, data, valueField, textField) {
+                    let ddl = document.getElementById(id);
+                    data.forEach(x => {
+             let opt = document.createElement("option");
+             opt.value = x[valueField];
+             opt.text = x[textField];
+             ddl.appendChild(opt);
+                    });
+                }
+
+
+         //======================= Form Submission ===================================
+
+        document.getElementById("programForm")
+    .addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        const activeSet = document.querySelector(".pill.active");
+
+            const dto = {
+
+        ChecklistId: 0,
+        ChecklistGuid: null,
+
+        VisitDate: getDate("VisitDate"),
+        VisitType: activeSet ? parseInt(activeSet.dataset.set) : null,
+
+        VisitorDesignation: getNullableInt("VisitorDesignation"),
+        VisitorName: getString("VisitorName"),
+        OtherVisitorName: getString("OtherVisitorName"),
+
+        StateId: getInt("StateId"),
+        DistrictId: getInt("DistrictId"),
+        BlockId: getInt("BlockId"),
+        FacilityId: getInt("FacilityId"),
+        SubcentreId: getInt("SubcentreId"),
+
+        // ================= DISTRICT (FIXED NAMES) =================
+
+        DistrictOfficialsOriented: getNullableInt("DistrictOfficialsOriented"),
+        DistrictOfficialsHMProtocol: getNullableInt("DistrictOfficialsHMProtocol"),
+        DistrictNoStockOut: getNullableInt("DistrictNoStockOut"),
+        DistrictASHAFelicitated: getNullableInt("DistrictASHAFelicitated"),
+        DistrictELAsIssued: getNullableInt("DistrictELAsIssued"),
+        DistrictReviewsConducted: getNullableInt("DistrictReviewsConducted"),
+        DistrictReviewsInDHS: getNullableInt("DistrictReviewsInDHS"),
+        DistrictFollowupLetterIssued: getNullableInt("DistrictFollowupLetterIssued"),
+
+        // ================= BLOCK =================
+
+        BlockOfficialsOriented: getNullableInt("BlockOfficialsOriented"),
+        BlockOfficialsHMProtocol: getNullableInt("BlockOfficialsHMProtocol"),
+        BlockDashboardUsed: getNullableInt("BlockDashboardUsed"),
+        BlockDataEntryCompleted: getNullableInt("BlockDataEntryCompleted"),
+        BlockNoStockOut: getNullableInt("BlockNoStockOut"),
+        BlockASHAFelicitated: getNullableInt("BlockASHAFelicitated"),
+        BlockELAsIssued: getNullableInt("BlockELAsIssued"),
+
+        // ================= PHC =================
+
+        PHCTrainedProviderAvailable: getNullableInt("PHCTrainedProviderAvailable"),
+        PHCExplainerVideoUsed: getNullableInt("PHCExplainerVideoUsed"),
+        PHCIECMaterialsAvailable: getNullableInt("PHCIECMaterialsAvailable"),
+        PHCSelfcareKitsInstalled: getNullableInt("PHCSelfcareKitsInstalled"),
+        PHCRecordsUpdated: getNullableInt("PHCRecordsUpdated"),
+        PHCNoStockOut: getNullableInt("PHCNoStockOut"),
+        PHCDashboardUsed: getNullableInt("PHCDashboardUsed"),
+        PHCMOProtocolArticulated: getNullableInt("PHCMOProtocolArticulated"),
+        PHCSPProtocolArticulated: getNullableInt("PHCSPProtocolArticulated"),
+        PHCELAsDisseminated: getNullableInt("PHCELAsDisseminated"),
+        PHCASHATrained: getNullableInt("PHCASHATrained"),
+
+        // ================= HWC (FIXED NAMES) =================
+
+        HWCTrainedProviderAvailable: getNullableInt("HWCTrainedProviderAvailable"),
+        HWCExplainerVideoUsed: getNullableInt("HWCExplainerVideoUsed"),
+        HWCIECMaterialsAvailable: getNullableInt("HWCIECMaterialsAvailable"),
+        HWCSelfcareKitsInstalled: getNullableInt("HWCSelfcareKitsInstalled"),
+        HWCRecordsUpdated: getNullableInt("HWCRecordsUpdated"),
+        HWCNoStockOut: getNullableInt("HWCNoStockOut"),
+        HWCDashboardUsed: getNullableInt("HWCDashboardUsed"),
+        HWCAntaraDosesProvided: getNullableInt("HWCAntaraDosesProvided"),
+        HWCELAsDisseminated: getNullableInt("HWCELAsDisseminated"),
+        HWCASHATrained: getNullableInt("HWCASHATrained")
+    };
+
+        console.log("Sending DTO:", dto);
+
+        try {
+
+            const token =
+                document.querySelector("input[name='__RequestVerificationToken']").value;
+
+            const response = await fetch("/ChecklistVisit/CreateJson", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "RequestVerificationToken": token
+                },
+                body: JSON.stringify(dto)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Saved Successfully ✅");
+                document.getElementById("programForm").reset();
+                window.location.href = "/ChecklistVisit/Index";
+            }
+            else {
+                alert("Save Failed ❌");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
+
+    });
+
+
+        // ---------------------
+        // Helper Functions
+        // ---------------------
+
+            function getNullableInt(name) {
+        const el = document.querySelector(`[name="${name}"]`);
+        if (!el || el.value === "") return null;
+        return parseInt(el.value);
+    }
+
+        function getInt(name) {
+            const el = document.querySelector(`[name='${name}']`);
+            if (!el || el.value === "") return null;
+            return parseInt(el.value);
+        }
+
+        function getString(name) {
+            const el = document.querySelector(`[name='${name}']`);
+            if (!el || el.value === "") return null;
+            return el.value.trim();
+        }
+
+        function getDate(name) {
+            const el = document.querySelector(`[name='${name}']`);
+            if (!el || el.value === "") return null;
+            return el.value;
+        }
+
+        function getBool(name) {
+            const el = document.querySelector(`[name='${name}']`);
+            if (!el || el.value === "") return null;
+
+            if (el.value === "Yes") return true;
+            if (el.value === "No") return false;
+
+            return null;
+        }
+
+</script>

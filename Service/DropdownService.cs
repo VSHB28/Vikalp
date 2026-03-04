@@ -131,6 +131,21 @@ public class DropdownService : IDropdownService
             Name = r.Field<string>("Value")
         }).ToList();
     }
+
+    public List<DropdownDto> GetChecklistvisit()
+    {
+        var param = new SqlParameter[]
+        {
+        new SqlParameter("@UserID", 1)
+        };
+        var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetChecklistvisit", param);
+
+        return dt.AsEnumerable().Select(r => new DropdownDto
+        {
+            Id = r.Field<int>("Id"),
+            Name = r.Field<string>("Value")
+        }).ToList();
+    }
     public List<DropdownDto> GetSubCentre(int blockId, int UserId)
     {
         var param = new SqlParameter[]

@@ -12,7 +12,7 @@ public interface IDropdownService
     List<DropdownDto> GetBlocks(int districtId);
     List<DropdownDto> GetFacilities(int blockId);
     List<DropdownDto> GetEventActivities();
-
+    List<DropdownDto> GetChecklistvisit();
     List<DropdownDto> GetSubCentre(int blockId, int UserId);
     List<DropdownDto> GetFacilityTypes();
     List<DropdownDto> GetAshas();
