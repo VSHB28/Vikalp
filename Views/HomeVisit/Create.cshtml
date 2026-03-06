@@ -151,6 +151,203 @@
     }
 </style>
 
+<style>
+    :root {
+        --all-ipas-primary: #F15A29;
+        --all-ipas-light: #F8F6F3;
+        --all-ipas-text-dark: #2C2C2C;
+        --all-ipas-text-muted: #666666;
+        --all-ipas-white: #FFFFFF;
+        --all-border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+
+
+    .all-modal-container {
+        background-color: var(--all-ipas-white);
+        border-radius: 10px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .all-modal-header {
+        background-color: #FBD9A5;
+        color: var(--all-ipas-text-dark);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .all-modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+    .all-close-btn {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        color: #b08968;
+    }
+
+    .all-modal-body {
+        padding: 20px 24px 24px;
+        background-color: var(--all-ipas-light);
+    }
+
+    .all-section-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .all-section-card {
+        background: var(--all-ipas-white);
+        border-radius: 8px;
+        border: 1px solid #F0E0D2;
+        padding: 14px 16px 16px;
+    }
+
+    .all-section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .all-section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(241, 90, 41, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--all-ipas-primary);
+        font-size: 15px;
+    }
+
+    .all-section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--all-ipas-text-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .all-section-subtitle {
+        font-size: 11px;
+        color: var(--all-ipas-text-muted);
+        margin-top: 2px;
+    }
+
+    .all-form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .all-form-grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .all-form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .all-form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--all-ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .all-label-icon {
+        color: var(--all-ipas-primary);
+        font-size: 14px;
+    }
+
+    .all-form-input,
+    .all-form-select,
+    .all-form-textarea {
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--all-border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+    .all-form-textarea {
+        min-height: 70px;
+        resize: vertical;
+    }
+
+        .all-form-input:focus,
+        .all-form-select:focus,
+        .all-form-textarea:focus {
+            border-color: var(--all-ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241,90,41,0.18);
+        }
+
+    .all-modal-footer {
+        padding: 14px 24px 18px;
+        background-color: #FBD9A5;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .all-btn-add {
+        min-width: 130px;
+        padding: 10px 26px;
+        border-radius: 4px;
+        border: 1px solid #f1a259;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #FFD8A6;
+        color: #e46b29;
+    }
+
+        .all-btn-add:hover {
+            background-color: #ffc37a;
+        }
+
+    @@media (max-width: 900px) {
+        .all-form-grid,
+        .all-form-grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .all-modal-shell {
+            padding: 12px;
+        }
+
+        .all-form-grid,
+        .all-form-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
 <form asp-action="Create" method="post" id="linelistForm">
     @Html.AntiForgeryToken()
     <input type="hidden" id="hdnLineListGuid" name="LineListGuid" value="@Model.LineListGuid" />
@@ -260,10 +457,10 @@
 
         <div class="col-md-2">
             <label>Client Parity</label>
-            <input id="ClientParity" name="ClientParity" class="form-control" type="number" maxlength="1">
+            <input id="ClientParity" name="ClientParity" value="@Model.ChildCount" class="form-control" type="number" maxlength="1">
         </div>
     </div>
-    <div class="row mb-2">
+    @* <div class="row mb-2">
         <div class="row align-items-center mb-2">
             <div class="col-md-4 fw-semibold">
                 <label>Are you currently pregnant?</label>
@@ -425,8 +622,180 @@
             </div>
         </div>
         </div>
-    </div>
+    </div> *@
     @*  <button type="button" class="btn-save" onclick="saveMembers()">Save</button> *@
+
+
+    <div class="all-section-card">
+
+        <div class="all-section-header">
+            <div class="all-section-icon">🤰</div>
+            <div>
+                <div class="all-section-title">Pregnancy & IEC Information</div>
+            </div>
+        </div>
+
+        <div class="all-form-grid all-form-grid-2">
+
+            <div class="all-form-group">
+                <label class="all-form-label">Are you currently pregnant?</label>
+                <select name="IsCurrentlyPregnant" class="all-form-select" id="IsCurrentlyPregnant">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value" @(Model.IsCurrentlyPregnant.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="all-form-group">
+                <label class="all-form-label">Are you Receiving IEC?</label>
+                <select name="IsReceivingSocialBenefit" class="all-form-select" id="IsReceivingSocialBenefit">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value" @(Model.IsReceivingSocialBenefit.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div id="iecMethodSection" class="all-form-group">
+                <label class="all-form-label">Which IEC are you using?</label>
+
+                <div class="dropdown">
+                    <button class="all-form-input dropdown-toggle w-100 text-start"
+                            type="button"
+                            data-bs-toggle="dropdown">
+                        Select Method
+                    </button>
+
+                    <ul class="dropdown-menu w-100 px-2" style="max-height:200px; overflow-y:auto;">
+                        @{
+                            var socialbenifits = ViewBag.socialbenifit as List<SelectListItem>;
+                        }
+
+                        @foreach (var s in socialbenifits)
+                        {
+                            <li>
+                                <div class="form-check">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="SocialBenifits"
+                                           value="@s.Value"
+                                           id="fp_@s.Value"
+                                           @(Model.SocialBenifits != null &&
+                                                                                  Model.SocialBenifits.Contains(int.Parse(s.Value)) ? "checked" : "") />
+
+                                <label class="form-check-label">@s.Text</label>
+                            </div>
+                        </li>
+                                                }
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    
+
+        <div class="all-section-header">
+            <div class="all-section-icon">💊</div>
+            <div>
+                <div class="all-section-title">Family Planning</div>
+            </div>
+        </div>
+
+        <div class="all-form-grid all-form-grid-2">
+
+            <div class="all-form-group">
+                <label class="all-form-label">Are you using any family planning method?</label>
+                <select name="IsUsingFamilyPlanning" class="all-form-select" id="IsUsingFamilyPlanning">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value" @(Model.IsUsingFamilyPlanning.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div id="fpMethodSection" class="all-form-group">
+                <label class="all-form-label">Which family planning method are you using?</label>
+                <select name="FamilyPlanningMethod" class="all-form-select" id="FamilyPlanningMethod">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.familyplanning)
+                    {
+                        <option value="@s.Value" @(Model.FamilyPlanningMethod.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+        </div>
+
+        <div class="all-section-header">
+            <div class="all-section-icon">🗣</div>
+            <div>
+                <div class="all-section-title">Counselling</div>
+            </div>
+        </div>
+
+        <div class="all-form-grid all-form-grid-2">
+
+            <div id="fpMethodNotSection" class="all-form-group">
+                <label class="all-form-label">If not, was mutual discussion/counseling done</label>
+                <select name="IsCounsellingDone" class="all-form-select" id="IsCounsellingDone">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value" @(Model.IsCounsellingDone.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+        </div>
+
+        <div class="all-section-header">
+            <div class="all-section-icon">🏥</div>
+            <div>
+                <div class="all-section-title">Referral Details</div>
+            </div>
+        </div>
+
+        <div class="all-form-grid all-form-grid-2">
+
+            <div class="all-form-group">
+                <label class="all-form-label">Referred to the health center?</label>
+                <select name="IsReferredForServices" class="all-form-select" id="IsReferredForServices">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value" @(Model.IsReferredForServices.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div id="ifreffered" class="all-form-grid all-form-grid-2">
+
+                <div class="all-form-group">
+                    <label class="all-form-label">Referred Facility Type?</label>
+                    <select name="ReferredHealthCenterType" class="all-form-select" id="ReferredHealthCenterType">
+                        <option value="">-- Select Facility Type --</option>
+                        @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.FacilityType)
+                        {
+                            <option value="@s.Value">@s.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="all-form-group">
+                    <label class="all-form-label">Write the name of the referred health center</label>
+                    <input id="ReferredHealthCenterName"
+                           name="ReferredHealthCenterName"
+                           class="all-form-input" />
+                </div>
+
+            </div>
+
+        </div>
+    </div>
 
     <button type="button" id="btnSave" class="btn-save" onclick="saveMembers()">
         <span id="btnText">Save</span>
