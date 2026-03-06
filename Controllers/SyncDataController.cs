@@ -66,21 +66,38 @@ namespace Vikalp.Controllers.Api
 
                 var connStr = _config.GetConnectionString("DefaultConnection");
 
+                var results = new List<object>();
+
                 using (var conn = new SqlConnection(connStr))
                 using (var cmd = new SqlCommand("dbo.sp_InsertAshaOrientationSync", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
+
                     cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new
+                            {
+                                RecordType = reader["RecordType"].ToString(),
+                                RecordGuid = reader["RecordGuid"].ToString(),
+                                ActionType = reader["ActionType"].ToString(),
+                                Message = reader["Message"].ToString()
+                            });
+                        }
+                    }
                 }
 
                 return Ok(new
                 {
                     statusCode = 200,
-                    message = "Sync completed successfully"
+                    message = "Sync processed",
+                    results = results
                 });
             }
             catch (SqlException ex)
@@ -158,14 +175,28 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
+                    var results = new List<object>();
 
-                return Ok(new
-                {
-                    statusCode = 200,
-                    message = "Sync completed successfully"
-                });
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new
+                            {
+                                lineListGuid = reader["LineListGuid"]?.ToString(),
+                                actionTaken = reader["ActionTaken"]?.ToString(),
+                                statusMsg = reader["StatusMsg"]?.ToString()
+                            });
+                        }
+                    }
+
+                    return Ok(new
+                    {
+                        statusCode = 200,
+                        message = "Sync completed successfully",
+                        results
+                    });
+                }
             }
             catch (SqlException ex)
             {
@@ -242,14 +273,28 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
+                    var results = new List<object>();
 
-                return Ok(new
-                {
-                    statusCode = 200,
-                    message = "Sync completed successfully"
-                });
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new
+                            {
+                                visitGuid = reader["VisitGuid"]?.ToString(),
+                                actionTaken = reader["ActionTaken"]?.ToString(),
+                                statusMsg = reader["StatusMsg"]?.ToString()
+                            });
+                        }
+                    }
+
+                    return Ok(new
+                    {
+                        statusCode = 200,
+                        message = "Sync completed successfully",
+                        results
+                    });
+                }
             }
             catch (SqlException ex)
             {
@@ -410,13 +455,27 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+                    var result = new List<object>();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            result.Add(new
+                            {
+                                FollowupGuId = reader["FollowupGuId"].ToString(),
+                                StatusCode = Convert.ToInt32(reader["StatusCode"]),
+                                Message = reader["Message"].ToString()
+                            });
+                        }
+                    }
+                    return Ok(new
+                    {
+                        statusCode = 200,
+                        message = "Sync processed",
+                        results = result
+                    });
                 }
-                return Ok(new
-                {
-                    statusCode = 200,
-                    message = "Sync completed successfully"
-                });
             }
             catch (SqlException ex)
             {
@@ -493,13 +552,27 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+                    var results = new List<object>();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new
+                            {
+                                profileGuid = reader["profileGuid"]?.ToString(),
+                                actionTaken = reader["actionTaken"]?.ToString(),
+                                statusMsg = reader["statusMsg"]?.ToString()
+                            });
+                        }
+                    }
+                    return Ok(new
+                    {
+                        statusCode = 200,
+                        message = "Sync completed successfully",
+                        results = results
+                    });
                 }
-                return Ok(new
-                {
-                    statusCode = 200,
-                    message = "Sync completed successfully"
-                });
             }
             catch (SqlException ex)
             {
@@ -567,6 +640,7 @@ namespace Vikalp.Controllers.Api
                 Log(userId, rawJson, "SaveUpdateHrStatus");
 
                 var connStr = _config.GetConnectionString("DefaultConnection");
+                var results = new List<object>();
 
                 using (var conn = new SqlConnection(connStr))
                 using (var cmd = new SqlCommand("dbo.sp_InsertHRstatusSync", conn))
@@ -576,12 +650,26 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            results.Add(new
+                            {
+                                HrGuid = reader["HrGuid"].ToString(),
+                                ActionTaken = reader["ActionTaken"].ToString(),
+                                StatusMsg = reader["StatusMsg"].ToString()
+                            });
+                        }
+                    }
                 }
+
                 return Ok(new
                 {
                     statusCode = 200,
-                    message = "Sync completed successfully"
+                    message = "Sync completed successfully",
+                    results
                 });
             }
             catch (SqlException ex)
@@ -650,6 +738,7 @@ namespace Vikalp.Controllers.Api
                 Log(userId, rawJson, "SaveUpdateEventActivity");
 
                 var connStr = _config.GetConnectionString("DefaultConnection");
+                var results = new List<object>();
 
                 using (var conn = new SqlConnection(connStr))
                 using (var cmd = new SqlCommand("dbo.sp_InsertEventActivitiesSync", conn))
@@ -659,12 +748,29 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        // Debug: see what columns are coming back
+                        // for (int i = 0; i < reader.FieldCount; i++)
+                        //     Console.WriteLine(reader.GetName(i));
+
+                        while (await reader.ReadAsync())
+                        {
+                            results.Add(new
+                            {
+                                EventGuid = reader["EventGuid"].ToString(),
+                                ActionTaken = reader["ActionTaken"].ToString(),
+                                StatusMsg = reader["StatusMsg"].ToString()
+                            });
+                        }
+                    }
                 }
+
                 return Ok(new
                 {
                     statusCode = 200,
-                    message = "Sync completed successfully"
+                    message = "Sync completed successfully",
+                    results
                 });
             }
             catch (SqlException ex)
