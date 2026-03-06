@@ -626,182 +626,202 @@
     @*  <button type="button" class="btn-save" onclick="saveMembers()">Save</button> *@
 
 
-    <div class="all-section-card">
-
-        <div class="all-section-header">
-            <div class="all-section-icon">🤰</div>
-            <div>
-                <div class="all-section-title">Pregnancy & IEC Information</div>
+    <div class="all-modal-shell mt-3">
+        <div class="all-modal-container">
+            <div class="all-modal-header">
+                <h2>Add Home Visit of Member</h2>
             </div>
-        </div>
-
-        <div class="all-form-grid all-form-grid-2">
-
-            <div class="all-form-group">
-                <label class="all-form-label">Are you currently pregnant?</label>
-                <select name="IsCurrentlyPregnant" class="all-form-select" id="IsCurrentlyPregnant">
-                    <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.yesNo)
-                    {
-                        <option value="@s.Value" @(Model.IsCurrentlyPregnant.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div class="all-form-group">
-                <label class="all-form-label">Are you Receiving IEC?</label>
-                <select name="IsReceivingSocialBenefit" class="all-form-select" id="IsReceivingSocialBenefit">
-                    <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.yesNo)
-                    {
-                        <option value="@s.Value" @(Model.IsReceivingSocialBenefit.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div id="iecMethodSection" class="all-form-group">
-                <label class="all-form-label">Which IEC are you using?</label>
-
-                <div class="dropdown">
-                    <button class="all-form-input dropdown-toggle w-100 text-start"
-                            type="button"
-                            data-bs-toggle="dropdown">
-                        Select Method
-                    </button>
-
-                    <ul class="dropdown-menu w-100 px-2" style="max-height:200px; overflow-y:auto;">
-                        @{
-                            var socialbenifits = ViewBag.socialbenifit as List<SelectListItem>;
-                        }
-
-                        @foreach (var s in socialbenifits)
-                        {
-                            <li>
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="SocialBenifits"
-                                           value="@s.Value"
-                                           id="fp_@s.Value"
-                                           @(Model.SocialBenifits != null &&
-                                                                                  Model.SocialBenifits.Contains(int.Parse(s.Value)) ? "checked" : "") />
-
-                                <label class="form-check-label">@s.Text</label>
+            <div class="all-modal-body">
+                <div class="all-section-wrapper">
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">🤰</div>
+                            <div>
+                                <div class="all-section-title">Pregnancy & IEC Information</div>
                             </div>
-                        </li>
-                                                }
-                    </ul>
+
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+
+                            <div class="all-form-group">
+                                <label class="all-form-label">Are you currently pregnant?</label>
+                                <select name="IsCurrentlyPregnant" class="all-form-select" id="IsCurrentlyPregnant">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsCurrentlyPregnant.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="all-form-group">
+                                <label class="all-form-label">Are you Receiving IEC?</label>
+                                <select name="IsReceivingSocialBenefit" class="all-form-select" id="IsReceivingSocialBenefit">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsReceivingSocialBenefit.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div id="iecMethodSection" class="all-form-group">
+                                <label class="all-form-label">Which IEC are you using?</label>
+
+                                <div class="dropdown">
+                                    <button class="all-form-input dropdown-toggle w-100 text-start"
+                                            type="button"
+                                            data-bs-toggle="dropdown">
+                                        Select Method
+                                    </button>
+
+                                    <ul class="dropdown-menu w-100 px-2" style="max-height:200px; overflow-y:auto;">
+                                        @{
+                                            var socialbenifits = ViewBag.socialbenifit as List<SelectListItem>;
+                                        }
+
+                                        @foreach (var s in socialbenifits)
+                                        {
+                                            <li>
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="SocialBenifits"
+                                                           value="@s.Value"
+                                                           id="fp_@s.Value"
+                                                           @(Model.SocialBenifits != null &&
+                                                                                                                  Model.SocialBenifits.Contains(int.Parse(s.Value)) ? "checked" : "") />
+
+                                                    <label class="form-check-label">@s.Text</label>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">💊</div>
+                            <div>
+                                <div class="all-section-title">Family Planning</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+
+                            <div class="all-form-group">
+                                <label class="all-form-label">Are you using any family planning method?</label>
+                                <select name="IsUsingFamilyPlanning" class="all-form-select" id="IsUsingFamilyPlanning">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsUsingFamilyPlanning.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div id="fpMethodSection" class="all-form-group">
+                                <label class="all-form-label">Which family planning method are you using?</label>
+                                <select name="FamilyPlanningMethod" class="all-form-select" id="FamilyPlanningMethod">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.familyplanning)
+                                    {
+                                        <option value="@s.Value" @(Model.FamilyPlanningMethod.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">🗣</div>
+                            <div>
+                                <div class="all-section-title">Counselling</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+
+                            <div id="fpMethodNotSection" class="all-form-group">
+                                <label class="all-form-label">If not, was mutual discussion/counseling done</label>
+                                <select name="IsCounsellingDone" class="all-form-select" id="IsCounsellingDone">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsCounsellingDone.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">🏥</div>
+                            <div>
+                                <div class="all-section-title">Referral Details</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
+
+                            <div class="all-form-group">
+                                <label class="all-form-label">Referred to the health center?</label>
+                                <select name="IsReferredForServices" class="all-form-select" id="IsReferredForServices">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsReferredForServices.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div id="ifreffered" >
+                                <div class="all-form-grid all-form-grid-2">
+                                    <div class="all-form-group">
+                                        <label class="all-form-label">Referred Facility Type?</label>
+                                        <select name="ReferredHealthCenterType" class="all-form-select" id="ReferredHealthCenterType">
+                                            <option value="">-- Select Facility Type --</option>
+                                            @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.FacilityType)
+                                            {
+                                                <option value="@s.Value">@s.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="all-form-group">
+                                        <label class="all-form-label">Write the name of the referred health center</label>
+                                        <input id="ReferredHealthCenterName"
+                                               name="ReferredHealthCenterName"
+                                               class="all-form-input" />
+                                    </div>
+                                </div>
+                                
+
+                                
+
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
-
-        </div>
-    
-
-        <div class="all-section-header">
-            <div class="all-section-icon">💊</div>
-            <div>
-                <div class="all-section-title">Family Planning</div>
-            </div>
-        </div>
-
-        <div class="all-form-grid all-form-grid-2">
-
-            <div class="all-form-group">
-                <label class="all-form-label">Are you using any family planning method?</label>
-                <select name="IsUsingFamilyPlanning" class="all-form-select" id="IsUsingFamilyPlanning">
-                    <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.yesNo)
-                    {
-                        <option value="@s.Value" @(Model.IsUsingFamilyPlanning.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div id="fpMethodSection" class="all-form-group">
-                <label class="all-form-label">Which family planning method are you using?</label>
-                <select name="FamilyPlanningMethod" class="all-form-select" id="FamilyPlanningMethod">
-                    <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.familyplanning)
-                    {
-                        <option value="@s.Value" @(Model.FamilyPlanningMethod.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                    }
-                </select>
-            </div>
-
-        </div>
-
-        <div class="all-section-header">
-            <div class="all-section-icon">🗣</div>
-            <div>
-                <div class="all-section-title">Counselling</div>
-            </div>
-        </div>
-
-        <div class="all-form-grid all-form-grid-2">
-
-            <div id="fpMethodNotSection" class="all-form-group">
-                <label class="all-form-label">If not, was mutual discussion/counseling done</label>
-                <select name="IsCounsellingDone" class="all-form-select" id="IsCounsellingDone">
-                    <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.yesNo)
-                    {
-                        <option value="@s.Value" @(Model.IsCounsellingDone.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                    }
-                </select>
-            </div>
-
-        </div>
-
-        <div class="all-section-header">
-            <div class="all-section-icon">🏥</div>
-            <div>
-                <div class="all-section-title">Referral Details</div>
-            </div>
-        </div>
-
-        <div class="all-form-grid all-form-grid-2">
-
-            <div class="all-form-group">
-                <label class="all-form-label">Referred to the health center?</label>
-                <select name="IsReferredForServices" class="all-form-select" id="IsReferredForServices">
-                    <option value="">-- Select --</option>
-                    @foreach (var s in ViewBag.yesNo)
-                    {
-                        <option value="@s.Value" @(Model.IsReferredForServices.ToString() == s.Value ? "selected" : "")>@s.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div id="ifreffered" class="all-form-grid all-form-grid-2">
-
-                <div class="all-form-group">
-                    <label class="all-form-label">Referred Facility Type?</label>
-                    <select name="ReferredHealthCenterType" class="all-form-select" id="ReferredHealthCenterType">
-                        <option value="">-- Select Facility Type --</option>
-                        @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.FacilityType)
-                        {
-                            <option value="@s.Value">@s.Text</option>
-                        }
-                    </select>
-                </div>
-
-                <div class="all-form-group">
-                    <label class="all-form-label">Write the name of the referred health center</label>
-                    <input id="ReferredHealthCenterName"
-                           name="ReferredHealthCenterName"
-                           class="all-form-input" />
-                </div>
-
-            </div>
-
         </div>
     </div>
+    <div class="mt-4">
+        <button type="button" id="btnSave" class="btn-save" onclick="saveMembers()">
+            <span id="btnText">Save</span>
+            <span id="btnLoader" class="spinner-border spinner-border-sm d-none"></span>
+        </button>
+        <a href="@Url.Action("Index", "HomeVisit")" class="btn-back">Back</a>
+    </div>
 
-    <button type="button" id="btnSave" class="btn-save" onclick="saveMembers()">
-        <span id="btnText">Save</span>
-        <span id="btnLoader" class="spinner-border spinner-border-sm d-none"></span>
-    </button>
-    <a href="@Url.Action("Index", "HomeVisit")" class="btn-back">Back</a>
+
+
+    
+
+    
 </form>
 
 
