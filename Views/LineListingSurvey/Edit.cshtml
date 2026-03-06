@@ -320,7 +320,7 @@
     <div class="row g-3">
 
         <div class="col-md-2">
-            <label class="fw-bold">State</label>
+            <label>State</label>
             <select id="StateId" class="form-control">
                 <option value="">-- Select State --</option>
                 @foreach (var item in (IEnumerable<dynamic>)ViewBag.States)
@@ -332,7 +332,7 @@
         </div>
 
         <div class="col-md-2">
-            <label class="fw-bold">District</label>
+            <label>District</label>
             <select id="DistrictId" class="form-control">
                 <option value="">-- Select District --</option>
                 @if (ViewBag.Districts != null)
@@ -347,7 +347,7 @@
         </div>
 
         <div class="col-md-2">
-            <label class="fw-bold">Block</label>
+            <label>Block</label>
             <select id="BlockId" class="form-control">
                 <option value="">-- Select Block --</option>
                 @if (ViewBag.Blocks != null)
@@ -379,7 +379,7 @@
 
 
         <div class="col-md-2">
-            <label class="fw-bold">Sub Centre</label>
+            <label>Sub Centre</label>
             <select id="SubCenterId" class="form-control">
                 <option value="">-- Select Sub-centre --</option>
                 @if (ViewBag.SubCentres != null)
@@ -394,7 +394,7 @@
         </div>
 
         <div class="col-md-2">
-            <label class="fw-bold">ASHA Name</label>
+            <label>ASHA Name</label>
             <select id="ASHAId" class="form-control">
                 <option value="">-- Select ASHA --</option>
                 @if (ViewBag.Ashas != null)
@@ -409,11 +409,11 @@
         </div>
 
         <div class="col-md-3 mt-3">
-            <label class="fw-bold">Village Name</label>
+            <label>Village Name</label>
             <input type="text" id="VillageName" class="form-control" value="@Model.VillageName" />
         </div>
         <div class="col-md-3 mt-3">
-            <label class="fw-bold">Anganwadi Worker</label>
+            <label>Anganwadi Worker</label>
             <input type="text" id="AnganwadiWorkerName" class="form-control" value="@Model.AnganwadiWorkerName" />
         </div>
     </div>

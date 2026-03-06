@@ -29,6 +29,7 @@ namespace Vikalp.Models.DTO
         public string? VisitGuid { get; set; }
         public string? ASHAName { get; set; }
         public int? ClientParity { get; set; }
+        public int? ChildCount { get; set; }
         public int? IsCurrentlyPregnant { get; set; }
         public int? IsReceivingSocialBenefit { get; set; }
         public List<int>? SocialBenifits { get; set; }

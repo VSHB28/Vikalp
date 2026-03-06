@@ -177,6 +177,7 @@ public class HomeVisitService : IHomeVisitService
             VisitGuid = dr["VisitGuid"]?.ToString(),
             ASHAName = dr["ASHAName"]?.ToString(),
             ClientParity = dr["ClientParity"] != DBNull.Value ? Convert.ToInt32(dr["ClientParity"]) : (int?)null,
+            ChildCount = dr["ChildCount"] != DBNull.Value ? Convert.ToInt32(dr["ChildCount"]) : (int?)null,
             IsCurrentlyPregnant = dr["IsCurrentlyPregnant"] != DBNull.Value ? Convert.ToInt32(dr["IsCurrentlyPregnant"]) : (int?)null,
             IsReceivingSocialBenefit = dr["IsReceivingSocialBenefit"] != DBNull.Value ? Convert.ToInt32(dr["IsReceivingSocialBenefit"]) : (int?)null,
             SocialBenifits = dr["SocialBenifits"] != DBNull.Value ? dr["SocialBenifits"].ToString()!.Split(',').Select(int.Parse).ToList() : new List<int>(),
