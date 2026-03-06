@@ -1,0 +1,136 @@
+﻿@using Vikalp.Models.DTO
+@model List<AshaDto>
+
+@{
+    ViewData["Title"] = "Asha List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
+
+    .um-toolbar {
+        gap: .5rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .um-table thead th {
+        color: #fff;
+        border: 1px dotted;
+        background: var(--ipas-sidebar);
+    }
+
+    .um-table tbody tr:hover {
+        background: rgba(13,110,253,0.03);
+    }
+
+    .um-action .btn {
+        min-width: 44px;
+        margin-left: 0.2rem;
+    }
+
+    .btn-add {
+        background-color: #3F0C11;
+        color: white;
+    }
+
+</style>
+
+<div class="container py-2">
+    <div class="card um-card">
+        <div class="card-body">
+
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <h3 class="mb-0">Asha List</h3>
+                    </div>
+
+                    <div class="um-toolbar">
+                        <a href="/Asha/Create" class="btn btn-add btn-primary ms-3">
+                            Add Asha
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="table-responsive">
+                <table class="table table-hover um-table align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-center">VCAT Attended</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int i = 1;
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>@i</td>
+
+                                <td class="fw-semibold">@item.AshaName</td>
+
+                                <td>@item.AshaMobile</td>
+
+                                <td class="text-center">
+                                    <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
+                                        @(item.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+
+                                <td class="text-center">
+                                    <span class="badge @(item.AttendedVCAT ? "bg-info" : "bg-secondary")">
+                                        @(item.AttendedVCAT ? "Yes" : "No")
+                                    </span>
+                                </td>
+
+                                <td class="text-end um-action">
+
+                           
+                                    <a href="/Asha/Edit/@item.AshaId" class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="/Asha/Delete/@item.AshaId"
+                                       class="btn btn-sm btn-outline-danger"
+                                       title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                            i++;
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+

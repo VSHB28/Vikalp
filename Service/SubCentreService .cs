@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -289,6 +290,8 @@ public class SubCentreService : ISubCentreService
             parameters.Add("@AttendentVCAT", model.AttendentVCAT);
             parameters.Add("@TrainedInIUCD", model.TrainedInIUCD);
             parameters.Add("@TrainedInFPLMIS", model.TrainedInFPLMIS);
+            parameters.Add("@TrainedInCACS_MMA", model.TrainedInCACS_MMA);
+
             parameters.Add("@UserId", model.CreatedBy);
 
             await con.ExecuteAsync(

@@ -1,0 +1,75 @@
+﻿ @model Vikalp.Models.DTO.AshaDto
+
+@{
+    ViewData["Title"] = "Delete Asha";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="card um-card">
+        <div class="card-body">
+            <h4 class="text-danger">Delete Asha</h4>
+            <hr />
+
+            <div class="alert alert-warning">
+                <strong>Are you sure?</strong> This action will deactivate the Asha.
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8">@Model.AshaName</dd>
+
+                <dt class="col-sm-4">Mobile</dt>
+                <dd class="col-sm-8">@Model.AshaMobile</dd>
+
+                <dt class="col-sm-4">Active</dt>
+                <dd class="col-sm-8">@((Model.IsActive) ? "Yes" : "No")</dd>
+
+                <dt class="col-sm-4">VCAT Attended</dt>
+                <dd class="col-sm-8">@((Model.AttendedVCAT) ? "Yes" : "No")</dd>
+            </dl>
+
+            <form id="deleteForm" method="post" action="/Asha/DeleteConfirmed">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.AshaId" />
+
+                <button type="submit" class="btn btn-danger">
+                    Yes, Delete
+                </button>
+                <a href="/Asha/Index" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#deleteForm').submit(function(e){
+                e.preventDefault();
+                if(confirm("Are you sure you want to delete this Asha?")){
+                    var form = $(this);
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'POST',
+                        data: form.serialize(),
+                        success: function(res){
+                            if(res.success){
+                                alert("Deleted successfully!");
+                                window.location.href = "/Asha/Index";
+                            } else {
+                                alert("Delete failed!");
+                            }
+                        },
+                        error: function(){
+                            alert("Error occurred while deleting!");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+} 
+
+
