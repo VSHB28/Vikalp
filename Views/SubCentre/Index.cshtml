@@ -511,35 +511,21 @@
                             <div class="fp-section-card">
                                 <div class="fp-section-header">
                                     <div class="fp-section-icon"><i class="bi bi-geo-alt-fill"></i></div>
-                                    <div>
-                                        <div class="fp-section-title">Catchment Population</div>
-                                        <div class="fp-section-subtitle">Coverage of PHC and linked units</div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="PopulationCoveredbyPHC" class="form-label">
-                                            <i class="bi bi-people-fill fp-label-icon"></i> Population Covered by the PHC
-                                        </label>
-                                        <input name="PopulationCoveredbyPHC" id="PopulationCoveredbyPHC" type="number" class="form-control" placeholder="Enter population" />
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="NumberofHSC" class="form-label">
-                                            <i class="bi bi-hospital fp-label-icon"></i> Number of HSC in the PHC
-                                        </label>
-                                        <input name="NumberofHSC" id="NumberofHSC" type="number" class="form-control" placeholder="Enter number" />
-                                    </div>
-                                    <div class="col-md-6 mb-0">
-                                        <label for="PopulationCoveredPHC_HWC" class="form-label">
-                                            <i class="bi bi-people fp-label-icon"></i> Population covered by PHC including HSCs
-                                        </label>
-                                        <input name="PopulationCoveredPHC_HWC" id="PopulationCoveredPHC_HWC" type="number" class="form-control" placeholder="Enter population" />
-                                    </div>
+                                  
+
                                     <div class="col-md-6 mb-0">
                                         <label for="PopulationCoveredbyHWC" class="form-label">
                                             <i class="bi bi-house-heart-fill fp-label-icon"></i> Population covered by HWC
                                         </label>
-                                        <input name="PopulationCoveredbyHWC" id="PopulationCoveredbyHWC" type="number" class="form-control" placeholder="Enter population" />
+
+                                        <input name="PopulationCoveredbyHWC"
+                                               id="PopulationCoveredbyHWC"
+                                               type="number"
+                                               class="form-control"
+                                               placeholder="Enter population"
+                                               max="99999"
+                                               oninput="if(this.value.length > 5) this.value = this.value.slice(0,5);"
+                                               required />
                                     </div>
                                 </div>
                             </div>
@@ -597,7 +583,8 @@
                                         </label>
                                         <input name="AverageOPDperDay" id="AverageOPDperDay" type="number" class="form-control" placeholder="Enter average OPD" />
                                     </div>
-                                    <div class="col-md-6 mb-0">
+                                    <div class="col-md-6 mb-0" id="avgDeliveryDiv">
+                                     
                                         <label for="AvgdeliveryperMonth" class="form-label">
                                             <i class="bi bi-baby fp-label-icon"></i> Average delivery per month
                                         </label>
@@ -641,7 +628,8 @@
                         </div><!-- /.modal-body -->
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-save" id="modalOkBtn">SAVE</button>
+                      @*       <button type="button" class="btn btn-save" id="modalOkBtn">SAVE</button> *@
+                            <button type="button" class="btn btn-save" id="saveBtn">SAVE</button>
                         </div>
 
                     </div>
@@ -673,6 +661,36 @@
                                             </div>
                                         </div>
                                         <div class="form-grid">
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
+                                                <select name="DesignationId" id="DesignationId" class="form-select">
+                                                    <option value="">Select</option>
+                                                
+
+                                                    @foreach (var s in ViewBag.designation)
+                                                    {
+                                                        if (s.Value == "1" || s.Value == "8")
+                                                        {
+                                                            <option value="@s.Value">@s.Text</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-check-circle label-icon"></i><span>Post Occupied</span></label>
+                                                <select name="Status" id="Status" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
                                                 <input name="Name" type="text" id="Name" class="form-control" required />
@@ -681,20 +699,11 @@
                                                 <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
                                                 <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
                                             </div>
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
-                                                <select name="DesignationId" id="DesignationId" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.designation)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
+                                          
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-gender-ambiguous label-icon"></i><span>Gender</span></label>
                                                 <select name="GenderId" id="GenderId" class="form-select">
-                                                    <option value="">-- Select --</option>
+                                                    <option value="">Select</option>
                                                     @foreach (var s in ViewBag.gender)
                                                     {
                                                         <option value="@s.Value">@s.Text</option>
@@ -705,7 +714,7 @@
                                     </div>
 
                                     <!-- Training Details -->
-                                    <div class="section-card">
+                                    <div class="section-card" id="trainingSection">
                                         <div class="section-header">
                                             <div class="section-icon"><i class="bi bi-mortarboard-fill"></i></div>
                                             <div>
@@ -755,6 +764,23 @@
                                                     }
                                                 </select>
                                             </div>
+
+                                    
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    <i class="bi bi-capsule-pill label-icon"></i>
+                                                    <span>Trained In CACS / MMA</span>
+                                                </label>
+                                                <select name="TrainedInCACS_MMA" id="TrainedInCACS_MMA" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-clipboard-check label-icon"></i><span>Attended VCAT</span></label>
                                                 <select name="AttendentVCAT" id="AttendentVCAT" class="form-select">
@@ -785,8 +811,10 @@
     </div>
 </div>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -862,6 +890,23 @@
         loadSubCentres(blockId, facilityId);
     });
 
+
+
+        $("#avgDeliveryDiv").hide();
+
+       $("#IsDeliveryPoint").change(function () {
+
+           var val = $(this).val();
+
+           if (val == "1") {
+               $("#avgDeliveryDiv").show();
+           } else {
+               $("#avgDeliveryDiv").hide();
+               $("#AvgdeliveryperMonth").val("");
+           }
+
+       });
+
     });
 
     function loadSubCentres(blockId, facilityId) {
@@ -922,6 +967,7 @@
                 $('#subCentreList').html(html);
             });
     }
+
 
     function resetBelow(level) {
 
@@ -1004,7 +1050,9 @@
                 TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
                 AttendentVCAT: $("#AttendentVCAT").val(),
                 TrainedInIUCD: $("#TrainedInIUCD").val(),
-                TrainedInFPLMIS: $("#TrainedInFPLMIS").val()
+                TrainedInFPLMIS: $("#TrainedInFPLMIS").val(),
+                 TrainedInCACS_MMA: $("#TrainedInCACS_MMA").val()
+
             };
 
             $.ajax({
@@ -1047,6 +1095,56 @@
             }
         });
     }
+
+    
+      function handleStatusChange() {
+
+        var status = document.getElementById("Status").value;
+        console.log("Selected Status:", status);
+
+        var name = document.getElementById("Name");
+        var mobile = document.getElementById("Mobile");
+        var gender = document.getElementById("GenderId");
+
+        var trainingSection = document.getElementById("trainingSection");
+        var saveBtn = document.getElementById("btnSaveHr");
+
+        if (status == "1") {   // Yes
+
+            name.disabled = true;
+            mobile.disabled = true;
+            gender.disabled = true;
+
+            trainingSection.style.display = "none";
+
+            if (saveBtn) {
+                saveBtn.style.display = "none"; 
+            }
+
+        } else {
+
+            name.disabled = false;
+            mobile.disabled = false;
+            gender.disabled = false;
+
+            trainingSection.style.display = "block";
+
+            if (saveBtn) {
+                saveBtn.style.display = "inline-block"; 
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var statusDropdown = document.getElementById("Status");
+
+        if (statusDropdown) {
+            statusDropdown.addEventListener("change", handleStatusChange);
+        }
+
+        handleStatusChange();
+    });
 
 
 </script>

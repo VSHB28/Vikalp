@@ -88,6 +88,7 @@ builder.Services.AddScoped<IHomeVisitService, HomeVisitService>();
 builder.Services.AddScoped<IEventActivityService, EventActivityService>();
 builder.Services.AddScoped<ISubCentreService, SubCentreService>();
 builder.Services.AddScoped<IChecklistVisitService, ChecklistVisitService>();
+builder.Services.AddScoped<IAshaService, AshaService>();
 
 
 // Register DbContext

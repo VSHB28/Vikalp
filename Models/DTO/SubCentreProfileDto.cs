@@ -20,5 +20,7 @@
         public int? AvgdeliveryperMonth { get; set; }
         public decimal? DistancefromDH { get; set; }
         public int? IsSeparateSpaceforFp { get; set; }
+
+        public int? TrainedInCACS_MMA { get; set; }
     }
 }

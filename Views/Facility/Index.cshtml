@@ -511,19 +511,19 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="PopulationCoveredbyPHC" class="form-label">
-                                            <i class="bi bi-people-fill fp-label-icon"></i> Population Covered by the PHC
+                                            <i class="bi bi-people-fill fp-label-icon"></i> Population Covered by the Facility
                                         </label>
                                         <input name="PopulationCoveredbyPHC" id="PopulationCoveredbyPHC" type="number" class="form-control" placeholder="Enter population" />
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="NumberofHSC" class="form-label">
-                                            <i class="bi bi-hospital fp-label-icon"></i> Number of HSC in the PHC
+                                            <i class="bi bi-hospital fp-label-icon"></i> Number of HSC in the Facility
                                         </label>
                                         <input name="NumberofHSC" id="NumberofHSC" type="number" class="form-control" placeholder="Enter number" />
                                     </div>
                                     <div class="col-md-6 mb-0">
                                         <label for="PopulationCoveredPHC_HWC" class="form-label">
-                                            <i class="bi bi-people fp-label-icon"></i> Population covered by PHC including HSCs
+                                            <i class="bi bi-people fp-label-icon"></i> Population covered by Facility including HSCs
                                         </label>
                                         <input name="PopulationCoveredPHC_HWC" id="PopulationCoveredPHC_HWC" type="number" class="form-control" placeholder="Enter population" />
                                     </div>
@@ -674,10 +674,13 @@
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
                                                 <select name="DesignationId" id="DesignationId" class="form-select">
-                                                    <option value="">-- Select --</option>
+                                                 
                                                     @foreach (var s in ViewBag.designation)
                                                     {
-                                                        <option value="@s.Value">@s.Text</option>
+                                                        if (s.Value != "8")  
+                                                        {
+                                                            <option value="@s.Value">@s.Text</option>
+                                                        }
                                                     }
                                                 </select>
                                             </div>
@@ -995,19 +998,6 @@
 
                     $("#facilityprofileModal").modal("show");
             });
-
-
-        //      $(document).ready(function () {
-        //     // ... your existing dropdown change code ...
-
-        //     // Event delegation for dynamically added buttons
-
-        // $(document).on("click", ".addfacility", function () {
-        //     selectedFacilityId = $(this).data("facility-id");
-        //     let modal = new bootstrap.Modal(document.getElementById("facilityprofileModal"));
-        //     modal.show();
-        // });
-        // });
 
         function deleteFacility(id) {
             Swal.fire({

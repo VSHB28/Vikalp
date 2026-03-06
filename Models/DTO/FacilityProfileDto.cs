@@ -1,4 +1,6 @@
-﻿namespace Vikalp.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Vikalp.Models.DTO
 {
     public class FacilityProfileDto
     {
@@ -10,6 +12,9 @@
         public int PopulationCoveredbyPHC { get; set; }
         public int NumberofHSC { get; set; }
         public int? PopulationCoveredPHC_HWC { get; set; }
+
+        [Required(ErrorMessage = "Population is required")]
+        [Range(0, 99999, ErrorMessage = "Maximum 5 digits allowed")]
         public int? PopulationCoveredbyHWC { get; set; }
         public int? AverageOPDperDay { get; set; }
         public string? NearestFacilityReferral { get; set; }

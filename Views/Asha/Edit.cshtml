@@ -1,0 +1,49 @@
+﻿@model Vikalp.Models.DTO.AshaDto
+
+@{
+    ViewData["Title"] = "Edit Asha";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-2">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>Edit Asha</h3>
+                <a href="/Asha/Index" class="btn btn-secondary">← Back to List</a>
+            </div>
+
+            <form action="/Asha/Edit" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="AshaId" value="@Model.AshaId" />
+
+                <div class="col-md-6">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="AshaName" class="form-control" value="@Model.AshaName" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Mobile</label>
+                    <input type="text" name="AshaMobile" class="form-control" value="@Model.AshaMobile" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label d-block">Active</label>
+                    <input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label d-block">VCAT Attended</label>
+                    <input type="checkbox" name="AttendedVCAT" value="true" @(Model.AttendedVCAT ? "checked" : "") />
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <a href="/Asha/Index" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

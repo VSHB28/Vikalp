@@ -1,0 +1,68 @@
+﻿@model Vikalp.Models.DTO.AshaDto
+
+@{
+    ViewData["Title"] = "Add Asha";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container py-2">
+    <div class="card um-card">
+        <div class="card-body">
+
+            <div class="umcard-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Add Asha</h3>
+                <a href="/Asha/Index" class="btn btn-secondary">
+                    ← Back to List
+                </a>
+            </div>
+
+            <hr />
+
+            <form asp-action="Create" method="post" class="row mt-2 g-3">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="AshaId" value="@Model?.AshaId" />
+
+                <div class="col-md-6">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="AshaName" value="@Model?.AshaName" class="form-control" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Mobile</label>
+                    <input type="text" name="AshaMobile" value="@Model?.AshaMobile" class="form-control" required />
+                </div>
+
+                <div class="col-md-6 mt-2">
+                    <input type="hidden" name="IsActive" value="false" /> <!-- ensures false if unchecked -->
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="IsActive" value="true"
+                               @(Model?.IsActive == true ? "checked" : "") />
+                        <label class="form-check-label">Active</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mt-2">
+                    <input type="hidden" name="AttendedVCAT" value="false" />
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="AttendedVCAT" value="true"
+                               @(Model?.AttendedVCAT == true ? "checked" : "") />
+                        <label class="form-check-label">VCAT Attended</label>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-save">Save</button>
+                    <a href="/Asha/Index" class="btn btn-back ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
+</style>
