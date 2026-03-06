@@ -21,8 +21,8 @@
 
         public int? IsChildAvailable { get; set; }
         public int? ChildGender { get; set; }
-        public DateTime? ChildDOB { get; set; }
-        public int? ChildAge { get; set; }
+        public int? ChildAgeMonth { get; set; }
+        public int? ChildAgeYear { get; set; }
         public int? MarriageMonth { get; set; }
         public int? MarriageYear { get; set; }
         public int? IsCurrentlyPregnant { get; set; }

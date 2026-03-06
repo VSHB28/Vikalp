@@ -507,16 +507,50 @@
                                 </label>
                                 <select id="IsChildAvailable" class="all-form-select">
                                     <option value="">-- Select --</option>
-                                    <option value="1" @(Model.IsChildAvailable == 1 ? "selected" : "")>Yes</option>
-                                    <option value="0" @(Model.IsChildAvailable == 0 ? "selected" : "")>No</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsChildAvailable.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
                                 </select>
                             </div>
-                            <div class="all-form-group">
-                                <label class="all-form-label">
-                                    <span>Age of the youngest child</span>
-                                </label>
-                                <input type="number" id="ChildAge" class="all-form-input"
-                                       value="@Model.ChildAge" placeholder="Enter age in years" />
+
+                            <div class="all-form-group" id="ChildcountDiv">
+                                <label class="all-form-label"><i class="bi bi-people-fill all-label-icon"></i><span>How many children you have?</span></label>
+                                <input name="ChildCount" type="number" id="ChildCount" value="@Model.ChildCount" class="all-form-input" maxlength="1" />
+                            </div>
+
+                            <div class="all-form-group" id="childDobDiv">
+                                <label class="all-form-label"><i class="bi bi-hourglass all-label-icon"></i><span>Age of the youngest child</span></label>
+                                <div class="d-flex gap-2">
+                                    <select name="ChildAgeMonth" class="form-control" id="ChildAgeMonth">
+                                        <option value="">Month</option>
+                                        <option value="1" @(Model.ChildAgeMonth == 1 ? "selected" : "")>Jan</option>
+                                        <option value="2" @(Model.ChildAgeMonth == 2 ? "selected" : "")>Feb</option>
+                                        <option value="3" @(Model.ChildAgeMonth == 3 ? "selected" : "")>March</option>
+                                        <option value="4" @(Model.ChildAgeMonth == 4 ? "selected" : "")>April</option>
+                                        <option value="5" @(Model.ChildAgeMonth == 5 ? "selected" : "")>May</option>
+                                        <option value="6" @(Model.ChildAgeMonth == 6 ? "selected" : "")>June</option>
+                                        <option value="7" @(Model.ChildAgeMonth == 7 ? "selected" : "")>July</option>
+                                        <option value="8" @(Model.ChildAgeMonth == 8 ? "selected" : "")>Aug</option>
+                                        <option value="9" @(Model.ChildAgeMonth == 9 ? "selected" : "")>Sep</option>
+                                        <option value="10" @(Model.ChildAgeMonth == 10 ? "selected" : "")>Oct</option>
+                                        <option value="11" @(Model.ChildAgeMonth == 11 ? "selected" : "")>Nov</option>
+                                        <option value="12" @(Model.ChildAgeMonth == 12 ? "selected" : "")>Dec</option>
+                                    </select>
+                                    <select name="ChildAgeYear" id="ChildAgeYear" class="form-control">
+                                        <option value="">Year</option>
+
+                                        <script>
+                                            let currentYear = new Date().getFullYear();
+                                            let selectedYear = '@Model.ChildAgeYear'; // value from model
+
+                                            for (let y = currentYear; y >= currentYear - 5; y--) {
+                                                let selected = (y == selectedYear) ? "selected" : "";
+                                                document.write(`<option value="${y}" ${selected}>${y}</option>`);
+                                            }
+                                        </script>
+                                    </select>
+                                </div>
                             </div>
                             <div class="all-form-group">
                                 <label class="all-form-label">
@@ -525,15 +559,17 @@
                                 <!-- ✅ Fixed: was IsUsingFamilyPlanning, now IsCurrentlyPregnant -->
                                 <select id="IsCurrentlyPregnant" class="all-form-select">
                                     <option value="">-- Select --</option>
-                                    <option value="1" @(Model.IsCurrentlyPregnant == 1 ? "selected" : "")>Yes</option>
-                                    <option value="0" @(Model.IsCurrentlyPregnant == 0 ? "selected" : "")>No</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsCurrentlyPregnant.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <!-- Family Planning & Antara -->
-                    <div class="all-section-card">
+                    <div class="all-section-card" id="familyPlanningDiv">
                         <div class="all-section-header">
                             <div class="all-section-icon">💊</div>
                             <div>
@@ -543,56 +579,68 @@
                         </div>
                         <div class="all-form-grid all-form-grid-2">
                             <div class="all-form-group">
-                                <label class="all-form-label">
-                                    <span>Are you using any family planning method?</span>
-                                </label>
-                                <!-- ✅ Fixed: was using Model.IsCurrentlyPregnant, now Model.IsUsingFamilyPlanning -->
-                                <select id="IsUsingFamilyPlanning" class="all-form-select">
+                                <label class="all-form-label"><i class="bi bi-shield-check all-label-icon"></i><span>Are you using any family planning method?</span></label>
+                                <select name="IsUsingFamilyPlanning" class="form-control" id="IsUsingFamilyPlanning">
                                     <option value="">-- Select --</option>
-                                    <option value="1" @(Model.IsUsingFamilyPlanning == 1 ? "selected" : "")>Yes</option>
-                                    <option value="0" @(Model.IsUsingFamilyPlanning == 0 ? "selected" : "")>No</option>
-                                </select>
-                            </div>
-                            <div class="all-form-group">
-                                <label class="all-form-label">
-                                    <span>Which family planning method are you using?</span>
-                                </label>
-                                <!-- ✅ Fixed: was using item.Id/item.Name (dynamic), now item.Value/item.Text (SelectListItem) -->
-                                <select id="FamilyPlanningMethod" class="all-form-select">
-                                    <option value="">-- Select --</option>
-                                    @if (ViewBag.familyplanning != null)
+                                    @foreach (var s in ViewBag.yesNo)
                                     {
-                                        foreach (SelectListItem item in (IEnumerable<SelectListItem>)ViewBag.familyplanning)
-                                        {
-                                            var isSelected = Model.FamilyPlanningMethod != null &&
-                                            Model.FamilyPlanningMethod.ToString() == item.Value ? "selected" : "";
-                                            <option value="@item.Value" @isSelected>@item.Text</option>
-                                        }
+                                        <option value="@s.Value" @(Model.IsUsingFamilyPlanning.ToString() == s.Value ? "selected" : "")>@s.Text</option>
                                     }
                                 </select>
                             </div>
                             <div class="all-form-group">
-                                <label class="all-form-label">
-                                    <span>Are you aware of Antara?</span>
-                                </label>
-                                <select id="IsAwareOfAntara" class="all-form-select">
+                                <label class="all-form-label"><i class="bi bi-list-check all-label-icon"></i><span>Which family planning method are you using?</span></label>
+                                <select name="FamilyPlanningMethod" class="form-control" id="FamilyPlanningMethod">
                                     <option value="">-- Select --</option>
-                                    <option value="1" @(Model.IsAwareOfAntara == 1 ? "selected" : "")>Yes</option>
-                                    <option value="0" @(Model.IsAwareOfAntara == 0 ? "selected" : "")>No</option>
+                                    @foreach (var s in ViewBag.familyplanning)
+                                    {
+                                        <option value="@s.Value" @(Model.FamilyPlanningMethod.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
                                 </select>
                             </div>
                             <div class="all-form-group">
-                                <label class="all-form-label">
-                                    <span>Selected Method Today</span>
-                                </label>
-                                <input type="text" id="SelectedMethodName" class="all-form-input"
-                                       value="@Model.SelectedMethodName" placeholder="Enter selected method" />
+                                <label class="all-form-label"><i class="bi bi-info-circle-fill all-label-icon"></i><span>Do you have information about the Antara contraceptive injection?</span></label>
+                                <select name="IsAwareOfAntara" class="form-control" id="IsAwareOfAntara">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsAwareOfAntara.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="all-form-group" id="antaraMessageDiv" style="display:none;">
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-info-circle"></i>
+                                    Please inform the beneficiary about Antara contraceptive injection services available at the facility.
+                                </div>
+                            </div>
+                            <div class="all-form-group">
+                                <label class="all-form-label"><i class="bi bi-info-circle-fill all-label-icon"></i><span>Have you choosen any method today</span></label>
+                                <select name="ChoosenMethodToday" class="form-control" id="ChoosenMethodToday">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.ChoosenMethodToday.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="all-form-group">
+                                <label class="all-form-label"><i class="bi bi-check2-circle all-label-icon"></i><span>Selected Method Today</span></label>
+                                <select name="SelectedMethodName" class="form-control" id="SelectedMethodName">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.familyplanning)
+                                    {
+                                        <option value="@s.Value" @(Model.SelectedMethodName.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
                             </div>
                         </div>
                     </div>
 
                     <!-- Reason For Non Usage -->
-                    <div class="all-section-card">
+                    <div class="all-section-card" id="reasonDiv">
                         <div class="all-section-header">
                             <div class="all-section-icon">💬</div>
                             <div>
@@ -636,6 +684,169 @@
 
 @section Scripts {
     <script>
+
+        //============================== Child dob Hide =============================
+                function toggleChildDob() {
+
+            const childSelect = document.getElementById("IsChildAvailable");
+            const childDobDiv = document.getElementById("childDobDiv");
+            const childcountbDiv = document.getElementById("ChildcountDiv");
+
+            if (childSelect.value == "2") {
+
+                childDobDiv.style.display = "none";
+                childcountbDiv.style.display = "none";
+
+                childDobDiv.querySelectorAll("select").forEach(el => {
+                    el.value = "";
+                childcountbDiv.querySelector("input").value = "";
+                });
+
+            } else {
+
+                childDobDiv.style.display = "block";
+                childcountbDiv.style.display = "block";
+
+            }
+        }
+
+        // run on change
+        document.getElementById("IsChildAvailable").addEventListener("change", toggleChildDob);
+
+        // run on page load (for edit case)
+        document.addEventListener("DOMContentLoaded", toggleChildDob);
+
+         //============================== Child dob Hide =============================
+
+                        function toggleFamilyPlanning() {
+
+            const pregSelect = document.getElementById("IsCurrentlyPregnant").value;
+            const fpDiv = document.getElementById("familyPlanningDiv");
+            const reagDiv = document.getElementById("reasonDiv");
+
+            if (pregSelect == "1") {
+
+                fpDiv.style.display = "none";
+                reagDiv.style.display = "none";
+
+                fpDiv.querySelectorAll("select").forEach(el => el.value = "");
+                reagDiv.querySelector("textarea").value = "";
+
+            } else {
+
+                fpDiv.style.display = "block";
+
+                toggleFamilyPlanningMethod(); // 👈 important
+            }
+        }
+
+                //============================= Antara Prompt ==============================
+
+        function toggleAntaraMessage() {
+
+            const antaraSelect = document.getElementById("IsAwareOfAntara");
+            const antaraMsg = document.getElementById("antaraMessageDiv");
+
+            if (antaraSelect.value == "2") { // No
+                antaraMsg.style.display = "block";
+            } else {
+                antaraMsg.style.display = "none";
+            }
+        }
+
+
+        //========================= Family Planning method ========================
+
+                function toggleFamilyPlanningMethod() {
+
+            const usingFP = document.getElementById("IsUsingFamilyPlanning").value;
+            const preg = document.getElementById("IsCurrentlyPregnant").value;
+
+            const methodDropdown = document.getElementById("FamilyPlanningMethod");
+            const methodDiv = methodDropdown.closest(".all-form-group");
+            const reagDiv = document.getElementById("reasonDiv");
+
+            // If pregnant → hide everything
+            if (preg == "1") {
+
+                methodDiv.style.display = "none";
+                reagDiv.style.display = "none";
+
+                methodDropdown.value = "";
+                reagDiv.querySelector("textarea").value = "";
+
+                return;
+            }
+
+            // If not using FP
+            if (usingFP == "2") {
+
+                methodDiv.style.display = "none";
+                methodDropdown.value = "";
+
+                reagDiv.style.display = "block";
+
+            } else {
+
+                methodDiv.style.display = "block";
+
+                reagDiv.style.display = "none";
+                reagDiv.querySelector("textarea").value = "";
+
+            }
+        }
+
+        document.getElementById("IsUsingFamilyPlanning")
+            .addEventListener("change", toggleFamilyPlanningMethod);
+
+
+        //========================= Choosen today method ============================
+
+        function toggleChosenMethod() {
+
+            const chosenToday = document.getElementById("ChoosenMethodToday").value;
+            const selectedMethod = document.getElementById("SelectedMethodName");
+
+            if (chosenToday == "2") { // No
+
+                selectedMethod.value = "";
+                selectedMethod.closest(".all-form-group").style.display = "none";
+
+            } else {
+
+                selectedMethod.closest(".all-form-group").style.display = "block";
+
+            }
+        }
+
+        document.getElementById("ChoosenMethodToday")
+            .addEventListener("change", toggleChosenMethod);
+
+
+        //========================= Antara change ============================
+
+        document.getElementById("IsAwareOfAntara")
+            .addEventListener("change", toggleAntaraMessage);
+
+
+        //========================= Edit Mode Auto Run ============================
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+                  toggleChildDob();
+        toggleFamilyPlanning();
+        toggleFamilyPlanningMethod();
+        toggleChosenMethod();
+        toggleAntaraMessage();
+        });
+
+        // run on change
+        document.getElementById("IsCurrentlyPregnant").addEventListener("change", toggleFamilyPlanning);
+
+        // run on page load (for edit case)
+        document.addEventListener("DOMContentLoaded", toggleFamilyPlanning);
+
+
         document.addEventListener("DOMContentLoaded", async function () {
 
             const prefill = {
@@ -734,100 +945,6 @@
             });
         });
 
-
-//     async function updateSurvey() {
-//     // Helper to safely parse int or return null
-//     const getInt = (id) => {
-//         const el = document.getElementById(id);
-//         if (!el) return null;
-//         const val = el.value;
-//         const parsed = parseInt(val);
-//         return isNaN(parsed) ? null : parsed;
-//     };
-
-//     // Check required fields first
-//     const lineListId = getInt("LineListId");
-//     if (!lineListId) {
-//         alert("Error: LineListId missing! Cannot update.");
-//         return;
-//     }
-
-//     const requiredFields = [
-//         { id: "StateId", name: "State" },
-//         { id: "DistrictId", name: "District" },
-//         { id: "BlockId", name: "Block" },
-//         { id: "FacilityId", name: "Facility" },
-//         { id: "SubCenterId", name: "Sub-Centre" },
-//         { id: "ASHAId", name: "ASHA" },
-//         { id: "WomanName", name: "Woman Name" }
-//     ];
-
-//     for (const f of requiredFields) {
-//         const val = document.getElementById(f.id)?.value;
-//         if (!val) {
-//             alert(`Error: ${f.name} is required.`);
-//             return;
-//         }
-//     }
-
-//     // Build the model
-//     const model = {
-//         lineListId: lineListId,
-//         lineListGuid: document.getElementById("LineListGuid")?.value || null,
-//         villageName: document.getElementById("VillageName")?.value || null,
-//         anganwadiWorkerName: document.getElementById("AnganwadiWorkerName")?.value || null,
-//         stateId: getInt("StateId"),
-//         districtId: getInt("DistrictId"),
-//         blockId: getInt("BlockId"),
-//         facilityId: getInt("FacilityId"),
-//         subCenterId: getInt("SubCenterId"),
-//         ashaId: getInt("ASHAId"),
-//         womanName: document.getElementById("WomanName")?.value || null,
-//         husbandName: document.getElementById("HusbandName")?.value || null,
-//         mobileNumber: document.getElementById("MobileNumber")?.value || null,
-//         marriageMonth: getInt("MarriageMonth"),
-//         marriageYear: getInt("MarriageYear"),
-//         isChildAvailable: getInt("IsChildAvailable"),
-//         childAge: getInt("ChildAge"),
-//         isCurrentlyPregnant: getInt("IsCurrentlyPregnant"),
-//         isUsingFamilyPlanning: getInt("IsUsingFamilyPlanning"),
-//         familyPlanningMethod: document.getElementById("FamilyPlanningMethod")?.value || null,
-//         isAwareOfAntara: getInt("IsAwareOfAntara"),
-//         selectedMethodName: document.getElementById("SelectedMethodName")?.value || null,
-//         reasonForNonUsage: document.getElementById("ReasonForNonUsage")?.value || null
-//     };
-
-//     console.log("Payload to send:", model);
-
-//     try {
-//         const response = await fetch('/LineListingSurvey/Edit', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-//             },
-//             body: JSON.stringify(model)
-//         });
-
-//         if (!response.ok) {
-//             alert("HTTP Error: " + response.status);
-//             return;
-//         }
-
-//         const res = await response.json();
-//         console.log("Response from server:", res);
-
-//         if (res.success) {
-//             alert("Updated successfully!");
-//             window.location.href = '@Url.Action("Index", "LineListingSurvey")';
-//         } else {
-//             alert("Update failed: " + res.message);
-//         }
-//     } catch (err) {
-//         console.error("Update failed:", err);
-//         alert("Unexpected error occurred. Check console for details.");
-//     }
-// }
         async function updateSurvey() {
             // Helper: safely parse int or return null
             const getInt = (id) => {
@@ -882,13 +999,15 @@
                 marriageMonth: getInt("MarriageMonth"),
                 marriageYear: getInt("MarriageYear"),
                 isChildAvailable: getInt("IsChildAvailable"),
+                childCount: getInt("ChildCount"),
                 childGender: getInt("ChildGender"),
-                childDOB: document.getElementById("ChildDOB")?.value || null,
-                childAge: getInt("ChildAge"),
+                childageMonth : getInt("ChildAgeMonth"),
+                childageYear : getInt("ChildAgeYear"),
                 isCurrentlyPregnant: getInt("IsCurrentlyPregnant"),
                 isUsingFamilyPlanning: getInt("IsUsingFamilyPlanning"),
                 familyPlanningMethod: document.getElementById("FamilyPlanningMethod")?.value || null,
                 isAwareOfAntara: getInt("IsAwareOfAntara"),
+                choosenmethodToday: getInt("ChoosenMethodToday"),
                 selectedMethodName: document.getElementById("SelectedMethodName")?.value || null,
                 reasonForNonUsage: document.getElementById("ReasonForNonUsage")?.value || null,
                 isConcent: getInt("IsConcent"),

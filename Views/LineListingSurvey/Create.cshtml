@@ -421,13 +421,13 @@
         </div>
 
         <div class="col-md-2">
-            <label>Anganwadi Worker</label>
-            <input type="text" name="AnganwadiWorkerName" class="form-control" placeholder="Enter AWC name" />
+            <label>Village Name</label>
+            <input type="text" name="VillageName" class="form-control" placeholder="Enter Village name" />
         </div>
 
         <div class="col-md-2">
-            <label>Village Name</label>
-            <input type="text" name="VillageName" class="form-control" placeholder="Enter Village name" />
+            <label>Anganwadi Worker</label>
+            <input type="text" name="AnganwadiWorkerName" class="form-control" placeholder="Enter AWC name" />
         </div>
 
     </div>
@@ -521,9 +521,40 @@
                                             }
                                         </select>
                                     </div>
-                                    <div class="all-form-group">
+                                    <div class="all-form-group" id="ChildcountDiv">
+                                        <label class="all-form-label"><i class="bi bi-people-fill all-label-icon"></i><span>How many children you have?</span></label>
+                                        <input name="ChildCount" type="number" id="ChildCount" class="all-form-input" maxlength="1" placeholder="Enter age in years" />
+                                    </div>
+
+                                    <div class="all-form-group" id="childDobDiv">
                                         <label class="all-form-label"><i class="bi bi-hourglass all-label-icon"></i><span>Age of the youngest child</span></label>
-                                        <input type="number" id="ChildAge" class="all-form-input" maxlength="1"  placeholder="Enter age in years" />
+                                        <div class="d-flex gap-2">
+                                            <select name="ChildAgeMonth" class="form-control" id="ChildAgeMonth">
+                                                <option value="">Month</option>
+                                                <option value="1">Jan</option>
+                                                <option value="2">Feb</option>
+                                                <option value="3">Mar</option>
+                                                <option value="4">Apr</option>
+                                                <option value="5">May</option>
+                                                <option value="6">Jun</option>
+                                                <option value="7">Jul</option>
+                                                <option value="8">Aug</option>
+                                                <option value="9">Sep</option>
+                                                <option value="10">Oct</option>
+                                                <option value="11">Nov</option>
+                                                <option value="12">Dec</option>
+                                            </select>
+                                            <select name="ChildAgeYear" class="form-control" id="ChildAgeYear">
+                                                <option value="">Year</option>
+
+                                                <script>
+                                                    let currentYear = new Date().getFullYear();
+                                                    for (let y = currentYear; y >= currentYear - 5; y--) {
+                                                        document.write(`<option value="${y}">${y}</option>`);
+                                                    }
+                                                </script>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="all-form-group">
                                         <label class="all-form-label"><i class="bi bi-heart-fill all-label-icon"></i><span>Are you currently pregnant?</span></label>
@@ -539,7 +570,7 @@
                             </div>
 
                             <!-- Family Planning & Antara -->
-                            <div class="all-section-card">
+                            <div class="all-section-card" id="familyPlanningDiv">
                                 <div class="all-section-header">
                                     <div class="all-section-icon"><i class="bi bi-capsule"></i></div>
                                     <div>
@@ -569,7 +600,7 @@
                                         </select>
                                     </div>
                                     <div class="all-form-group">
-                                        <label class="all-form-label"><i class="bi bi-info-circle-fill all-label-icon"></i><span>Are you aware of Antara?</span></label>
+                                        <label class="all-form-label"><i class="bi bi-info-circle-fill all-label-icon"></i><span>Do you have information about the Antara contraceptive injection?</span></label>
                                         <select name="IsAwareOfAntara" class="form-control" id="IsAwareOfAntara">
                                             <option value="">-- Select --</option>
                                             @foreach (var s in ViewBag.yesNo)
@@ -578,19 +609,44 @@
                                             }
                                         </select>
                                     </div>
+
+                                    <div class="all-form-group" id="antaraMessageDiv" style="display:none;">
+                                        <div class="alert alert-warning">
+                                            <i class="bi bi-info-circle"></i>
+                                            Please inform the beneficiary about Antara contraceptive injection services available at the facility.
+                                        </div>
+                                    </div>
+
+                                    <div class="all-form-group">
+                                        <label class="all-form-label"><i class="bi bi-info-circle-fill all-label-icon"></i><span>Have you choosen any method today</span></label>
+                                        <select name="ChoosenMethodToday" class="form-control" id="ChoosenMethodToday">
+                                            <option value="">-- Select --</option>
+                                            @foreach (var s in ViewBag.yesNo)
+                                            {
+                                                <option value="@s.Value" @(Model.ChoosenMethodToday.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+
                                     <div class="all-form-group">
                                         <label class="all-form-label"><i class="bi bi-check2-circle all-label-icon"></i><span>Selected Method Today</span></label>
-                                        <input type="text" id="SelectedMethodName" class="all-form-input" placeholder="Enter selected method" />
+                                        <select name="SelectedMethodName" class="form-control" id="SelectedMethodName">
+                                            <option value="">-- Select --</option>
+                                            @foreach (var s in ViewBag.familyplanning)
+                                            {
+                                                <option value="@s.Value" @(Model.SelectedMethodName.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                            }
+                                        </select>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Reason For Non Usage -->
-                            <div class="all-section-card">
+                            <div class="all-section-card" id="reasonDiv">
                                 <div class="all-section-header">
                                     <div class="all-section-icon"><i class="bi bi-chat-left-text-fill"></i></div>
                                     <div>
-                                        <div class="all-section-title">Reason For Non Usage</div>
+                                        <div class="all-section-title">Reason For Non Usage of Family Planning method</div>
                                         <div class="all-section-subtitle">Note down any key reasons</div>
                                     </div>
                                 </div>
@@ -689,8 +745,11 @@
         <input type="hidden" name="Beneficiaries[__index__].MarriageMonth" class="hdMarriageMonth" />
         <input type="hidden" name="Beneficiaries[__index__].MarriageYear" class="hdMarriageYear" />
         <input type="hidden" name="Beneficiaries[__index__].IsChildAvailable" class="hdChild" />
-        <input type="hidden" name="Beneficiaries[__index__].ChildAge" class="hdChildAge" />
+        <input type="hidden" name="Beneficiaries[__index__].ChildCount" class="hdChildcount" />
+        <input type="hidden" name="Beneficiaries[__index__].ChildAgeMonth" class="hdChildAgemonth" />
+        <input type="hidden" name="Beneficiaries[__index__].ChildAgeYear" class="hdChildAgeyear" />
         <input type="hidden" name="Beneficiaries[__index__].IsAwareOfAntara" class="hdAntara" />
+        <input type="hidden" name="Beneficiaries[__index__].ChoosenMethodToday" class="hdChoosenMethod" />
         <input type="hidden" name="Beneficiaries[__index__].SelectedMethodName" class="hdSelectedMethod" />
         <input type="hidden" name="Beneficiaries[__index__].ReasonForNonUsage" class="hdReason" />
 
@@ -705,6 +764,115 @@
 
 @section Scripts {
     <script>
+
+        //============================== Hide and Show Child Age ============================
+                document.getElementById("IsChildAvailable").addEventListener("change", function () {
+
+            const childDobDiv = document.getElementById("childDobDiv");
+            const childcountbDiv = document.getElementById("ChildcountDiv");
+
+            if (this.value == "2") {
+
+                childDobDiv.style.display = "none";
+                childcountbDiv.style.display = "none";
+
+                childDobDiv.querySelectorAll("select").forEach(el => {
+                    el.value = "";
+                childcountbDiv.querySelector("number").value = "";
+                });
+
+            } else {
+
+                childDobDiv.style.display = "block";
+                childcountbDiv.style.display = "block";
+            }
+
+        });
+
+
+        //=============================== Family Planning Hide/show ==================================
+
+                document.getElementById("IsCurrentlyPregnant").addEventListener("change", function () {
+
+            const fpDiv = document.getElementById("familyPlanningDiv");
+            const reagDiv = document.getElementById("reasonDiv");
+
+            if (this.value == "1") {
+
+                fpDiv.style.display = "none";
+                reagDiv.style.display = "none";
+                fpDiv.querySelector("select").value = "";
+                reagDiv.querySelector("textarea").value = "";
+
+            } else {
+
+                fpDiv.style.display = "block";
+                reagDiv.style.display = "block";
+
+            }
+
+        });
+
+        //============================= Antara Prompt ==============================
+
+                function toggleAntaraMessage() {
+
+            const antaraSelect = document.getElementById("IsAwareOfAntara");
+            const antaraMsg = document.getElementById("antaraMessageDiv");
+
+            if (antaraSelect.value == "2") { // No
+                antaraMsg.style.display = "block";
+            } else {
+                antaraMsg.style.display = "none";
+            }
+        }
+
+        //========================= Family Planning method ========================
+                function toggleFamilyPlanningMethod() {
+
+            const usingFP = document.getElementById("IsUsingFamilyPlanning").value;
+                const methodDropdown = document.getElementById("FamilyPlanningMethod");
+                const reagDiv = document.getElementById("reasonDiv");
+
+            if (usingFP == "2") { // No
+                methodDropdown.value = "";
+                methodDropdown.closest(".all-form-group").style.display = "none";
+                reagDiv.style.display = "block";                    
+
+            }
+            else {
+                    methodDropdown.closest(".all-form-group").style.display = "block";
+                    reagDiv.style.display = "none";
+                    reagDiv.querySelector("textarea").value = "";
+            }
+        }
+
+        document.getElementById("IsUsingFamilyPlanning")
+            .addEventListener("change", toggleFamilyPlanningMethod);
+
+    //========================= Choosen today method ============================
+            function toggleChosenMethod() {
+
+            const chosenToday = document.getElementById("ChoosenMethodToday").value;
+            const selectedMethod = document.getElementById("SelectedMethodName");
+
+            if (chosenToday == "2") { // No
+                selectedMethod.value = "";
+                selectedMethod.closest(".all-form-group").style.display = "none";
+            }
+            else {
+                selectedMethod.closest(".all-form-group").style.display = "block";
+            }
+        }
+
+        document.getElementById("ChoosenMethodToday")
+            .addEventListener("change", toggleChosenMethod);
+
+        document.getElementById("IsAwareOfAntara").addEventListener("change", toggleAntaraMessage);
+
+        // For Edit Mode
+        document.addEventListener("DOMContentLoaded", toggleAntaraMessage);
+
         // ---------------- CASCADING DROPDOWNS ----------------
 
             document.getElementById("StateId").addEventListener("change", function () {
@@ -851,15 +1019,21 @@
                 const marriageYear = document.getElementById("MarriageYear").value;
 
                 const isChild = document.getElementById("IsChildAvailable").value;
-                const childAge = document.getElementById("ChildAge").value;
+                const childCount = document.getElementById("ChildCount")?.value;
+                const childAgeyear = document.getElementById("ChildAgeYear")?.value || null;
+                const childAgemonth = document.getElementById("ChildAgeMonth")?.value || null;
                 const isPregnant = document.getElementById("IsCurrentlyPregnant").value;
-                const isFP = document.getElementById("IsUsingFamilyPlanning").value;
-                const isAntara = document.getElementById("IsAwareOfAntara").value;
+                const isFP = document.getElementById("IsUsingFamilyPlanning")?.value || null;
+                const isAntara = document.getElementById("IsAwareOfAntara")?.value || null;
 
-                const selectedMethod = document.getElementById("SelectedMethodName").value;
-                const reason = document.getElementById("ReasonForNonUsage").value;
+                const choosenmethodName = document.getElementById("ChoosenMethodToday")?.value || null;
+                const selectedMethod = document.getElementById("SelectedMethodName")?.value || null;
+                const reason = document.getElementById("ReasonForNonUsage")?.value || null;
 
-                const fpChecked = document.getElementById("FamilyPlanningMethod").value;
+                const fpSelect = document.getElementById("FamilyPlanningMethod");
+
+                const fpValue = fpSelect?.value || "";
+                const fpText = fpSelect?.options[fpSelect.selectedIndex]?.text || "";
 
                 if (!womanName) {
                     alert("Please enter woman name");
@@ -880,7 +1054,7 @@
                 row.querySelector(".mobile").textContent = mobile;
                 row.querySelector(".pregnant").textContent = isPregnant === "1" ? "Yes" : "No";
                 row.querySelector(".fp").textContent = isFP === "1" ? "Yes" : "No";
-                row.querySelector(".methods").textContent = fpChecked.text;
+                row.querySelector(".methods").textContent = fpText;
 
                 // Fill hidden fields
                 row.querySelector(".hdWomanName").value = womanName;
@@ -889,13 +1063,16 @@
                 row.querySelector(".hdMarriageMonth").value = marriageMonth;
                 row.querySelector(".hdMarriageYear").value = marriageYear;
                 row.querySelector(".hdChild").value = isChild;
-                row.querySelector(".hdChildAge").value = childAge
+                row.querySelector(".hdChildcount").value = childCount;
+                row.querySelector(".hdChildAgemonth").value = childAgemonth;
+                row.querySelector(".hdChildAgeyear").value = childAgeyear;
                 row.querySelector(".hdPregnant").value = isPregnant;
                 row.querySelector(".hdFP").value = isFP;
                 row.querySelector(".hdAntara").value = isAntara;
+                row.querySelector(".hdChoosenMethod").value = choosenmethodName;
                 row.querySelector(".hdSelectedMethod").value = selectedMethod;
                 row.querySelector(".hdReason").value = reason;
-                row.querySelector(".hdMethods").value = fpChecked;
+                row.querySelector(".hdMethods").value = fpValue;
 
                 // Append row
                 document.querySelector("#memberTable tbody").appendChild(row);
@@ -987,11 +1164,14 @@
                     MarriageMonth: row.querySelector(".hdMarriageMonth")?.value || null,
                     MarriageYear: row.querySelector(".hdMarriageYear")?.value || null,
                     IsChildAvailable: row.querySelector(".hdChild")?.value || null,
-                    ChildAge: row.querySelector(".hdChildAge")?.value || null,
+                    ChildCount: row.querySelector(".hdChildcount")?.value || null,
+                    ChildAgeMonth: row.querySelector(".hdChildAgemonth")?.value || null,
+                    ChildAgeYear: row.querySelector(".hdChildAgeyear")?.value || null,
                     IsCurrentlyPregnant: row.querySelector(".hdPregnant")?.value || null,
                     IsUsingFamilyPlanning: row.querySelector(".hdFP")?.value || null,
 
                     IsAwareOfAntara: row.querySelector(".hdAntara")?.value || null,
+                    ChoosenMethodToday: row.querySelector(".hdChoosenMethod")?.value || null,
                     SelectedMethodName: row.querySelector(".hdSelectedMethod")?.value || null,
                     ReasonForNonUsage: row.querySelector(".hdReason")?.value || null,
 
