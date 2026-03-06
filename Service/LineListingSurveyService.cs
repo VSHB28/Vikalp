@@ -74,8 +74,10 @@ namespace Vikalp.Service
                     MobileNumber = r.Field<string>("MobileNumber"),
 
                     IsChildAvailable = r.Field<int?>("IsChildAvailable"),
+                    ChildCount = r.Field<int?>("ChildCount"),
                     ChildGender = r.Field<int?>("ChildGender"),
-                    ChildDOB = r.Field<DateTime?>("ChildDOB"),
+                    ChildAgeMonth = r.Field<int?>("ChildAgeMonth"),
+                    ChildAgeYear = r.Field<int?>("ChildAgeYear"),
                     //MarriageDate = r.Field<DateTime?>("MarriageDate"),
 
                     IsCurrentlyPregnant = r.Field<int?>("IsCurrentlyPregnant"),
@@ -83,7 +85,8 @@ namespace Vikalp.Service
                     FamilyPlanningMethod = r.Field<int?>("FamilyPlanningMethod"),
 
                     IsAwareOfAntara = r.Field<int?>("IsAwareOfAntara"),
-                    SelectedMethodName = r.Field<string>("SelectedMethodName"),
+                    ChoosenMethodToday = r.Field<int?>("ChoosenMethodToday"),
+                    SelectedMethodName = r.Field<int?>("SelectedMethodName"),
                     ReasonForNonUsage = r.Field<string>("ReasonForNonUsage"),
 
                     IsConcent = r.Field<int?>("IsConcent"),
@@ -100,43 +103,6 @@ namespace Vikalp.Service
             return (list, totalRecords);
         }
 
-
-        // ===================== GET BY ID =====================
-        public LineListingSurveyDto? GetSurveyById(int id)
-        {
-            LineListingSurveyDto? dto = null;
-
-            using (var conn = new SqlConnection(Conn()))
-            using (var cmd = new SqlCommand("usp_GetLineListingSurveyById", conn))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Id", id);
-                conn.Open();
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        dto = new LineListingSurveyDto
-                        {
-                            LineListId = reader.GetInt32(reader.GetOrdinal("LineListId")),
-                            LineListGuid = reader["LineListGuid"] as string,
-                            FacilityId = reader.IsDBNull(reader.GetOrdinal("FacilityId")) ? null : reader.GetInt32(reader.GetOrdinal("FacilityId")),
-                            SubCenterId = reader.IsDBNull(reader.GetOrdinal("SubCenterId")) ? null : reader.GetInt32(reader.GetOrdinal("SubCenterId")),
-                            WomanName = reader["Name"] as string,
-                            MobileNumber = reader["MobileNumber"] as string,
-                            IsConcent = reader.IsDBNull(reader.GetOrdinal("IsConcent")) ? null : reader.GetInt32(reader.GetOrdinal("IsConcent")),
-                            CreatedOn = reader.GetDateTime(reader.GetOrdinal("CreatedOn")),
-                            CreatedBy = reader.GetInt32(reader.GetOrdinal("CreatedBy")),
-                            UpdatedOn = reader.IsDBNull(reader.GetOrdinal("UpdatedOn")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedOn")),
-                            UpdatedBy = reader.IsDBNull(reader.GetOrdinal("UpdatedBy")) ? null : reader.GetInt32(reader.GetOrdinal("UpdatedBy"))
-                        };
-                    }
-                }
-            }
-
-            return dto;
-        }
 
         // ===================== INSERT =====================
 
@@ -172,67 +138,77 @@ namespace Vikalp.Service
         // ===================== UPDATE =====================
         public async Task<LineListingSurveyDto> GetLineListingByIdAsync(int id)
         {
-            LineListingSurveyDto survey = null;
-
-            using (var conn = new SqlConnection(Conn()))
-            using (var cmd = new SqlCommand("usp_GetLineListingById", conn))
+            try
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Id", id);
+                LineListingSurveyDto survey = null;
 
-                await conn.OpenAsync();
-
-                using (var reader = await cmd.ExecuteReaderAsync())
+                using (var conn = new SqlConnection(Conn()))
+                using (var cmd = new SqlCommand("usp_GetLineListingById", conn))
                 {
-                    if (await reader.ReadAsync())
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", id);
+
+                    await conn.OpenAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        survey = new LineListingSurveyDto
+                        if (await reader.ReadAsync())
                         {
-                            LineListId = Convert.ToInt32(reader["Id"]),
-                            StateId = reader["StateId"] != DBNull.Value ? Convert.ToInt32(reader["StateId"]) : null,
-                            DistrictId = reader["DistrictId"] != DBNull.Value ? Convert.ToInt32(reader["DistrictId"]) : null,
-                            BlockId = reader["BlockId"] != DBNull.Value ? Convert.ToInt32(reader["BlockId"]) : null,
-                            VillageName = reader["VillageName"]?.ToString(),
+                            survey = new LineListingSurveyDto
+                            {
+                                LineListId = Convert.ToInt32(reader["Id"]),
+                                StateId = reader["StateId"] != DBNull.Value ? Convert.ToInt32(reader["StateId"]) : null,
+                                DistrictId = reader["DistrictId"] != DBNull.Value ? Convert.ToInt32(reader["DistrictId"]) : null,
+                                BlockId = reader["BlockId"] != DBNull.Value ? Convert.ToInt32(reader["BlockId"]) : null,
+                                VillageName = reader["VillageName"]?.ToString(),
 
-                            FacilityId = reader["FacilityId"] != DBNull.Value ? Convert.ToInt32(reader["FacilityId"]) : null,
-                            SubCenterId = reader["SubCenterId"] != DBNull.Value ? Convert.ToInt32(reader["SubCenterId"]) : null,
-                            ASHAId = reader["ASHAId"] != DBNull.Value ? Convert.ToInt32(reader["ASHAId"]) : null,
-                            AnganwadiWorkerName = reader["AnganwadiWorkerName"]?.ToString(),
+                                FacilityId = reader["FacilityId"] != DBNull.Value ? Convert.ToInt32(reader["FacilityId"]) : null,
+                                SubCenterId = reader["SubCenterId"] != DBNull.Value ? Convert.ToInt32(reader["SubCenterId"]) : null,
+                                ASHAId = reader["ASHAId"] != DBNull.Value ? Convert.ToInt32(reader["ASHAId"]) : null,
+                                AnganwadiWorkerName = reader["AnganwadiWorkerName"]?.ToString(),
 
-                            WomanName = reader["WomanName"]?.ToString(),
-                            HusbandName = reader["HusbandName"]?.ToString(),
-                            MobileNumber = reader["MobileNumber"]?.ToString(),
+                                WomanName = reader["WomanName"]?.ToString(),
+                                HusbandName = reader["HusbandName"]?.ToString(),
+                                MobileNumber = reader["MobileNumber"]?.ToString(),
 
-                            // ✅ ADDED MISSING FIELDS
-                            MarriageMonth = reader["MarriageMonth"] != DBNull.Value ? Convert.ToInt32(reader["MarriageMonth"]) : null,
-                            MarriageYear = reader["MarriageYear"] != DBNull.Value ? Convert.ToInt32(reader["MarriageYear"]) : null,
+                                // ✅ ADDED MISSING FIELDS
+                                MarriageMonth = reader["MarriageMonth"] != DBNull.Value ? Convert.ToInt32(reader["MarriageMonth"]) : null,
+                                MarriageYear = reader["MarriageYear"] != DBNull.Value ? Convert.ToInt32(reader["MarriageYear"]) : null,
 
-                            IsChildAvailable = reader["IsChildAvailable"] != DBNull.Value ? Convert.ToInt32(reader["IsChildAvailable"]) : null,
-                            ChildAge = reader["ChildAge"] != DBNull.Value ? Convert.ToInt32(reader["ChildAge"]) : null,
-                            ChildGender = reader["ChildGender"] != DBNull.Value ? Convert.ToInt32(reader["ChildGender"]) : null,
-                            ChildDOB = reader["ChildDOB"] != DBNull.Value ? Convert.ToDateTime(reader["ChildDOB"]) : null,
+                                IsChildAvailable = reader["IsChildAvailable"] != DBNull.Value ? Convert.ToInt32(reader["IsChildAvailable"]) : null,
+                                ChildCount = reader["ChildCount"] != DBNull.Value ? Convert.ToInt32(reader["ChildCount"]) : null,
+                                ChildGender = reader["ChildGender"] != DBNull.Value ? Convert.ToInt32(reader["ChildGender"]) : null,
+                                ChildAgeMonth = reader["ChildAgeMonth"] != DBNull.Value ? Convert.ToInt32(reader["ChildAgeMonth"]) : null,
+                                ChildAgeYear = reader["ChildAgeYear"] != DBNull.Value ? Convert.ToInt32(reader["ChildAgeYear"]) : null,
 
-                            IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] != DBNull.Value ? Convert.ToInt32(reader["IsCurrentlyPregnant"]) : null,
-                            IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] != DBNull.Value ? Convert.ToInt32(reader["IsUsingFamilyPlanning"]) : null,
-                            FamilyPlanningMethod = reader["FamilyPlanningMethod"] != DBNull.Value ? Convert.ToInt32(reader["FamilyPlanningMethod"]) : null,
-                            IsAwareOfAntara = reader["IsAwareOfAntara"] != DBNull.Value ? Convert.ToInt32(reader["IsAwareOfAntara"]) : null,
-                            SelectedMethodName = reader["SelectedMethodName"]?.ToString(),
-                            ReasonForNonUsage = reader["ReasonForNonUsage"]?.ToString(),
+                                IsCurrentlyPregnant = reader["IsCurrentlyPregnant"] != DBNull.Value ? Convert.ToInt32(reader["IsCurrentlyPregnant"]) : null,
+                                IsUsingFamilyPlanning = reader["IsUsingFamilyPlanning"] != DBNull.Value ? Convert.ToInt32(reader["IsUsingFamilyPlanning"]) : null,
+                                FamilyPlanningMethod = reader["FamilyPlanningMethod"] != DBNull.Value ? Convert.ToInt32(reader["FamilyPlanningMethod"]) : null,
+                                IsAwareOfAntara = reader["IsAwareOfAntara"] != DBNull.Value ? Convert.ToInt32(reader["IsAwareOfAntara"]) : null,
+                                ChoosenMethodToday = reader["ChoosenMethodToday"] != DBNull.Value ? Convert.ToInt32(reader["ChoosenMethodToday"]) : null,
+                                SelectedMethodName = reader["SelectedMethodName"] != DBNull.Value ? Convert.ToInt32(reader["SelectedMethodName"]) : null,
+                                ReasonForNonUsage = reader["ReasonForNonUsage"]?.ToString(),
 
-                            IsConcent = reader["IsConcent"] != DBNull.Value ? Convert.ToInt32(reader["IsConcent"]) : null,
-                            ConcentDate = reader["ConcentDate"] != DBNull.Value ? Convert.ToDateTime(reader["ConcentDate"]) : null,
-                            Signature = reader["Signature"]?.ToString(),
+                                IsConcent = reader["IsConcent"] != DBNull.Value ? Convert.ToInt32(reader["IsConcent"]) : null,
+                                ConcentDate = reader["ConcentDate"] != DBNull.Value ? Convert.ToDateTime(reader["ConcentDate"]) : null,
+                                Signature = reader["Signature"]?.ToString(),
 
-                            CreatedOn = reader["CreatedOn"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedOn"]) : null,
-                            CreatedBy = reader["CreatedBy"] != DBNull.Value ? Convert.ToInt32(reader["CreatedBy"]) : null,
-                            UpdatedOn = reader["UpdatedOn"] != DBNull.Value ? Convert.ToDateTime(reader["UpdatedOn"]) : null,
-                            UpdatedBy = reader["UpdatedBy"] != DBNull.Value ? Convert.ToInt32(reader["UpdatedBy"]) : null,
-                        };
+                                CreatedOn = reader["CreatedOn"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedOn"]) : null,
+                                CreatedBy = reader["CreatedBy"] != DBNull.Value ? Convert.ToInt32(reader["CreatedBy"]) : null,
+                                UpdatedOn = reader["UpdatedOn"] != DBNull.Value ? Convert.ToDateTime(reader["UpdatedOn"]) : null,
+                                UpdatedBy = reader["UpdatedBy"] != DBNull.Value ? Convert.ToInt32(reader["UpdatedBy"]) : null,
+                            };
+                        }
                     }
                 }
-            }
 
-            return survey;
+                return survey;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
         }
 
         public async Task<bool> UpdateSurvey(LineListingSurveyUpdateDto model, int userId)

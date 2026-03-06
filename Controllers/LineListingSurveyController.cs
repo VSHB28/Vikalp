@@ -92,17 +92,6 @@ namespace Vikalp.Controllers
 
         // ===================== EDIT =====================
 
-        // 1. GET: View Details
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var data = await _service.GetLineListingByIdAsync(id);
-            if (data == null) return NotFound();
-
-            return View(data);
-        }
-
-
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {

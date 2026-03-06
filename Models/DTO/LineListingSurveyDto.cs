@@ -20,9 +20,10 @@
         public string? MobileNumber { get; set; }
 
         public int? IsChildAvailable { get; set; }
+        public int? ChildCount { get; set; }
         public int? ChildGender { get; set; }
-        public DateTime? ChildDOB { get; set; }
-        public int? ChildAge { get; set; }
+        public int? ChildAgeMonth { get; set; }
+        public int? ChildAgeYear { get; set; }
         public int? MarriageMonth { get; set; }
         public int? MarriageYear { get; set; }
 
@@ -31,7 +32,8 @@
         public int? FamilyPlanningMethod { get; set; } // comma-separated
 
         public int? IsAwareOfAntara { get; set; }
-        public string? SelectedMethodName { get; set; }
+        public int? ChoosenMethodToday { get; set; }
+        public int? SelectedMethodName { get; set; }
         public string? ReasonForNonUsage { get; set; }
 
         public int? IsConcent { get; set; }
@@ -103,9 +105,10 @@
         public string? MobileNumber { get; set; }
 
         public int? IsChildAvailable { get; set; }
+        public int? ChildCount { get; set; }
         public int? ChildGender { get; set; }
-        public DateTime? ChildDOB { get; set; }
-        public int? ChildAge { get; set; }
+        public int? ChildAgeMonth { get; set; }
+        public int? ChildAgeYear { get; set; }
         public int? MarriageMonth { get; set; }
         public int? MarriageYear { get; set; }
         public int? IsCurrentlyPregnant { get; set; }
@@ -115,7 +118,8 @@
         public int? FamilyPlanningMethod { get; set; }
 
         public int? IsAwareOfAntara { get; set; }
-        public string? SelectedMethodName { get; set; }
+        public int? ChoosenMethodToday { get; set; }
+        public int? SelectedMethodName { get; set; }
         public string? ReasonForNonUsage { get; set; }
 
         public int? IsConcent { get; set; }
@@ -171,15 +175,18 @@
         public int? MarriageMonth { get; set; }
         public int? MarriageYear { get; set; }
         public int? IsChildAvailable { get; set; }
-        public int? ChildAge { get; set; }
+        public int? ChildCount { get; set; }
         public int? ChildGender { get; set; }
-        public string? ChildDOB { get; set; }
+
+        public int? ChildAgeMonth { get; set; }
+        public int? ChildAgeYear { get; set; }
 
         public int? IsCurrentlyPregnant { get; set; }
         public int? IsUsingFamilyPlanning { get; set; }
         public int? FamilyPlanningMethod { get; set; }  // ✅ int not string
         public int? IsAwareOfAntara { get; set; }
-        public string? SelectedMethodName { get; set; }
+        public int? ChoosenMethodToday { get; set; }
+        public int? SelectedMethodName { get; set; }
         public string? ReasonForNonUsage { get; set; }
 
         public int? IsConcent { get; set; }
