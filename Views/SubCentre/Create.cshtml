@@ -18,7 +18,7 @@
 
             <form asp-action="@(Model.SubCentreId > 0 ? "Edit" : "Create")"
                   method="post"
-                  class="row g-3">
+                  class="row g-3 mt-2">
 
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="SubCentreId" />
@@ -71,23 +71,12 @@
                     </select>
                 </div>
 
-                <!-- FACILITY -->
-                @*     <div class="col-md-3">
-                    <label class="form-label">Facility</label>
-                    <input name="FacilityId"
-                           class="form-control"
-                           value="@Model.FacilityId" />
-                </div> *@
-
                 <div class="col-md-3">
                     <label class="form-label">Facility</label>
                     <select name="FacilityId" id="facilityDropdown" class="form-control" required>
                         <option value="">Select Facility</option>
                     </select>
                 </div>
-
-
-
 
                 <!-- SUBCENTRE NAME -->
                 <div class="col-md-3">
@@ -107,9 +96,6 @@
                            required
                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                 </div>
-
-
-
 
 
                 <!-- ANM -->
@@ -212,9 +198,6 @@
             });
         });
     });
-
-
-
 
 
 </script>

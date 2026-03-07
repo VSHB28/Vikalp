@@ -11,7 +11,7 @@ namespace Vikalp.Models.DTO
         [RegularExpression(@"^\d+$", ErrorMessage = "Only numeric values allowed")]
         [StringLength(12, ErrorMessage = "Maximum 12 digits allowed")]
         public string? NinNumber { get; set; }
-        //public string? NinNumber { get; set; }
+ 
         public bool IsLearningSite { get; set; }
         public bool IsActive { get; set; }
         public int? BlockId { get; set; }

@@ -151,7 +151,7 @@ public class SubCentreService : ISubCentreService
              
 
                 await connection.ExecuteAsync(
-                    "sp_SaveSubCentreProfile",   // 👈 Your SubCentre SP name
+                    "sp_SaveSubCentreProfile", 
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }

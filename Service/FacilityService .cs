@@ -195,7 +195,7 @@ namespace Vikalp.Service.Implementations
                     parameters.Add("@CreatedBy", model.CreatedBy);
 
                     await connection.ExecuteAsync(
-                        "sp_InsertFacilityProfile",   // renamed properly
+                        "sp_InsertFacilityProfile",   
                         parameters,
                         commandType: CommandType.StoredProcedure);
                 }
@@ -237,6 +237,7 @@ namespace Vikalp.Service.Implementations
                 parameters.Add("@AttendentVCAT", model.AttendentVCAT);
                 parameters.Add("@TrainedInIUCD", model.TrainedInIUCD);
                 parameters.Add("@TrainedInFPLMIS", model.TrainedInFPLMIS);
+                parameters.Add("@TrainedInCACS_MMA", model.TrainedInCACS_MMA);
                 parameters.Add("@UserId", model.CreatedBy);
 
                 await con.ExecuteAsync(
