@@ -231,7 +231,7 @@ public class HomeVisitService : IHomeVisitService
                 list.Add(new HomevisitFollowUpDto
                 {
                     FollowupDate = dr["FollowupDate"] as DateTime?,
-                    Remark = dr["Remark"]?.ToString(),
+                    Methods = dr["Methods"]?.ToString(),
                     Status = dr["Status"]?.ToString(),
                     IsEdited = dr["IsEdited"] as bool?
                 });
@@ -258,7 +258,9 @@ public class HomeVisitService : IHomeVisitService
             cmd.Parameters.AddWithValue("@HomVisitGuid", model.HomeVistGuid);
             cmd.Parameters.AddWithValue("@FollowupDate", model.FollowupDate);
             cmd.Parameters.AddWithValue("@FollowupStatus", model.FollowupStatus);
-            cmd.Parameters.AddWithValue("@Remark", model.Remark ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@IsUsingFamilyPlanning", model.IsUsingFamilyPlanning);
+            cmd.Parameters.AddWithValue("@FamilyPlanningMethod", model.FamilyPlanningMethod);
+            cmd.Parameters.AddWithValue("@ReasonForNonUsage", model.Remark ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
 
             await con.OpenAsync();
