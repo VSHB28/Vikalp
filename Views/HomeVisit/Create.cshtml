@@ -457,7 +457,7 @@
 
         <div class="col-md-2">
             <label>Client Parity</label>
-            <input id="ClientParity" name="ClientParity" value="@Model.ChildCount" class="form-control" type="number" maxlength="1">
+            <input id="ClientParity" name="ClientParity" value="@Model.ChildCount" class="form-control" type="number" maxlength="1" disabled>
         </div>
     </div>
     @* <div class="row mb-2">
@@ -690,12 +690,11 @@
                                                            value="@s.Value"
                                                            id="fp_@s.Value"
                                                            @(Model.SocialBenifits != null &&
-                                                                                                                  Model.SocialBenifits.Contains(int.Parse(s.Value)) ? "checked" : "") />
-
-                                                    <label class="form-check-label">@s.Text</label>
-                                                </div>
-                                            </li>
-                                        }
+                                                           Model.SocialBenifits.Contains(int.Parse(s.Value)) ? "checked" : "") />
+                                                <label class="form-check-label">@s.Text</label>
+                                            </div>
+                                        </li>
+                                                                                }
                                     </ul>
                                 </div>
                             </div>
@@ -734,6 +733,13 @@
                                 </select>
                             </div>
 
+                            <!-- Reason For Non Usage -->
+                            <div class="all-form-grid" id="reasonDiv">
+                                <div class="all-form-group" style="grid-column: 1 / -1;">
+                                    <label class="all-form-label"><i class="bi bi-pencil-square all-label-icon"></i><span>Reason For Non Usage</span></label>
+                                    <textarea class="all-form-textarea" id="Reason" placeholder="Enter reason"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="all-section-card">
@@ -778,7 +784,7 @@
                                 </select>
                             </div>
 
-                            <div id="ifreffered" >
+                            <div id="ifreffered">
                                 <div class="all-form-grid all-form-grid-2">
                                     <div class="all-form-group">
                                         <label class="all-form-label">Referred Facility Type?</label>
@@ -797,12 +803,39 @@
                                                class="all-form-input" />
                                     </div>
                                 </div>
-                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="all-section-card">
+                        <div class="all-section-header">
+                            <div class="all-section-icon">🗣</div>
+                            <div>
+                                <div class="all-section-title">Consent</div>
+                            </div>
+                        </div>
+                        <div class="all-form-grid all-form-grid-2">
 
-                                
-
+                            <div class="all-form-group">
+                                <label class="all-form-label">Was consent takento connect with the helpline?</label>
+                                <select name="IsConsentTaken" class="all-form-select" id="IsConsentTaken">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsConsentTaken.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
                             </div>
 
+                            <div id="callInitiatedSection" class="all-form-group">
+                                <label class="all-form-label">Was a call made to connect with the helpline?</label>
+                                <select name="IsCallInitiated" class="all-form-select form-control" id="IsCallInitiated">
+                                    <option value="">-- Select --</option>
+                                    @foreach (var s in ViewBag.yesNo)
+                                    {
+                                        <option value="@s.Value" @(Model.IsCallInitiated.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -816,12 +849,6 @@
         </button>
         <a href="@Url.Action("Index", "HomeVisit")" class="btn-back">Back</a>
     </div>
-
-
-
-    
-
-    
 </form>
 
 
@@ -1034,6 +1061,14 @@
 
             const isReferred = document.getElementById("IsReferredForServices");
             const referredSection = document.getElementById("ifreffered");
+                    const isPregnant = document.getElementById("IsCurrentlyPregnant");
+        const counsellingSelect = document.getElementById("IsCounsellingDone");
+
+        const familyPlanningCard = document.getElementById("IsUsingFamilyPlanning").closest(".all-section-card");
+        const counsellingCard = counsellingSelect.closest(".all-section-card");
+        const referCard = document.getElementById("IsReferredForServices").closest(".all-section-card");
+        const consentSelect = document.getElementById("IsConsentTaken");
+        const callSection = document.getElementById("callInitiatedSection");
 
             function isYes(val) {
                 return val === "true" || val === "1";
@@ -1047,23 +1082,59 @@
                     document.querySelectorAll("input[name='SocialBenifits']").forEach(cb => cb.checked = false);
                 }
             }
+                    function togglePregnancy() {
 
-            function toggleFP() {
-                if (isYes(isUsingFP.value)) {
-                    fpSection.style.display = "flex";
-                    fpNotSection.style.display = "none";
-                    document.getElementById("IsCounsellingDone").value = "";
-                }
-                else if (isUsingFP.value === "2" || isUsingFP.value === "false") {
-                    fpSection.style.display = "none";
-                    fpNotSection.style.display = "flex";
-                    document.getElementById("FamilyPlanningMethod").value = "";
-                }
-                else {
-                    fpSection.style.display = "none";
-                    fpNotSection.style.display = "none";
-                }
+            if (isYes(isPregnant.value)) {
+
+                familyPlanningCard.style.display = "none";
+                counsellingCard.style.display = "none";
+                referCard.style.display = "none";
+
+                isUsingFP.value = "";
+                counsellingSelect.value = "";
+                isReferred.value = "";
+
+            } else if (isPregnant.value === "2" || isPregnant.value === "false") {
+
+                familyPlanningCard.style.display = "block";
+                counsellingCard.style.display = "block";
+                referCard.style.display = "block";
             }
+        }
+                function toggleFP() {
+
+            const reasonDiv = document.getElementById("reasonDiv");
+
+            if (isYes(isUsingFP.value)) {
+
+                fpSection.style.display = "flex";
+
+                if (reasonDiv) reasonDiv.style.display = "none";
+
+                counsellingCard.style.display = "none";
+                referCard.style.display = "none";
+
+                document.getElementById("IsCounsellingDone").value = "";
+
+            }
+            else if (isUsingFP.value === "2" || isUsingFP.value === "false") {
+
+                fpSection.style.display = "none";
+
+                if (reasonDiv) reasonDiv.style.display = "block";
+
+                counsellingCard.style.display = "block";
+
+                document.getElementById("FamilyPlanningMethod").value = "";
+
+            }
+            else {
+
+                fpSection.style.display = "none";
+
+                if (reasonDiv) reasonDiv.style.display = "none";
+            }
+        }
 
             function toggleReferred() {
                 if (isYes(isReferred.value)) {
@@ -1075,16 +1146,50 @@
                 }
             }
 
+                    function toggleCounselling() {
+
+            if (isYes(counsellingSelect.value)) {
+
+                referCard.style.display = "block";
+
+            } else if (counsellingSelect.value === "2" || counsellingSelect.value === "false") {
+
+                referCard.style.display = "none";
+                isReferred.value = "";
+            }
+        }
+
+                //================ Consent Logic =================
+
+        
+
+        function toggleConsent() {
+
+            if (isYes(consentSelect.value)) {
+
+                callSection.style.display = "block";
+
+            } else {
+
+                callSection.style.display = "none";
+                document.getElementById("IsCallInitiated").value = "";
+            }
+        }
             // Run on page load
-            toggleIEC();
-            toggleFP();
-            toggleReferred();
+                   togglePregnancy();
+        toggleIEC();
+        toggleFP();
+        toggleCounselling();
+        toggleReferred();
+        toggleConsent();
 
             // Bind change events
-            isReceiving.addEventListener("change", toggleIEC);
-            isUsingFP.addEventListener("change", toggleFP);
-            isReferred.addEventListener("change", toggleReferred);
-
+                   isReceiving.addEventListener("change", toggleIEC);
+        isUsingFP.addEventListener("change", toggleFP);
+        isReferred.addEventListener("change", toggleReferred);
+        isPregnant.addEventListener("change", togglePregnancy);
+        counsellingSelect.addEventListener("change", toggleCounselling);
+        consentSelect.addEventListener("change", toggleConsent);
 
         });
 

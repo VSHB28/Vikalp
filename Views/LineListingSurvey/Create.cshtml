@@ -365,7 +365,7 @@
                     var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
                     var maxDate = today.ToString("yyyy-MM-dd");
                 }
-                <div class="col-md-4 d-flex">
+                <div class="col-md-4 d-flex d-none">
                     <label>Line Listing Date</label>
                     <input name="CreatedOn" type="date" class="form-control" min="@minDate" max="@maxDate" />
                     <span asp-validation-for="CreatedOn" class="text-danger"></span>

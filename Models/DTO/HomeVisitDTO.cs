@@ -55,6 +55,9 @@ namespace Vikalp.Models.DTO
 
         public int UserId { get; set; }
 
+        public string? Reason { get; set; }
+        
+
         public List<HomevisitFollowUpDto> FollowUpHistory { get; set; }
         = new List<HomevisitFollowUpDto>();
 

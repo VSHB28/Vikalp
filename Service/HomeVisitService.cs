@@ -22,110 +22,120 @@ public class HomeVisitService : IHomeVisitService
 
     public async Task<(List<HomeVisitDTO> Data, int TotalCount)> GetAllAsync(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId, int? subcentreId)
     {
-        using var con = GetConnection();
-        using var cmd = new SqlCommand("sp_getHomeVisitalldataNew", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-
-        cmd.Parameters.AddWithValue("@UserId", userId);
-        cmd.Parameters.AddWithValue("@PageNumber", page);
-        cmd.Parameters.AddWithValue("@PageSize", pageSize);
-        cmd.Parameters.AddWithValue("@StateId", (object?)stateId ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@BlockId", (object?)blockId ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@FacilityId", (object?)facilityId ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@SubCenterId", (object?)subcentreId ?? DBNull.Value);
-
-        await con.OpenAsync();
-
-        var dt = new DataTable();
-        using (var reader = await cmd.ExecuteReaderAsync())
+        try
         {
-            dt.Load(reader);
-        }
+            using var con = GetConnection();
+            using var cmd = new SqlCommand("sp_getHomeVisitalldataNew", con);
+            cmd.CommandType = CommandType.StoredProcedure;
 
-        int totalRecords = 0;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@PageNumber", page);
+            cmd.Parameters.AddWithValue("@PageSize", pageSize);
+            cmd.Parameters.AddWithValue("@StateId", (object?)stateId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@BlockId", (object?)blockId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@FacilityId", (object?)facilityId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SubCenterId", (object?)subcentreId ?? DBNull.Value);
 
-        var list = dt.AsEnumerable().Select(r =>
-        {
-            totalRecords = r["TotalRecords"] != DBNull.Value
-                ? Convert.ToInt32(r["TotalRecords"])
-                : 0;
+            await con.OpenAsync();
 
-            return new HomeVisitDTO
+            var dt = new DataTable();
+            using (var reader = await cmd.ExecuteReaderAsync())
             {
-                LineListId = r.Field<int?>("LineListId") ?? 0,
+                dt.Load(reader);
+            }
 
-                LineListGuid = r.Field<string>("LineListGuid"),
+            int totalRecords = 0;
 
-                StateId = r.Field<int?>("StateId"),
-                StateName = r.Field<string>("StateName"),
+            var list = dt.AsEnumerable().Select(r =>
+            {
+                totalRecords = r["TotalRecords"] != DBNull.Value
+                    ? Convert.ToInt32(r["TotalRecords"])
+                    : 0;
 
-                DistrictId = r.Field<int?>("DistrictId"),
-                DistrictName = r.Field<string>("DistrictName"),
+                return new HomeVisitDTO
+                {
+                    LineListId = r.Field<int?>("LineListId") ?? 0,
 
-                BlockId = r.Field<int?>("BlockId"),
-                BlockName = r.Field<string>("BlockName"),
+                    LineListGuid = r.Field<string>("LineListGuid"),
 
-                VillageName = r.Field<string>("VillageName"),
+                    StateId = r.Field<int?>("StateId"),
+                    StateName = r.Field<string>("StateName"),
 
-                FacilityId = r.Field<int?>("FacilityId"),
-                FacilityName = r.Field<string>("FacilityName"),
+                    DistrictId = r.Field<int?>("DistrictId"),
+                    DistrictName = r.Field<string>("DistrictName"),
 
-                SubCenterId = r.Field<int?>("SubCenterId"),
+                    BlockId = r.Field<int?>("BlockId"),
+                    BlockName = r.Field<string>("BlockName"),
 
-                // FIX: Your SP returns SubCenterName, not SubCentre
-                SubCentre = r.Field<string>("SubCenterName"),
+                    VillageName = r.Field<string>("VillageName"),
 
-                ASHAId = r.Field<int?>("ASHAId"),
-                AnganwadiWorkerName = r.Field<string>("AnganwadiWorkerName"),
+                    FacilityId = r.Field<int?>("FacilityId"),
+                    FacilityName = r.Field<string>("FacilityName"),
 
-                WomanName = r.Field<string>("WomanName"),
-                HusbandName = r.Field<string>("HusbandName"),
-                MobileNumber = r.Field<string>("MobileNumber"),
+                    SubCenterId = r.Field<int?>("SubCenterId"),
 
-                VisitId = r.Field<int?>("VisitId"),
-                VisitGuid = r.Field<string>("VisitGuid"),
+                    // FIX: Your SP returns SubCenterName, not SubCentre
+                    SubCentre = r.Field<string>("SubCenterName"),
 
-                ASHAName = r.Table.Columns.Contains("ASHAName")
-                    ? r.Field<string>("ASHAName")
-                    : null,
+                    ASHAId = r.Field<int?>("ASHAId"),
+                    AnganwadiWorkerName = r.Field<string>("AnganwadiWorkerName"),
 
-                ClientParity = r.Field<int?>("ClientParity"),
-                IsCurrentlyPregnant = r.Field<int?>("IsCurrentlyPregnant"),
+                    WomanName = r.Field<string>("WomanName"),
+                    HusbandName = r.Field<string>("HusbandName"),
+                    MobileNumber = r.Field<string>("MobileNumber"),
 
-                IsReceivingSocialBenefit = r.Field<int?>("IsReceivingSocialBenefit"),
+                    VisitId = r.Field<int?>("VisitId"),
+                    VisitGuid = r.Field<string>("VisitGuid"),
 
-                SocialBenifits =
-                    r["SocialBenifits"] != DBNull.Value
-                    ? r.Field<string>("SocialBenifits")
-                        .Split(',')
-                        .Select(int.Parse)
-                        .ToList()
-                    : new List<int>(),
+                    ASHAName = r.Table.Columns.Contains("ASHAName")
+                        ? r.Field<string>("ASHAName")
+                        : null,
 
-                IsUsingFamilyPlanning = r.Field<int?>("IsUsingFamilyPlanning"),
-                FamilyPlanningMethod = r.Field<int?>("FamilyPlanningMethod"),
+                    ClientParity = r.Field<int?>("ClientParity"),
+                    IsCurrentlyPregnant = r.Field<int?>("IsCurrentlyPregnant"),
 
-                IsCounsellingDone = r.Field<int?>("IsCounsellingDone"),
-                IsReferredForServices = r.Field<int?>("IsReferredForServices"),
+                    IsReceivingSocialBenefit = r.Field<int?>("IsReceivingSocialBenefit"),
 
-                ReferredHealthCenterType = r.Field<int?>("ReferredHealthCenterType"),
-                ReferredHealthCenterName = r.Field<string>("ReferredHealthCenterName"),
+                    SocialBenifits =
+    r["SocialBenifits"] != DBNull.Value
+    ? r.Field<string>("SocialBenifits")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Select(x => x.Trim())
+        .Where(x => int.TryParse(x, out _))
+        .Select(int.Parse)
+        .ToList()
+    : new List<int>(),
 
-                IsConsentTaken = r.Field<int?>("IsConsentTaken"),
-                IsCallInitiated = r.Field<int?>("IsCallInitiated"),
+                    IsUsingFamilyPlanning = r.Field<int?>("IsUsingFamilyPlanning"),
+                    FamilyPlanningMethod = r.Field<int?>("FamilyPlanningMethod"),
 
-                CreatedOn = r.Field<DateTime?>("CreatedOn"),
-                CreatedBy = r.Field<int?>("CreatedBy"),
-                UpdatedOn = r.Field<DateTime?>("UpdatedOn"),
-                UpdatedBy = r.Field<int?>("UpdatedBy"),
+                    IsCounsellingDone = r.Field<int?>("IsCounsellingDone"),
+                    IsReferredForServices = r.Field<int?>("IsReferredForServices"),
 
-                SubCenterName = r.Field<string>("SubCenterName"),
-                HomeVisit = r.Field<string>("HomeVisit")
-            };
-        }).ToList();
+                    ReferredHealthCenterType = r.Field<int?>("ReferredHealthCenterType"),
+                    ReferredHealthCenterName = r.Field<string>("ReferredHealthCenterName"),
 
-        return (list, totalRecords);
+                    IsConsentTaken = r.Field<int?>("IsConsentTaken"),
+                    IsCallInitiated = r.Field<int?>("IsCallInitiated"),
+
+                    CreatedOn = r.Field<DateTime?>("CreatedOn"),
+                    CreatedBy = r.Field<int?>("CreatedBy"),
+                    UpdatedOn = r.Field<DateTime?>("UpdatedOn"),
+                    UpdatedBy = r.Field<int?>("UpdatedBy"),
+
+                    SubCenterName = r.Field<string>("SubCenterName"),
+                    HomeVisit = r.Field<string>("HomeVisit")
+                };
+            }).ToList();
+
+            return (list, totalRecords);
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        
     }
 
     public async Task<HomeVisitDTO?> GetByIdAsync(Guid linelistguid, int userId)
