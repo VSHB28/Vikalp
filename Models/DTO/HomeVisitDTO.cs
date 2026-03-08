@@ -74,6 +74,10 @@ namespace Vikalp.Models.DTO
         public Guid? HomeVistGuid { get; set; }
         public DateTime? FollowupDate { get; set; }
         public string? Remark { get; set; }
+        public int IsUsingFamilyPlanning { get; set; }
+        public int? FamilyPlanningMethod { get; set; }
+        public string? ReasonForNonUsage { get; set; }
+        public string? Methods { get; set; }
         public int? FollowupStatus { get; set; }
         public string? Status { get; set; }
         public DateTime? CreatedOn { get; set; }

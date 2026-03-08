@@ -125,13 +125,18 @@ public class HomeVisitController : Controller
 
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-        // 🔹 Load main HomeVisit data
         var homeVisit = await _service.GetByIdAsync(guid, userId);
 
         if (homeVisit == null)
-            return NotFound();   // IMPORTANT
+            return NotFound();
 
-        // 🔹 Load follow-up history
+        // ✅ Stop followup if family planning already started
+        if (homeVisit.IsUsingFamilyPlanning == 1)
+        {
+            TempData["Message"] = "Follow-up not required. Beneficiary already started using family planning method.";
+            return RedirectToAction("Index", "HomeVisit");
+        }
+
         var followUps = await _service.GetFollowUpHistoryAsync(guid, userId);
 
         homeVisit.FollowUpHistory = followUps ?? new List<HomevisitFollowUpDto>();

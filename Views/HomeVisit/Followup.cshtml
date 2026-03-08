@@ -215,6 +215,7 @@
     .form-row {
         display: flex;
         gap: 15px;
+        margin-top: 15px;
     }
 
         .form-row .form-group {
@@ -420,7 +421,7 @@
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Remark</th>
+                    <th>Familty Plannig Method</th>
                     <th>Status</th>
                 </tr>
             </thead>
@@ -429,7 +430,7 @@
                 {
                     <tr>
                         <td>@f.FollowupDate?.ToString("yyyy-MM-dd")</td>
-                        <td>@f.Remark</td>
+                        <td>@f.Methods</td>
                         <td>@f.Status</td>
                 </tr>
                                 }
@@ -466,11 +467,11 @@
                 var maxDate = today.ToString("yyyy-MM-dd");
             }
 
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label>Date</label>
                 <input name="FollowupDate" id="followupDate" type="date" min="@minDate" max="@maxDate" class="form-control" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4 d-none">
                 <label>Followup Status</label>
                 <select name="FollowupStatus" id="followupStatus" class="form-control">
                     <option value="">-- Select --</option>
@@ -481,53 +482,138 @@
                 </select>
             </div>
 
-            <div class="col-md-3">
-                <label>Remarks</label>
-                <textarea name="Remark" id="remark" class="form-control"></textarea>
-                <span asp-validation-for="Remark" class="text-danger"></span>
+            <div class="col-md-4">
+                <label>Are you using any family planning method?</label>
+                <select name="IsUsingFamilyPlanning" id="IsUsingFamilyPlanning" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.yesNo)
+                    {
+                        <option value="@s.Value">@s.Text</option>
+                    }
+                </select>
             </div>
+            </div>
+
+        <div class="form-row">
+            <div class="col-md-4" id="methodDiv" style="display:none;">
+                <label>Which family planning method are you using?</label>
+                <select name="FamilyPlanningMethod" id="FamilyPlanningMethod" class="form-control">
+                    <option value="">-- Select --</option>
+                    @foreach (var s in ViewBag.familyplanning)
+                    {
+                        <option value="@s.Value">@s.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4" id="reasonDiv" style="display:none;">
+                <label>If no, Write the reason</label>
+                <textarea name="ReasonForNonUsage" id="ReasonForNonUsage" class="form-control"></textarea>
+                <span asp-validation-for="ReasonForNonUsage" class="text-danger"></span>
+            </div>
+
         </div>
+        <div class="form-row">
         <button type="button" id="btnSave" class="btn-save" onclick="saveconsent()">Save</button>
         <a href="@Url.Action("Index", "HomeVisit")" class="btn-back">Back</a>
-
+        </div>
     </form>
 </div>
 
 @section Scripts {
     <script>
-                document.addEventListener("DOMContentLoaded", function () {
+                        document.addEventListener("DOMContentLoaded", function () {
 
             const tableBody = document.getElementById("followupTableBody");
             const rows = tableBody ? tableBody.querySelectorAll("tr") : [];
 
             const followupCount = rows.length;
+            let followupCompleted = false;
 
-            console.log("Followup count:", followupCount);
+            rows.forEach(row => {
 
-            if (followupCount >= 4) {
+                const status = row.querySelector(".followupStatusHidden")?.value
+                            || row.dataset.status;
 
+                if (status == "2") {
+                    followupCompleted = true;
+                }
+
+            });
+
+            function disableControls() {
                 document.getElementById("followupDate").disabled = true;
                 document.getElementById("followupStatus").disabled = true;
-                document.getElementById("remark").disabled = true;
+                document.getElementById("IsUsingFamilyPlanning").disabled = true;
+                document.getElementById("FamilyPlanningMethod").disabled = true;
+                document.getElementById("ReasonForNonUsage").disabled = true;
                 document.getElementById("btnSave").disabled = true;
+            }
 
+            // Condition 1: Beneficiary started family planning
+            if (followupCompleted) {
+                disableControls();
+                alert("Followups completed. Beneficiary started using family planning method.");
+                return;
+            }
+
+            // Condition 2: Max followups reached
+            if (followupCount >= 4) {
+                disableControls();
                 alert("Maximum 3 followups already completed.");
             }
+
+        });
+
+                 document.addEventListener("DOMContentLoaded", function () {
+
+            const usingFP = document.getElementById("IsUsingFamilyPlanning");
+            const methodDiv = document.getElementById("methodDiv");
+            const reasonDiv = document.getElementById("reasonDiv");
+
+            function toggleFamilyPlanningFields() {
+
+                if (usingFP.value === "1") { // Yes
+                    methodDiv.style.display = "block";
+                    reasonDiv.style.display = "none";
+                    document.getElementById("ReasonForNonUsage").value = "";
+                }
+                else if (usingFP.value === "2") { // No
+                    methodDiv.style.display = "none";
+                    reasonDiv.style.display = "block";
+                    document.getElementById("FamilyPlanningMethod").value = "";
+                }
+                else {
+                    methodDiv.style.display = "none";
+                    reasonDiv.style.display = "none";
+                }
+            }
+
+            usingFP.addEventListener("change", toggleFamilyPlanningFields);
+
+            toggleFamilyPlanningFields(); // run on page load
+
         });
 
         function saveconsent() {
 
-            const model = {
-                LineListGuid: document.getElementById("LineListGuid")?.value,
+                   const model = {
+            LineListGuid: document.getElementById("LineListGuid")?.value,
+            HomeVistGuid: document.getElementById("HomeVistGuid")?.value,
 
-                HomeVistGuid : document.getElementById("HomeVistGuid")?.value,
+            FollowupDate: document.querySelector('[name="FollowupDate"]')?.value || null,
+            IsUsingFamilyPlanning: document.querySelector('[name="IsUsingFamilyPlanning"]')?.value || null,
 
-                FollowupStatus: document.querySelector('[name="FollowupStatus"]')?.value || null,
+            FamilyPlanningMethod: document.querySelector('[name="FamilyPlanningMethod"]')?.value || null,
+            ReasonForNonUsage: document.querySelector('[name="ReasonForNonUsage"]')?.value || null
+        };
 
-                FollowupDate: document.querySelector('[name="FollowupDate"]')?.value || null,
-
-                Remark: document.querySelector('[name="Remark"]')?.value || null
-            };
+        // condition
+        if (model.FamilyPlanningMethod && parseInt(model.FamilyPlanningMethod) > 1) {
+            model.FollowupStatus = 2;
+        } else {
+            model.FollowupStatus = 1;
+        }
 
             console.log("Posting followup:", model);
 
