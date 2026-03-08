@@ -185,7 +185,7 @@ namespace Vikalp.Controllers
         {
             if (model.IsConcent == 2)
             {
-                model.ConcentDate = null;
+                model.ConsentDate = null;
                 model.MobileNumber = null;
                 model.MobileHandledBy = null;
                 model.Signature = null;
@@ -194,7 +194,12 @@ namespace Vikalp.Controllers
                 return Json(new { success = false, message = "Invalid data" });
 
             int UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            await _service.SaveConsentAsync(model, UserId);
+            var result = await _service.SaveConsentAsync(model, UserId);
+
+            if (!result)
+            {
+                return Json(new { success = false, message = "Failed to save consent." });
+            }
 
             return Json(new { success = true });
         }

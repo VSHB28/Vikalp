@@ -309,10 +309,14 @@
         <div class="fh-cardBody">
             <div class="fh-cardHeader d-flex gap-5">
                 <h2 class="mb-3">Edit Details</h2>
-
-                <div class="col-md-4 d-flex">
+                @{
+                    var today = DateTime.Today;
+                    var minDate = today.AddDays(-5).ToString("yyyy-MM-dd");
+                    var maxDate = today.ToString("yyyy-MM-dd");
+                }
+                <div class="col-md-4 d-flex d-none">
                     <label>Line Listing Date </label>
-                    <input type="date" class="form-control" id="CreatedOn" value="@(Model.CreatedOn.HasValue? Model.CreatedOn.Value.ToString("yyyy-MM-dd") : "")" />
+                    <input type="date" class="form-control" id="CreatedOn" min="@minDate" max="@maxDate" value="@(Model.CreatedOn.HasValue? Model.CreatedOn.Value.ToString("yyyy-MM-dd") : "")" />
                 </div>
             </div>
         </div>

@@ -305,12 +305,11 @@ namespace Vikalp.Service
 
                 cmd.Parameters.AddWithValue("@LineListGuid", model.LineListGuid);
                 cmd.Parameters.AddWithValue("@IsConsentGiven", model.IsConcent);
-                cmd.Parameters.AddWithValue("@ConsentSignature",
-                    (object?)model.Signature ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@IsConsetHardCopy", model.IsCollectedHardCopy);
                 cmd.Parameters.AddWithValue("@CreatedBy", userId);
-                cmd.Parameters.AddWithValue("@ConsentDate", model.ConcentDate);
-                cmd.Parameters.AddWithValue("@MobileHandledBy", model.MobileHandledBy);
-                cmd.Parameters.AddWithValue("@MobileNumber", model.MobileNumber);
+                cmd.Parameters.AddWithValue("@MobileHandledBy", model.MobileHandledBy ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ConsentDate", model.ConsentDate ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@MobileNumber", model.MobileNumber ?? (object)DBNull.Value);
 
                 await conn.OpenAsync();
                 await cmd.ExecuteNonQueryAsync();

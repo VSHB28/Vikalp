@@ -371,14 +371,28 @@ namespace Vikalp.Controllers.Api
                     cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
 
                     conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
+                    var results = new List<object>();
 
-                return Ok(new
-                {
-                    statusCode = 200,
-                    message = "Sync completed successfully"
-                });
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new
+                            {
+                                consentGuid = reader["ConsentGuid"]?.ToString(),
+                                actionTaken = reader["ActionTaken"]?.ToString(),
+                                statusMsg = reader["StatusMsg"]?.ToString()
+                            });
+                        }
+                    }
+
+                    return Ok(new
+                    {
+                        statusCode = 200,
+                        message = "Sync completed successfully",
+                        results
+                    });
+                }
             }
             catch (SqlException ex)
             {

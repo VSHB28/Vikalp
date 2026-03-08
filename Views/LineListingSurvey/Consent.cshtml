@@ -491,16 +491,22 @@
                 }
                 <div class="form-group">
                     <label>Date</label>
-                    <input name="ConcentDate" type="date" max="@maxDate" class="form-control" />
+                    <input name="ConsentDate" type="date" max="@maxDate" class="form-control" />
                 </div>
-                <div class="form-group">
-                    <label>Signature</label>
-                    <input type="text" name="Signature" id="Signature" class="all-form-input" placeholder="Enter name" />
-                    @* <div class="signature-box">
-                        <i class="fa-solid fa-camera"></i>
-                        <div style="font-size: 10px; margin-top: 5px;">Tap to Upload</div>
-                        <input name="Signature" type="file" style="display: none;" id="sig-upload">
-                    </div> *@
+                <div class="col-md-6 mt-4">
+                    <div class="form-check">
+                        <input type="hidden" name="IsCollectedHardCopy" value="0" />
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="IsCollectedHardCopy"
+                               name="IsCollectedHardCopy"
+                               value="1"
+                               @(Model.IsCollectedHardCopy == 1 ? "checked" : "")>
+
+                        <label class="form-check-label" for="IsCollectedHardCopy">
+                            Hard Copy Of Consent Form Collected
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -524,13 +530,21 @@
             LineListGuid: document.getElementById("LineListGuid").value,
             IsConcent: isConsentEl.value,
         };
-
-        if (isConsentEl.value === "1") {
-            model.ConsentDate = document.querySelector('#ConsentDate')?.value || null;
+                if (isConsentEl.value === "1") {
+            model.ConsentDate = document.querySelector('[name="ConsentDate"]')?.value || null;
             model.MobileNumber = document.querySelector('#MobileNumber')?.value || null;
             model.MobileHandledBy = document.querySelector('#MobileHandledBy')?.value || null;
-            model.Signature = document.querySelector('#Signature')?.value || null;
+
+            const hardCopy = document.querySelector('#IsCollectedHardCopy');
+            model.IsCollectedHardCopy = hardCopy && hardCopy.checked ? 1 : 0;
         }
+        // if (isConsentEl.value === "1") {
+        //     model.ConsentDate = document.querySelector('#ConsentDate')?.value || null;
+        //     model.MobileNumber = document.querySelector('#MobileNumber')?.value || null;
+        //     model.MobileHandledBy = document.querySelector('#MobileHandledBy')?.value || null;
+        //         const hardCopy = document.querySelector('#IsCollectedHardCopy');
+        // model.IsCollectedHardCopy = hardCopy && hardCopy.checked ? 1 : 0;
+        // }
 
             // const model = {
             //     LineListGuid: document.getElementById("LineListGuid").value,

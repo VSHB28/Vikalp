@@ -87,8 +87,6 @@ public class HomeVisitController : Controller
 
         result = await _service.SaveHomeVisitAsync(model, userId);
 
-        result = await _service.SaveHomeVisitAsync(model, userId);
-
         return Json(new { success = result });
     }
 

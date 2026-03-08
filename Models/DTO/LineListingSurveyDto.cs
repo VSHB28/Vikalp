@@ -138,9 +138,9 @@
          public int? MobileHandledBy { get; set; }
         // Editable
         public int? IsConcent { get; set; }
-        public DateTime? ConcentDate { get; set; }
+        public DateTime? ConsentDate { get; set; }
         public string? Signature { get; set; }
-
+        public int? IsCollectedHardCopy { get; set; }
         public int? UpdatedBy { get; set; }
 
         public int? StateId { get; set; }
