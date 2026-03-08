@@ -6,43 +6,55 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container py-4">
+<div class="container py-2">
     <div class="card">
         <div class="card-body">
 
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">Edit Block</h3>
-                <a href="/LocationBlock/Index" class="btn btn-secondary">← Back to List</a>
+            
+
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Edit Block</h3>
+                    <div class="um-toolbar">
+                        <a href="/LocationBlock/Index" class="btn btn-secondary">← Back to List</a>
+                    </div>
+                </div>
             </div>
 
             <!-- Form -->
-            <form method="post" action="/LocationBlock/Edit" class="row g-3">
+            <form method="post" action="/LocationBlock/Edit" class="row g-3 mt-2">
                 @Html.AntiForgeryToken()
 
                 <input type="hidden" name="BlockId" value="@Model.BlockId" />
-             
-         
-                <select id="stateDropdown" name="RegionId" class="form-select">
-                    <option value="">Select State</option>
-                    @foreach (var s in ViewBag.States)
-                    {
-                        <option value="@s.Id" @(s.Id == ViewBag.SelectedStateId ? "selected" : "")>
-                            @s.Name
-                        </option>
-                    }
-                </select>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">State Name</label>
+                        <select id="stateDropdown" name="RegionId" class="form-select">
+                            <option value="">Select State</option>
+                            @foreach (var s in ViewBag.States)
+                            {
+                                <option value="@s.Id" @(s.Id == ViewBag.SelectedStateId ? "selected" : "")>
+                                    @s.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
 
-
-                <select id="districtDropdown" name="DistrictId" class="form-select">
-                    <option value="">Select District</option>
-                </select>
-
-
-                <div class="col-md-3">
-                    <label class="form-label">Block Name</label>
-                    <input name="BlockName" class="form-control" value="@Model.BlockName" />
+                    <div class="col-md-4">
+                        <label class="form-label">District Name</label>
+                        <select id="districtDropdown" name="DistrictId" class="form-select">
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Block Name</label>
+                        <input name="BlockName" class="form-control" value="@Model.BlockName" />
+                        
+                    </div>
                 </div>
+
+
+              
 
                 <div class="col-md-3">
                     <label class="form-label">Block Code</label>
@@ -52,22 +64,22 @@
                 <input type="hidden" name="IsActive" value="false" />
                 <input type="hidden" name="IsAspirational" value="false" />
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Is Active</label><br />
                     <input type="checkbox" name="IsActive" value="true"
                            @(Model.IsActive ? "checked" : "") />
                 </div>
 
  
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Aspirational</label><br />
                     <input type="checkbox" name="IsAspirational" value="true"
                            @(Model.IsAspirational ? "checked" : "") />
                 </div>
 
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <a href="/LocationBlock/Index" class="btn btn-secondary ms-2">Cancel</a>
+                    <button type="submit" class="btn btn-save">Update</button>
+                    <a href="/LocationBlock/Index" class="btn btn-back ms-2">Cancel</a>
                 </div>
             </form>
 

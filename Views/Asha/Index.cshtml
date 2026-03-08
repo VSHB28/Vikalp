@@ -64,6 +64,37 @@
 
             <hr />
 
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-3">
+                    <select id="stateDropdown" class="form-control form-control-sm">
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="districtDropdown" class="form-control form-control-sm">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="blockDropdown" class="form-control form-control-sm">
+                        <option value="">Select Block</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="facilityDropdown" class="form-control form-control-sm">
+                        <option value="">Select Facility</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover um-table align-middle">
 
@@ -112,11 +143,13 @@
                                     <a href="/Asha/Edit/@item.AshaId" class="btn btn-sm btn-outline-primary" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="/Asha/Delete/@item.AshaId"
-                                       class="btn btn-sm btn-outline-danger"
-                                       title="Delete">
+                                
+                                    <button type="button"
+                                            onclick="deleteAsha(@item.AshaId)"
+                                            class="btn btn-sm btn-outline-danger"
+                                            title="Delete">
                                         <i class="bi bi-trash"></i>
-                                    </a>
+                                    </button>
 
                                 </td>
 
@@ -133,4 +166,216 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+<script>
+    $(document).ready(function () {
+
+        $('#stateDropdown').change(function () {
+
+            let stateId = $(this).val();
+
+            resetBelow('state');
+
+            if (!stateId) {
+                filterAshaTable();
+                return;
+            }
+
+            $.ajax({
+                url: '/Asha/GetDistricts',
+                type: 'GET',
+                data: { stateId: stateId },
+                success: function (data) {
+
+                    $.each(data, function (i, d) {
+                        $('#districtDropdown').append('<option value="' + d.id + '">' + d.name + '</option>');
+                    });
+
+                    filterAshaTable();
+                }
+            });
+
+        });
+
+        $('#districtDropdown').change(function () {
+
+            let districtId = $(this).val();
+
+            resetBelow('district');
+
+            if (!districtId) {
+                filterAshaTable();
+                return;
+            }
+
+            $.getJSON('/Asha/GetBlocks',
+                { districtId: districtId },
+                function (data) {
+
+                    $.each(data, function (i, b) {
+                        $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
+                    });
+
+                    filterAshaTable();
+                });
+
+        });
+
+        $('#blockDropdown').change(function () {
+
+            let blockId = $(this).val();
+
+            resetBelow('block');
+
+            if (!blockId) {
+                filterAshaTable();
+                return;
+            }
+
+            $.getJSON('/Asha/GetFacilities',
+                { blockId: blockId },
+                function (data) {
+
+                    $.each(data, function (i, f) {
+                        $('#facilityDropdown').append(`<option value="${f.id}">${f.name}</option>`);
+                    });
+
+                    filterAshaTable();
+                });
+
+        });
+
+        $('#facilityDropdown').change(function () {
+
+            filterAshaTable();
+
+        });
+
+        function resetBelow(level) {
+
+            if (level === 'state') {
+
+                $('#districtDropdown').html('<option value="">Select District</option>');
+                $('#blockDropdown').html('<option value="">Select Block</option>');
+                $('#facilityDropdown').html('<option value="">Select Facility</option>');
+            }
+
+            if (level === 'district') {
+
+                $('#blockDropdown').html('<option value="">Select Block</option>');
+                $('#facilityDropdown').html('<option value="">Select Facility</option>');
+            }
+
+            if (level === 'block') {
+
+                $('#facilityDropdown').html('<option value="">Select Facility</option>');
+            }
+        }
+
+
+        // FILTER ASHA TABLE
+        function filterAshaTable() {
+
+            let stateId = $('#stateDropdown').val();
+            let districtId = $('#districtDropdown').val();
+            let blockId = $('#blockDropdown').val();
+            let facilityId = $('#facilityDropdown').val();
+
+            $.ajax({
+                url: '/Asha/GetByFilter',
+                type: 'GET',
+                data: {
+                    stateId: stateId,
+                    districtId: districtId,
+                    blockId: blockId,
+                    facilityId: facilityId
+                },
+                success: function (data) {
+
+                    let tbody = $('.um-table tbody');
+                    tbody.empty();
+
+                    if (data.length > 0) {
+
+                        $.each(data, function (i, item) {
+
+                            let row = `<tr>
+                                <td>${i + 1}</td>
+                                <td class="fw-semibold">${item.ashaName}</td>
+                                <td>${item.ashaMobile}</td>
+                                <td class="text-center">
+                                    <span class="badge ${item.isActive ? 'bg-success':'bg-secondary'}">
+                                        ${item.isActive ? 'Active':'Inactive'}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge ${item.attendedVCAT ? 'bg-info':'bg-secondary'}">
+                                        ${item.attendedVCAT ? 'Yes':'No'}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="/Asha/Edit/${item.ashaId}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>`;
+
+                            tbody.append(row);
+                        });
+
+                    } else {
+
+                        tbody.append('<tr><td colspan="6" class="text-center">No record found</td></tr>');
+
+                    }
+                }
+            });
+        }
+
+    });
+
+
+    function deleteAsha(id) {
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This Asha will be deleted',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: '/Asha/DeleteConfirmed',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (res) {
+
+                        if (res.success) {
+                            Swal.fire('Deleted!', 'Asha deleted successfully.', 'success')
+                                .then(() => {
+                                    window.location.href = "/Asha/Index";
+                                });
+                        }
+
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'Could not delete Asha.', 'error');
+                    }
+                });
+
+            }
+
+        });
+    }
+
+
+</script>

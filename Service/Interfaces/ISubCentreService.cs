@@ -1,6 +1,4 @@
-﻿// Service/SubCentreService.cs
-
-using Vikalp.Models.DTO;
+﻿using Vikalp.Models.DTO;
 
 public interface ISubCentreService
 {

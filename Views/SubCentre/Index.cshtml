@@ -432,11 +432,15 @@
 
             @Html.AntiForgeryToken()
             <input type="hidden" id="hdnSubCenterId" />
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">Sub Centre </h3>
-                <a href="/SubCentre/Create" class="btn btn-add btn-primary">
-                    Add Sub Centre
-                </a>
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Sub Centre </h3>
+                    <div class="um-toolbar">
+                        <a href="/SubCentre/Create" class="btn btn-add btn-primary">
+                            Add Sub Centre
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <hr />
@@ -478,9 +482,7 @@
                             <th>#</th>
                             <th>Facility Name</th>
                             <th>Sub Centre</th>
-                            <th>NIN Number</th>
-                            @* <th>Learning Site</th>
-                            <th>Status</th> *@
+                            <th>NIN Number</th>                          
                             <th>+ Info</th>
                            <th>+ Profile</th>
                             <th>Actions</th>
@@ -511,8 +513,14 @@
                             <div class="fp-section-card">
                                 <div class="fp-section-header">
                                     <div class="fp-section-icon"><i class="bi bi-geo-alt-fill"></i></div>
-                                  
+                                    <div>
+                                        <div class="fp-section-title">Catchment Population</div>
+                                        <div class="fp-section-subtitle">Coverage of PHC and linked units</div>
+                                    </div>
 
+                                   
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6 mb-0">
                                         <label for="PopulationCoveredbyHWC" class="form-label">
                                             <i class="bi bi-house-heart-fill fp-label-icon"></i> Population covered by HWC
@@ -609,27 +617,35 @@
                                         </label>
                                         <input type="text" name="NearestFacilityReferral" id="NearestFacilityReferral" class="form-control" placeholder="Enter facility name" />
                                     </div>
+                                  
+
                                     <div class="col-md-4 mb-0">
                                         <label for="DistancefromPHC" class="form-label">
                                             <i class="bi bi-arrow-left-right fp-label-icon"></i> Distance of referral facility from PHC
                                         </label>
-                                        <input name="DistancefromPHC" id="DistancefromPHC" type="number" class="form-control" placeholder="Distance (in km)" />
+                                        <input name="DistancefromPHC" id="DistancefromPHC" type="number" class="form-control" step="0.01"
+                                               oninput="if(this.value.split('.')[0].length > 2) this.value = this.value.slice(0,2);" placeholder="Distance (in km)" />
 
                                     </div>
+
+
                                     <div class="col-md-4 mb-0">
                                         <label for="DistancefromDH" class="form-label">
                                             <i class="bi bi-signpost-split fp-label-icon"></i> Distance from DH
                                         </label>
-                                        <input name="DistancefromDH" id="DistancefromDH" type="number" class="form-control" placeholder="Distance (in km)" />
-                                    </div>
+                                        <input name="DistancefromDH" id="DistancefromDH" type="number" class="form-control" step="0.01"
+                                               oninput="if(this.value.split('.')[0].length > 2) this.value = this.value.slice(0,2);" placeholder="Distance (in km)" />
+                                    </div> 
+
+
                                 </div>
                             </div>
 
-                        </div><!-- /.modal-body -->
+                        </div>
 
                         <div class="modal-footer">
-                      @*       <button type="button" class="btn btn-save" id="modalOkBtn">SAVE</button> *@
-                            <button type="button" class="btn btn-save" id="saveBtn">SAVE</button>
+                       <button type="button" class="btn btn-save" id="modalOkBtn">SAVE</button> 
+
                         </div>
 
                     </div>
@@ -645,7 +661,6 @@
                             <h5 class="modal-title" id="hrModalTitle">Add HR</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-
 
                         <div class="modal-body">
                             <form>
@@ -666,8 +681,8 @@
                                                 <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
                                                 <select name="DesignationId" id="DesignationId" class="form-select">
                                                     <option value="">Select</option>
-                                                
 
+                                                    @if (ViewBag.designation != null)
                                                     @foreach (var s in ViewBag.designation)
                                                     {
                                                         if (s.Value == "1" || s.Value == "8")
