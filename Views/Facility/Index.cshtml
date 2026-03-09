@@ -567,8 +567,9 @@
                                         <div class="fp-section-subtitle">Delivery point &amp; FP space</div>
                                     </div>
                                 </div>
+
                                 <div class="row">
-                                    <div class="col-md-6 mb-0">
+                                 <div class="col-md-6 mb-0">
                                         <label for="IsDeliveryPoint" class="form-label">
                                             <i class="bi bi-hospital-fill fp-label-icon"></i> Is Delivery Point
                                         </label>
@@ -579,7 +580,9 @@
                                                 <option value="@s.Value">@s.Text</option>
                                             }
                                         </select>
-                                    </div>
+                                    </div>  
+                                   
+
                                     <div class="col-md-6 mb-0">
                                         <label for="IsSeparateSpaceforFp" class="form-label">
                                             <i class="bi bi-heart-pulse-fill fp-label-icon"></i> Is Separate Space for FP
@@ -611,12 +614,19 @@
                                         </label>
                                         <input name="AverageOPDperDay" id="AverageOPDperDay" type="number" class="form-control" placeholder="Enter average OPD" />
                                     </div>
-                                    <div class="col-md-6 mb-0">
+                                 
+                                    <div class="col-md-6 mb-0" id="avgDeliveryDiv">
                                         <label for="AvgdeliveryperMonth" class="form-label">
                                             <i class="bi bi-baby fp-label-icon"></i> Average delivery per month
                                         </label>
-                                        <input name="AvgdeliveryperMonth" id="AvgdeliveryperMonth" type="number" class="form-control" placeholder="Enter average" />
+                                        <input name="AvgdeliveryperMonth"
+                                               id="AvgdeliveryperMonth"
+                                               type="number"
+                                               class="form-control"
+                                               placeholder="Enter average" />
                                     </div>
+
+
                                 </div>
                             </div>
 
@@ -686,29 +696,48 @@
                                                 <div class="section-subtitle">Key HR profile details</div>
                                             </div>
                                         </div>
+
+
                                         <div class="form-grid">
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
-                                                <input name="Name" type="text" id="Name" class="form-control" required />
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
-                                                <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
-                                            </div>
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
                                                 <select name="DesignationId" id="DesignationId" class="form-select">
                                                     <option value=""> Select  </option>
-                                                 
+
                                                     @foreach (var s in ViewBag.designation)
                                                     {
-                                                        if (s.Value != "8")  
+                                                        if (s.Value != "8")
                                                         {
                                                             <option value="@s.Value">@s.Text</option>
                                                         }
                                                     }
                                                 </select>
                                             </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-check-circle label-icon"></i><span>Post Occupied</span></label>
+                                                <select name="Status" id="Status" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
+                                                <input name="Name" type="text" id="Name" class="form-control" required />
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
+                                                <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
+                                            </div>
+
+                                          
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-gender-ambiguous label-icon"></i><span>Gender</span></label>
                                                 <select name="GenderId" id="GenderId" class="form-select">
@@ -723,7 +752,7 @@
                                     </div>
 
                                     <!-- Training Details -->
-                                    <div class="section-card">
+                                    <div class="section-card" id="trainingSection">
                                         <div class="section-header">
                                             <div class="section-icon"><i class="bi bi-mortarboard-fill"></i></div>
                                             <div>
@@ -896,255 +925,6 @@
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-         // ---------------- OPEN MODAL ----------------
-
-    //     let selectedFacilityId = 0;
-    //     let selectedProfileId = 0;
-    //     let selectedHrId = 0;
-
-    //     $(document).on("click", ".addfacility", function () {
-
-    //         selectedFacilityId = $(this).data("facility-id");
-    //         selectedProfileId = $(this).data("profile-id");
-
-    //         if (selectedProfileId && selectedProfileId > 0) {
-
-    //             // EDIT MODE
-    //             $.getJSON('/Facility/GetFacilityProfile',
-    //                 { profileId: selectedProfileId },
-    //                 function (data) {
-
-    //                     $("#PopulationCoveredbyPHC").val(data.populationCoveredbyPHC);
-    //                     $("#NumberofHSC").val(data.numberofHSC);
-    //                     $("#PopulationCoveredPHC_HWC").val(data.populationCoveredPHC_HWC);
-    //                     $("#PopulationCoveredbyHWC").val(data.populationCoveredbyHWC);
-    //                     $("#AverageOPDperDay").val(data.averageOPDperDay);
-    //                     $("#NearestFacilityReferral").val(data.nearestFacilityReferral);
-    //                     $("#DistancefromPHC").val(data.distancefromPHC);
-    //                     $("#IsDeliveryPoint").val(data.isDeliveryPoint);
-    //                     $("#AvgdeliveryperMonth").val(data.avgdeliveryperMonth);
-    //                     $("#DistancefromDH").val(data.distancefromDH);
-    //                     $("#IsSeparateSpaceforFp").val(data.isSeparateSpaceforFp);
-
-    //                     $("#facilityprofileModal").modal("show");
-    //                 });
-    //         }
-    //         else {
-    //             // ADD MODE
-    //             clearModal();
-    //             $("#facilityprofileModal").modal("show");
-    //         }
-
-
-
-
-    //     });
-
-    //         function clearModal() {
-    //         $("#facilityprofileModal").find("input, select").val('');
-    //         selectedProfileId = 0;
-    //     }
-
-
-
-    //     $(document).on("click", ".addhrstatus", function () {
-
-    //         selectedFacilityId = $(this).data("facility-id");
-    //         selectedHrId = $(this).data("hr-id");
-
-    //         if (selectedHrId && selectedHrId > 0) {
-
-    //             // EDIT MODE
-    //             $.getJSON('/Facility/GetHrStatus',
-    //                 { hrId: selectedHrId },
-    //                 function (data) {
-
-    //                     $("#HrId").val(data.hrId);
-    //                     $("#FacilityId").val(data.facilityId);
-    //                     $("#Name").val(data.name);
-    //                     $("#Mobile").val(data.mobile);
-    //                     $("#DesignationId").val(data.designationId);
-    //                     $("#GenderId").val(data.genderId);
-
-    //                     $("#TrainedAntaraGovt").val(data.trainedAntaraGovt);
-    //                     $("#TrainedAntaraIDF").val(data.trainedAntaraIDF);
-    //                     $("#AttendentVCAT").val(data.attendentVCAT);
-    //                     $("#TrainedInIUCD").val(data.trainedInIUCD);
-    //                     $("#TrainedInFPLMIS").val(data.trainedInFPLMIS);
-
-    //                     $("#hrStatusModal").modal("show");
-    //                 });
-    //         }
-    //         else {
-    //             // ADD MODE
-    //             clearhrModal();
-    //             $("#hrStatusModal").modal("show");
-    //         }
-    //     });
-
-
-    //     function clearhrModal() {
-    //         $("#hrStatusModal").find("input, select").val('');
-    //         selectedHrId = 0;
-    //     }
-
-    // $(document).on("click", ".addhrstatus", function () {
-
-    //     let facilityId = $(this).data("facility-id");
-    //     let hrId = $(this).data("hr-id");
-
-    //     //clearhrModal();
-
-    //     $("#FacilityId").val(facilityId);
-
-    //     if (hrId && hrId > 0) {
-    //         // EDIT MODE
-    //         $("#hrModalTitle").text("Edit HR");
-    //     }
-    //     else {
-    //         // ADD MODE
-    //         $("#hrModalTitle").text("Add HR");
-    //         $("#HrId").val(0);
-    //     }
-
-    //     $("#hrStatusModal").modal("show");
-    // });
-
-    //             $(document).on("click", ".addfacility", function () {
-
-    //             let facilityId = $(this).data("facility-id");
-    //             let ptofileId = $(this).data("profile-id");
-
-    //             $("#FacilityId").val(facilityId);
-
-    //             if (ptofileId && ptofileId > 0) {
-    //                 // EDIT MODE
-    //                 $("#profileModalTitle").text("Edit Information");
-    //             }
-    //             else {
-    //                // ADD MODE
-    //                $("#profileModalTitle").text("Add Information");
-    //                $("#profileId").val(0);
-    //             }
-
-    //                 $("#facilityprofileModal").modal("show");
-    //         });
-
-    //     function deleteFacility(id) {
-    //         Swal.fire({
-    //             title: 'Are you sure?',
-    //             text: 'This facility will be deleted',
-    //             icon: 'warning',
-    //             showCancelButton: true,
-    //             confirmButtonText: 'Yes, delete it!'
-    //         }).then((result) => {
-    //             if (result.isConfirmed) {
-    //                 $.ajax({
-    //                     url: '/Facility/DeleteConfirmed',
-    //                     type: 'POST',
-    //                     data: {
-    //                         id: id,
-    //                         __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-    //                     },
-    //                     success: function () {
-    //                         Swal.fire('Deleted!', 'Facility deleted.', 'success');
-    //                         $('#blockDropdown').change();
-    //                     },
-    //                     error: function () {
-    //                         Swal.fire('Error!', 'Could not delete facility.', 'error');
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //     }
-
-    //     $(document).on("click", "#modalOkBtn", function () {
-
-    //             let model = {
-    //     ProfileId: selectedProfileId || null,
-    //     FacilityId: selectedFacilityId,
-    //     PopulationCoveredbyPHC: parseInt($("#PopulationCoveredbyPHC").val()) || 0,
-    //     NumberofHSC: parseInt($("#NumberofHSC").val()) || 0,
-    //     PopulationCoveredPHC_HWC: parseInt($("#PopulationCoveredPHC_HWC").val()) || null,
-    //     PopulationCoveredbyHWC: parseInt($("#PopulationCoveredbyHWC").val()) || null,
-    //     AverageOPDperDay: parseInt($("#AverageOPDperDay").val()) || null,
-    //     NearestFacilityReferral: $("#NearestFacilityReferral").val() || "",
-    //     DistancefromPHC: parseFloat($("#DistancefromPHC").val()) || null,
-    //     IsDeliveryPoint:  parseInt($("#IsDeliveryPoint").val()) || null,
-    //     AvgdeliveryperMonth: parseInt($("#AvgdeliveryperMonth").val()) || null,
-    //     DistancefromDH: parseFloat($("#DistancefromDH").val()) || null,
-    //     IsSeparateSpaceforFp:parseInt($("#IsSeparateSpaceforFp").val()) || null
-    // };
-
-    //         $.ajax({
-    //             url: '/Facility/SaveFacilityProfile',
-    //             type: 'POST',
-    //             contentType: 'application/json',
-    //             data: JSON.stringify(model),
-    //             success: function () {
-    //                 Swal.fire('Success', 'Saved successfully!', 'success');
-    //                 $("#facilityprofileModal").modal('hide');
-    //                 $('#blockDropdown').change();
-    //             }
-    //         });
-    //     });
-
-
-    //     $(document).on("click", "#btnSaveHr", function () {
-
-    //         let modelhr = {
-    //             HrId: selectedHrId || null,
-    //             FacilityId: selectedFacilityId,
-    //             Name: $("#Name").val(),
-    //             Mobile: $("#Mobile").val(),
-    //             DesignationId: $("#DesignationId").val(),
-    //             GenderId: $("#GenderId").val(),
-    //             TrainedAntaraGovt: $("#TrainedAntaraGovt").val(),
-    //             TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
-    //             AttendentVCAT: $("#AttendentVCAT").val(),
-    //             TrainedInIUCD: $("#TrainedInIUCD").val(),
-    //             TrainedInFPLMIS: $("#TrainedInFPLMIS").val()
-    //         };
-
-    //         $.ajax({
-    //             url: '/Facility/SaveHrStatus',
-    //             type: 'POST',
-    //             contentType: 'application/json',
-    //             data: JSON.stringify(modelhr),
-    //             success: function () {
-    //                 Swal.fire('Success', 'Saved successfully!', 'success');
-    //                 $("#hrStatusModal").modal('hide');
-    //                 $('#blockDropdown').change();
-    //             }
-    //         });
-    //     });            
-
     // ---------------- GLOBAL VARIABLES ----------------
     let selectedFacilityId = 0;
     let selectedProfileId = 0; 
@@ -1253,6 +1033,95 @@
             }
         });
     });
+
+
+    function showInfo(item){
+        $("#hdnSubCenterId").val(item);
+        $("#facilityprofileModal").modal("show");
+    }
+
+
+
+
+
+        $(document).ready(function () {
+
+        $("#avgDeliveryDiv").hide();
+
+        $(document).on("change", "#IsDeliveryPoint", function () {
+
+            var val = $(this).val();
+
+            if (val == "1") {
+                $("#avgDeliveryDiv").show();
+            } else {
+                $("#avgDeliveryDiv").hide();
+                $("#AvgdeliveryperMonth").val("");
+            }
+
+        });
+
+    });
+
+
+      function handleStatusChange() {
+
+        var status = document.getElementById("Status").value;
+        console.log("Selected Status:", status);
+
+        var name = document.getElementById("Name");
+        var mobile = document.getElementById("Mobile");
+        var gender = document.getElementById("GenderId");
+
+        var trainingSection = document.getElementById("trainingSection");
+        var saveBtn = document.getElementById("btnSaveHr");
+
+        if (status == "1") {   // Yes
+
+            name.disabled = true;
+            mobile.disabled = true;
+            gender.disabled = true;
+
+            trainingSection.style.display = "none";
+
+            if (saveBtn) {
+                saveBtn.style.display = "none";
+            }
+
+        } else {
+
+            name.disabled = false;
+            mobile.disabled = false;
+            gender.disabled = false;
+
+            trainingSection.style.display = "block";
+
+            if (saveBtn) {
+                saveBtn.style.display = "inline-block";
+            }
+        }
+    }
+
+
+        $(document).on("change", "#Status", function () {
+        handleStatusChange();
+    });
+
+
+      document.addEventListener("DOMContentLoaded", function () {
+
+        var statusDropdown = document.getElementById("Status");
+
+        if (statusDropdown) {
+            statusDropdown.addEventListener("change", handleStatusChange);
+        }
+
+        handleStatusChange();
+    });
+
+
+
+
     // ---------------- DELETE FUNCTION ----------------
 
     function deleteFacility(id) {
@@ -1279,5 +1148,8 @@
             }
         });
     }
+
+
+
 </script> 
 
