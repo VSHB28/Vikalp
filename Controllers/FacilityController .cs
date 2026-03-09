@@ -35,8 +35,8 @@ public class FacilityController : Controller
             ? dropdowns["Gender"]
             : new List<SelectListItem>();
 
-        ViewBag.yesNo = dropdowns.ContainsKey("YesNo")
-            ? dropdowns["YesNo"]
+        ViewBag.yesNoNa = dropdowns.ContainsKey("YesNoNa")
+            ? dropdowns["YesNoNa"]
             : new List<SelectListItem>();
         return View();
     }
@@ -73,7 +73,7 @@ public class FacilityController : Controller
         var dropdowns = await _dropdownService.GetCommonDropdownsfamilyplanningAsync(userId: 1, languageId: 1);
         ViewBag.designation = dropdowns["Designation"];
         ViewBag.gender = dropdowns["Gender"];
-        ViewBag.yesNo = dropdowns["YesNo"];
+        ViewBag.yesNoNa = dropdowns["YesNoNa"];
         return Json(result);
     }
 

@@ -138,24 +138,32 @@ public class HomeVisitService : IHomeVisitService
         
     }
 
-    public async Task<HomeVisitDTO?> GetByIdAsync(Guid linelistguid, int userId)
+    public async Task<HomeVisitDTO?> GetByIdAsync(string linelistguid, int userId)
     {
-        using var con = GetConnection();
-        using var cmd = new SqlCommand("sp_getHomeVisitByguid", con);
-        cmd.CommandType = CommandType.StoredProcedure;
-
-        cmd.Parameters.AddWithValue("@UserId", userId);
-        cmd.Parameters.AddWithValue("@linelistguid", linelistguid);
-
-        await con.OpenAsync();
-        using var dr = await cmd.ExecuteReaderAsync();
-
-        if (await dr.ReadAsync())
+        try
         {
-            return MapReaderToHomeVisitDto(dr);
-        }
+            using var con = GetConnection();
+            using var cmd = new SqlCommand("sp_getHomeVisitByguid", con);
+            cmd.CommandType = CommandType.StoredProcedure;
 
-        return null;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@linelistguid", linelistguid);
+
+            await con.OpenAsync();
+            using var dr = await cmd.ExecuteReaderAsync();
+
+            if (await dr.ReadAsync())
+            {
+                return MapReaderToHomeVisitDto(dr);
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        
     }
 
     private HomeVisitDTO MapReaderToHomeVisitDto(SqlDataReader dr)
@@ -210,7 +218,7 @@ public class HomeVisitService : IHomeVisitService
             SubCenterName = dr["SubCenterName"]?.ToString()
         };
     }
-    public async Task<List<HomevisitFollowUpDto>> GetFollowUpHistoryAsync(Guid linelistguid, int userId)
+    public async Task<List<HomevisitFollowUpDto>> GetFollowUpHistoryAsync(string linelistguid, int userId)
     {
         try
         {
