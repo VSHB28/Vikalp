@@ -623,7 +623,16 @@
                                                id="AvgdeliveryperMonth"
                                                type="number"
                                                class="form-control"
-                                               placeholder="Enter average" />
+                                               placeholder="Enter average"
+                                               max="99999"
+                                               oninput="if(this.value.length > 5) this.value = this.value.slice(0,5);"
+                                               required />
+
+                                        <span class="text-danger"
+                                              data-valmsg-for="AvgdeliveryperMonth"
+                                              data-valmsg-replace="true"></span>
+
+
                                     </div>
 
 
@@ -727,7 +736,13 @@
                                             </div>
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
-                                                <input name="Name" type="text" id="Name" class="form-control" required />
+                                                <input name="Name"
+                                                       type="text"
+                                                       id="Name"
+                                                       class="form-control"
+                                                       maxlength="50"
+                                                       required
+                                                       onkeypress="return /[a-zA-Z\s]/.test(event.key)" />
                                             </div>
 
 
@@ -802,6 +817,26 @@
                                                     }
                                                 </select>
                                             </div>
+
+
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    <i class="bi bi-capsule-pill label-icon"></i>
+                                                    <span>Trained In CACS / MMA</span>
+                                                </label>
+                                                <select name="TrainedInCACS_MMA" id="TrainedInCACS_MMA" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNo)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+
+
+
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-clipboard-check label-icon"></i><span>Attended VCAT</span></label>
                                                 <select name="AttendentVCAT" id="AttendentVCAT" class="form-select">
@@ -1018,7 +1053,8 @@
             TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
             AttendentVCAT: $("#AttendentVCAT").val(),
             TrainedInIUCD: $("#TrainedInIUCD").val(),
-            TrainedInFPLMIS: $("#TrainedInFPLMIS").val()
+            TrainedInFPLMIS: $("#TrainedInFPLMIS").val(),
+            TrainedInCACS_MMA: $("#TrainedInCACS_MMA").val()
         };
 
         $.ajax({
