@@ -203,7 +203,6 @@
                                     <form asp-controller="AshaOrientation"
                                           asp-action="Delete"
                                           asp-route-id="'@item.VenueGuid'"
-                                          method="post"
                                           class="d-inline"
                                           onclick="deleteOrientation(@item.VenueId)">
                                         @Html.AntiForgeryToken()
@@ -294,35 +293,37 @@
             window.location.href =
                 '/AshaOrientation/Edit?venueGuid=' + venueGuid;
         }
+        
 
-                function deleteOrientation(Venueid) {
-            if (!confirm("Are you sure you want to delete this Orientation?")) {
-                return;
-            }
+        function deleteOrientation(Venueid) {
 
-            fetch('/AshaOrientation/Delete', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken':
-                        document.querySelector('input[name="__RequestVerificationToken"]').value
-                },
-                body: JSON.stringify(Venueid)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Orientation deleted successfully");
-                    window.location.reload();
-                } else {
-                    alert(data.message || "Delete failed");
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert("Error occurred while deleting Orientation");
-            });
+    if (!confirm("Are you sure you want to delete this Orientation?")) return;
+
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    fetch('/AshaOrientation/Delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': token
+        },
+        body: JSON.stringify({ venueId: Venueid })
+
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert("Orientation deleted successfully");
+            window.location.href = "/AshaOrientation";
+        } else {
+            alert(data.message || "Delete failed");
         }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error occurred while deleting Orientation");
+    });
+}
 
         // ---------------- CASCADING DROPDOWNS ----------------
 

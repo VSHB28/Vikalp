@@ -90,18 +90,11 @@ namespace Vikalp.Service
             return list;
         }
 
-        public async Task<(List<AshaOrientationDto> Data, int TotalCount)>
-    GetPagedAsync(
-        int userId,
-        int page,
-        int pageSize,
-        int? stateId,
-        int? districtId,
-        int? blockId,
-        int? facilityId,
-        DateTime? orientationDate)
+        public async Task<(List<AshaOrientationDto> Data, int TotalCount)>GetPagedAsync(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId, DateTime? orientationDate)
         {
-            var parameters = new[]
+            try
+            {
+                var parameters = new[]
             {
         new SqlParameter("@UserId", userId),
         new SqlParameter("@PageNumber", page),
@@ -113,38 +106,43 @@ namespace Vikalp.Service
         new SqlParameter("@OrientationDate", (object?)orientationDate ?? DBNull.Value)
     };
 
-            var dt = await Task.Run(() =>
-                SqlUtils.ExecuteSP(Conn(),
-                    "dbo.sp_GetVenueOrientationSummaryNew",
-                    parameters));
+                var dt = await Task.Run(() =>
+                    SqlUtils.ExecuteSP(Conn(),
+                        "dbo.sp_GetVenueOrientationSummaryNew",
+                        parameters));
 
-            int totalRecords = 0;
+                int totalRecords = 0;
 
-            var list = dt.AsEnumerable().Select(r =>
-            {
-                totalRecords = Convert.ToInt32(r["TotalRecords"]);
-
-                return new AshaOrientationDto
+                var list = dt.AsEnumerable().Select(r =>
                 {
-                    VenueId = Convert.ToInt32(r["VenueId"]),
-                    VenueGuid = r["VenueGuid"]?.ToString(),
-                    FacilityId = Convert.ToInt32(r["FacilityId"]),
-                    FacilityName = r["FacilityName"]?.ToString(),
-                    StateId = Convert.ToInt32(r["StateId"]),
-                    StateName = r["StateName"]?.ToString(),
-                    DistrictId = Convert.ToInt32(r["DistrictId"]),
-                    DistrictName = r["DistrictName"]?.ToString(),
-                    BlockId = Convert.ToInt32(r["BlockId"]),
-                    BlockName = r["BlockName"]?.ToString(),
-                    DateofOrientation = Convert.ToDateTime(r["DateofOrientation"]),
-                    InterventionCount = Convert.ToInt32(r["InterventionCount"]),
-                    NonInterventionCount = Convert.ToInt32(r["NonInterventionCount"]),
-                    TotalOrientations = Convert.ToInt32(r["TotalOrientations"])
+                    totalRecords = r.Field<int?>("TotalRecords") ?? 0;
 
-                };
-            }).ToList();
+                    return new AshaOrientationDto
+                    {
+                        VenueId = r.Field<int?>("VenueId") ?? 0,
+                        VenueGuid = r["VenueGuid"]?.ToString(),
+                        FacilityId = r.Field<int?>("FacilityId") ?? 0,
+                        FacilityName = r["FacilityName"]?.ToString(),
+                        StateId = r.Field<int?>("StateId") ?? 0,
+                        StateName = r["StateName"]?.ToString(),
+                        DistrictId = r.Field<int?>("DistrictId") ?? 0,
+                        DistrictName = r["DistrictName"]?.ToString(),
+                        BlockId = r.Field<int?>("BlockId") ?? 0,
+                        BlockName = r["BlockName"]?.ToString(),
+                        DateofOrientation = Convert.ToDateTime(r["DateofOrientation"]),
+                        InterventionCount = r.Field<int?>("InterventionCount") ?? 0,
+                        NonInterventionCount = r.Field<int?>("NonInterventionCount") ?? 0,
+                        TotalOrientations = r.Field<int?>("TotalOrientations") ?? 0
+                    };
+                }).ToList();
 
-            return (list, totalRecords);
+                return (list, totalRecords);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
         }
 
         public async Task CreateAsync(AshaOrientationDto model)
@@ -398,7 +396,7 @@ namespace Vikalp.Service
                     NIN = venueRow["NIN"] == DBNull.Value ? null : (long?)Convert.ToInt64(venueRow["NIN"]),
                     Attendees = new List<AshaOrientationRowDto>(),
                     VenueGuid = venueRow["VenueGuid"].ToString(),
-                    TopicsCovered = venueRow["TopicsCovered"] == DBNull.Value ? new List<int>() : venueRow["TopicsCovered"].ToString().Split(',').Select(s => int.Parse(s)).ToList()
+                    //TopicsCovered = venueRow["TopicsCovered"] == DBNull.Value ? new List<int>() : venueRow["TopicsCovered"].ToString().Split(',').Select(s => int.Parse(s)).ToList()
                 };
 
                 foreach (DataRow r in ds.Tables[1].Rows)

@@ -55,7 +55,7 @@ public class HomeVisitController : Controller
     // ===================== CREATE =====================
 
     [HttpGet("HomeVisit/Create/{guid}")]
-    public async Task<IActionResult> Create(Guid guid)
+    public async Task<IActionResult> Create(string guid)
     {
         LoadMasters();
         var dropdowns = await _dropdownService.GetCommonDropdownsfamilyplanningAsync(userId: 1, languageId: 1);
@@ -110,7 +110,7 @@ public class HomeVisitController : Controller
     // ===================== Followup =====================
 
     [HttpGet("HomeVisit/Followup/{guid}")]
-    public async Task<IActionResult> Followup(Guid guid)
+    public async Task<IActionResult> Followup(string guid)
     {
         LoadMasters();
 

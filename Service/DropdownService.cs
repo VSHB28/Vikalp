@@ -479,6 +479,18 @@ public class DropdownService : IDropdownService
                     });
                 }
                 result["Gender"] = gender;
+                await reader.NextResultAsync();
+
+                var yesNoNa = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    yesNoNa.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["YesNoNa"] = yesNoNa;
             }
         }
 

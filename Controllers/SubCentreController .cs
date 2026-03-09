@@ -42,8 +42,8 @@ public class SubCentreController : Controller
             ? dropdowns["Gender"]
             : new List<SelectListItem>();
 
-        ViewBag.yesNo = dropdowns.ContainsKey("YesNo")
-            ? dropdowns["YesNo"]
+        ViewBag.yesNoNa = dropdowns.ContainsKey("YesNoNa")
+            ? dropdowns["YesNoNa"]
             : new List<SelectListItem>();
 
         return View();
