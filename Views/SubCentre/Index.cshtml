@@ -591,13 +591,38 @@
                                         </label>
                                         <input name="AverageOPDperDay" id="AverageOPDperDay" type="number" class="form-control" placeholder="Enter average OPD" />
                                     </div>
-                                    <div class="col-md-6 mb-0" id="avgDeliveryDiv">
+
+
+                                 @*    <div class="col-md-6 mb-0" id="avgDeliveryDiv">
                                      
                                         <label for="AvgdeliveryperMonth" class="form-label">
                                             <i class="bi bi-baby fp-label-icon"></i> Average delivery per month
                                         </label>
                                         <input name="AvgdeliveryperMonth" id="AvgdeliveryperMonth" type="number" class="form-control" placeholder="Enter average" />
+                                    </div> *@
+
+
+
+                                    <div class="col-md-6 mb-0" id="avgDeliveryDiv">
+                                        <label asp-for="AvgdeliveryperMonth" class="form-label">
+                                            <i class="bi bi-baby fp-label-icon"></i> Average delivery per month
+                                        </label>
+
+                                        <input name="AvgdeliveryperMonth"
+                                               id="AvgdeliveryperMonth"
+                                               type="number"
+                                               class="form-control"
+                                               placeholder="Enter average"
+                                               max="99999"
+                                               oninput="if(this.value.length > 5) this.value = this.value.slice(0,5);"
+                                               required />
+
+                                        <span class="text-danger"
+                                              data-valmsg-for="AvgdeliveryperMonth"
+                                              data-valmsg-replace="true"></span>
                                     </div>
+
+
                                 </div>
                             </div>
 
@@ -708,8 +733,18 @@
 
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
-                                                <input name="Name" type="text" id="Name" class="form-control" required />
+                                                <input name="Name"
+                                                       type="text"
+                                                       id="Name"
+                                                       class="form-control"
+                                                       maxlength="50"
+                                                       required
+                                                       onkeypress="return /[a-zA-Z\s]/.test(event.key)" />
+
+
                                             </div>
+
+
                                             <div class="form-group">
                                                 <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
                                                 <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
@@ -1163,3 +1198,5 @@
 
 
 </script>
+
+

@@ -1,4 +1,6 @@
-﻿namespace Vikalp.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Vikalp.Models.DTO
 {
     public class SubCentreProfileDto
     {
@@ -17,7 +19,9 @@
 
         public decimal? DistancefromPHC { get; set; }
         public int? IsDeliveryPoint { get; set; }
+
         public int? AvgdeliveryperMonth { get; set; }
+
         public decimal? DistancefromDH { get; set; }
         public int? IsSeparateSpaceforFp { get; set; }
 
