@@ -147,7 +147,7 @@ namespace Vikalp.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "Invalid user id"
+                    message = "Invalid venueId"
                 });
             }
 
