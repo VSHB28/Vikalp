@@ -307,14 +307,13 @@
             'Content-Type': 'application/json',
             'RequestVerificationToken': token
         },
-        body: JSON.stringify({ venueId: Venueid })
-
+        body: JSON.stringify(Venueid)
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
             alert("Orientation deleted successfully");
-            window.location.href = "/AshaOrientation";
+            window.location.href = "/AshaOrientation/Index";
         } else {
             alert(data.message || "Delete failed");
         }

@@ -69,9 +69,9 @@ namespace Vikalp.Models.DTO
         public string? HusbandName { get; set; }
         public string? MobileNumber { get; set; }
         public int? FollowupId { get; set; }
-        public Guid FollowupGuId { get; set; }
-        public Guid? LineListGuid { get; set; }
-        public Guid? HomeVistGuid { get; set; }
+        public string? FollowupGuId { get; set; }
+        public string? LineListGuid { get; set; }
+        public string? HomeVistGuid { get; set; }
         public DateTime? FollowupDate { get; set; }
         public string? Remark { get; set; }
         public int IsUsingFamilyPlanning { get; set; }

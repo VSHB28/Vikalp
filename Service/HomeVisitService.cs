@@ -267,7 +267,7 @@ public class HomeVisitService : IHomeVisitService
             cmd.Parameters.AddWithValue("@FollowupDate", model.FollowupDate);
             cmd.Parameters.AddWithValue("@FollowupStatus", model.FollowupStatus);
             cmd.Parameters.AddWithValue("@IsUsingFamilyPlanning", model.IsUsingFamilyPlanning);
-            cmd.Parameters.AddWithValue("@FamilyPlanningMethod", model.FamilyPlanningMethod);
+            cmd.Parameters.AddWithValue("@FamilyPlanningMethod", model.FamilyPlanningMethod ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@ReasonForNonUsage", model.Remark ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@CreatedBy", model.CreatedBy);
 
@@ -282,9 +282,9 @@ public class HomeVisitService : IHomeVisitService
         
     }
 
-    // =====================================
+    // ======================================
     // INSERT
-    // =====================================
+    // ======================================
     public async Task<bool> SaveHomeVisitAsync(HomeVisitDTO model, int userId)
     {
         try

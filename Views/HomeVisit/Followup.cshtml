@@ -381,8 +381,8 @@
             <div class="p-details">
                 <span class="p-name">@Model.WomanName</span>
                 <div class="p-age">
-                    <label>Age</label>
-                    <input type="number" min="15" max="60" value="24" placeholder="Enter">
+                    @* <label>Age</label> *@
+                    @* <input type="number" min="15" max="60" value="24" placeholder="Enter" disabled> *@
                 </div>
             </div>
         </div>
@@ -394,8 +394,8 @@
             <div class="p-details">
                 <span class="p-name">@Model.HusbandName</span>
                 <div class="p-age">
-                    <label>Age</label>
-                    <input type="number" min="15" max="60" value="28" placeholder="Enter">
+                    @* <label>Age</label> *@
+                    @* <input type="number" min="15" max="60" value="28" placeholder="Enter" disabled> *@
                 </div>
             </div>
         </div>
@@ -442,7 +442,6 @@
         @Html.AntiForgeryToken()
         <input type="hidden" id="LineListGuid" value="@Model.LineListGuid" />
         <input type="hidden" id="HomeVistGuid" value="@Model.VisitGuid" />
-
         <div class="form-row">
             @{
                 var today = DateTime.Today;
@@ -532,7 +531,7 @@
 
             rows.forEach(row => {
 
-                const status = row.querySelector(".followupStatusHidden")?.value
+                const status = row.querySelector(".followupStatushdn")?.value
                             || row.dataset.status;
 
                 if (status == "2") {
