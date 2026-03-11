@@ -21,38 +21,89 @@
             <form asp-action="Create" method="post" class="row mt-2 g-3">
                 @Html.AntiForgeryToken()
 
-                <input type="hidden" name="AshaId" value="@Model?.AshaId" />
 
-                <div class="col-md-6">
+                <div class="col-md-3">
+                    <label class="form-label">State</label>
+                  @*   <select id="stateId" class="form-control">
+                        <option value="">Select State</option>
+                        @foreach (var s in ViewBag.States)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </select> *@
+                    <select id="stateId" name="StateId" class="form-control">
+                        <option value="">Select State</option>
+
+                        @if (ViewBag.States != null)
+                        {
+                            foreach (var s in ViewBag.States)
+                            {
+                                <option value="@s.Id">@s.Name</option>
+                            }
+                        }
+
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">District</label>
+                    <select id="districtId" name="DistrictId" class="form-control">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Block</label>
+                    <select id="blockId" name="BlockId" class="form-control">
+                        <option value="">Select Block</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Facility</label>
+
+                    <select id="facilityId" name="FacilityId" class="form-control">
+                        <option value="">Select Facility</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">SubCentre</label>
+                    <select id="subCentreId" name="SubCentreId" class="form-control">
+                        <option value="">Select SubCentre</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
                     <label class="form-label">Name</label>
                     <input type="text" name="AshaName" value="@Model?.AshaName" class="form-control" required />
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label class="form-label">Mobile</label>
                     <input type="text" name="AshaMobile" value="@Model?.AshaMobile" class="form-control" required />
                 </div>
 
-                <div class="col-md-6 mt-2">
-                    <input type="hidden" name="IsActive" value="false" /> <!-- ensures false if unchecked -->
+                <div class="col-md-3">
+                    <label class="form-label d-block">Status</label>
+
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" name="IsActive" value="true"
                                @(Model?.IsActive == true ? "checked" : "") />
                         <label class="form-check-label">Active</label>
                     </div>
-                </div>
+                    <input type="hidden" name="IsActive" value="false" />
 
-                <div class="col-md-6 mt-2">
-                    <input type="hidden" name="AttendedVCAT" value="false" />
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" name="AttendedVCAT" value="true"
                                @(Model?.AttendedVCAT == true ? "checked" : "") />
                         <label class="form-check-label">VCAT Attended</label>
                     </div>
+                    <input type="hidden" name="AttendedVCAT" value="false" />
+
                 </div>
 
                 <div class="col-12 mt-3">
-                    <button type="submit" class="btn btn-save">Save</button>
+                    <button type="submit" class="btn btn-save">Create</button>
                     <a href="/Asha/Index" class="btn btn-back ms-2">Cancel</a>
                 </div>
             </form>
@@ -66,3 +117,105 @@
         box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
     }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $("#stateId").change(function () {
+
+            var stateId = $(this).val();
+                console.log("State Changed:", stateId);
+
+            $("#districtId").empty().append('<option value="">Select District</option>');
+            $("#blockId").empty().append('<option value="">Select Block</option>');
+            $("#facilityId").empty().append('<option value="">Select Facility</option>');
+            $("#subCentreId").empty().append('<option value="">Select SubCentre</option>');
+
+            if (stateId != "") {
+
+                $.get("/Asha/GetDistricts?stateId=" + stateId, function (data) {
+
+                    $.each(data, function (i, item) {
+
+                        $("#districtId").append('<option value="' + item.id + '">' + item.name + '</option>');
+
+                    });
+
+                });
+
+            }
+
+        });
+
+        $("#districtId").change(function () {
+
+            var districtId = $(this).val();
+
+            $("#blockId").empty().append('<option value="">Select Block</option>');
+
+            if (districtId != "") {
+
+                $.get("/Asha/GetBlocks?districtId=" + districtId, function (data) {
+
+                    $.each(data, function (i, item) {
+
+                        $("#blockId").append('<option value="' + item.id + '">' + item.name + '</option>');
+
+                    });
+
+                });
+
+            }
+
+        });
+
+
+        $("#blockId").change(function () {
+
+            var blockId = $(this).val();
+
+            $("#facilityId").empty().append('<option value="">Select Facility</option>');
+
+            if (blockId != "") {
+
+                $.get("/Asha/GetFacilities?blockId=" + blockId, function (data) {
+
+                    $.each(data, function (i, item) {
+
+                        $("#facilityId").append('<option value="' + item.id + '">' + item.name + '</option>');
+
+                    });
+
+                });
+
+            }
+
+        });
+
+    $("#facilityId").change(function () {
+
+        var facilityId = $(this).val();
+
+        $("#subCentreId").empty().append('<option value="">Select SubCentre</option>');
+
+        if (facilityId != "") {
+
+            $.get("/Asha/GetSubCentres?facilityId=" + facilityId, function (data) {
+
+                $.each(data, function (i, item) {
+
+                    $("#subCentreId").append('<option value="' + item.id + '">' + item.name + '</option>');
+
+                });
+
+            });
+
+        }
+
+    });
+
+    });
+</script>

@@ -74,9 +74,9 @@ namespace Vikalp.Controllers
 
 
         [HttpGet]
-        public async Task<JsonResult> GetByFilter(int? stateId, int? districtId, int? blockId, int? facilityId)
+        public async Task<JsonResult> GetByFilter(int? stateId, int? districtId, int? blockId, int? facilityId, int? subCentreId)
         {
-            var data = await _ashaService.GetByFilter(stateId, districtId, blockId, facilityId);
+            var data = await _ashaService.GetByFilter(stateId, districtId, blockId, facilityId, subCentreId);
 
             var result = data.Select(x => new
             {
@@ -90,8 +90,23 @@ namespace Vikalp.Controllers
             return Json(result);
         }
 
+        public JsonResult GetSubCentres(int facilityId)
+        {
+            int userId = 1;
+
+            var data = _dropdownService.GetSubCentre(facilityId, userId)
+                .Select(s => new
+                {
+                    id = s.Id,
+                    name = s.Name
+                });
+
+            return Json(data);
+        }
+
         public IActionResult Create()
         {
+            ViewBag.States = _dropdownService.GetStates();
             return View();
         }
 
@@ -102,19 +117,29 @@ namespace Vikalp.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 await _ashaService.Insert(model, 0);
                 return RedirectToAction("Index");
             }
+
+            ViewBag.States = _dropdownService.GetStates();   
+
             return View(model);
         }
+     
         public async Task<IActionResult> Edit(int id)
         {
             var data = await _ashaService.GetById(id);
+          
+
             if (data == null)
-            {
                 return NotFound();
-            }
+
+            ViewBag.States = _dropdownService.GetStates();
+            ViewBag.Districts = _dropdownService.GetDistricts(data.StateId ?? 0);
+            ViewBag.Blocks = _dropdownService.GetBlocks(data.DistrictId ?? 0);
+            ViewBag.Facilities = _dropdownService.GetFacilities(data.BlockId ?? 0);
+            ViewBag.SubCentres = _dropdownService.GetSubCentre(data.FacilityId ?? 0, 1);
+
             return View(data);
         }
 
