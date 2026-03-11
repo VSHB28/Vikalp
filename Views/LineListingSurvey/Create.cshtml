@@ -1038,7 +1038,7 @@
                 const fpSelect = document.getElementById("FamilyPlanningMethod");
 
                 const fpValue = fpSelect?.value || "";
-                const fpText = fpSelect?.options[fpSelect.selectedIndex]?.text || "";
+                const fpText = fpValue ? fpSelect.options[fpSelect.selectedIndex].text : "";
 
                 if (!womanName) {
                     alert("Please enter woman name");
