@@ -34,20 +34,26 @@ using Vikalp.Service.Interfaces;
         return result.ToList();
     }
 
-    public async Task<AshaDto?> GetById(int id)
+    public async Task<AshaDto> GetById(int id)
     {
         using var conn = Conn();
-        return await conn.QueryFirstOrDefaultAsync<AshaDto>(
+
+        var data = await conn.QueryFirstOrDefaultAsync<AshaDto>(
             "USP_Asha_CRUD",
-            new { Action = "GETBYID", AshaId = id },
+            new
+            {
+                Action = "GETBYID",
+                AshaId = id
+            },
             commandType: CommandType.StoredProcedure
         );
+
+        return data;
     }
 
     public async Task Insert(AshaDto model, int userId)
     {
         using var conn = Conn();
-        if (conn.State != ConnectionState.Open) conn.Open();
 
         await conn.ExecuteAsync(
             "USP_Asha_CRUD",
@@ -56,10 +62,12 @@ using Vikalp.Service.Interfaces;
                 Action = "INSERT",
                 AshaName = model.AshaName ?? (object)DBNull.Value,
                 AshaMobile = model.AshaMobile ?? (object)DBNull.Value,
+                FacilityId = model.FacilityId ?? (object)DBNull.Value,
+                SubCentreId = model.SubCentreId ?? (object)DBNull.Value,
                 IsActive = model.IsActive,
                 AttendedVCAT = model.AttendedVCAT,
                 IsIntervention = model.IsIntervention,
-                CreatedBy = userId     
+                CreatedBy = userId
             },
             commandType: CommandType.StoredProcedure
         );
@@ -78,10 +86,12 @@ using Vikalp.Service.Interfaces;
                 model.AshaId,
                 model.AshaName,
                 model.AshaMobile,
+                model.FacilityId,
+                model.SubCentreId,
                 model.IsActive,
                 model.AttendedVCAT,
                 model.IsIntervention,
-                UpdatedBy = userId      
+                UpdatedBy = userId
             },
             commandType: CommandType.StoredProcedure
         );
@@ -109,7 +119,7 @@ using Vikalp.Service.Interfaces;
         throw new NotImplementedException();
     }
 
-    public async Task<List<AshaDto>> GetByFilter(int? stateId, int? districtId, int? blockId, int? facilityId)
+    public async Task<List<AshaDto>> GetByFilter(int? stateId, int? districtId, int? blockId, int? facilityId, int? subCentreId)
     {
         List<AshaDto> list = new();
 
@@ -118,10 +128,12 @@ using Vikalp.Service.Interfaces;
             SqlCommand cmd = new SqlCommand("USP_Asha_Filter", con);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@StateId", (object?)stateId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@BlockId", (object?)blockId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@FacilityId", (object?)facilityId ?? DBNull.Value);
+            cmd.Parameters.Add("@StateId", SqlDbType.Int).Value = (object?)stateId ?? DBNull.Value;
+            cmd.Parameters.Add("@DistrictId", SqlDbType.Int).Value = (object?)districtId ?? DBNull.Value;
+            cmd.Parameters.Add("@BlockId", SqlDbType.Int).Value = (object?)blockId ?? DBNull.Value;
+            cmd.Parameters.Add("@FacilityId", SqlDbType.Int).Value = (object?)facilityId ?? DBNull.Value;
+            cmd.Parameters.Add("@SubCentreId", SqlDbType.Int).Value = (object?)subCentreId ?? DBNull.Value;
+
 
             await con.OpenAsync();
             SqlDataReader dr = await cmd.ExecuteReaderAsync();
@@ -131,10 +143,10 @@ using Vikalp.Service.Interfaces;
                 list.Add(new AshaDto
                 {
                     AshaId = Convert.ToInt32(dr["AshaId"]),
-                    AshaName = dr["AshaName"].ToString(),
-                    AshaMobile = dr["AshaMobile"].ToString(),
-                    IsActive = Convert.ToBoolean(dr["IsActive"]),
-                    AttendedVCAT = Convert.ToBoolean(dr["AttendedVCAT"])
+                    AshaName = dr["AshaName"]?.ToString(),
+                    AshaMobile = dr["AshaMobile"]?.ToString(),
+                    IsActive = dr["IsActive"] != DBNull.Value && Convert.ToBoolean(dr["IsActive"]),
+                    AttendedVCAT = dr["AttendedVCAT"] != DBNull.Value && Convert.ToBoolean(dr["AttendedVCAT"])
                 });
             }
         }

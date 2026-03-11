@@ -93,6 +93,12 @@
                         <option value="">Select Facility</option>
                     </select>
                 </div>
+
+                <div class="col-md-3">
+                    <select id="subCentreDropdown" class="form-control form-control-sm">
+                        <option value="">Select Sub Centre</option>
+                    </select>
+                </div>
             </div>
 
             <div class="table-responsive">
@@ -103,9 +109,9 @@
                             <th>#</th>
                             <th>Name</th>
                             <th>Mobile</th>
-                            <th class="text-center">Active</th>
-                            <th class="text-center">VCAT Attended</th>
-                            <th class="text-end">Actions</th>
+                            <th >Active</th>
+                            <th >VCAT Attended</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
 
@@ -173,86 +179,101 @@
 <script>
     $(document).ready(function () {
 
+     
         $('#stateDropdown').change(function () {
 
-            let stateId = $(this).val();
+        let stateId = $(this).val();
 
-            resetBelow('state');
+        resetBelow('state');
 
-            if (!stateId) {
-                filterAshaTable();
-                return;
-            }
-
-            $.ajax({
-                url: '/Asha/GetDistricts',
-                type: 'GET',
-                data: { stateId: stateId },
-                success: function (data) {
-
-                    $.each(data, function (i, d) {
-                        $('#districtDropdown').append('<option value="' + d.id + '">' + d.name + '</option>');
-                    });
-
-                    filterAshaTable();
-                }
-            });
-
-        });
-
-        $('#districtDropdown').change(function () {
-
-            let districtId = $(this).val();
-
-            resetBelow('district');
-
-            if (!districtId) {
-                filterAshaTable();
-                return;
-            }
-
-            $.getJSON('/Asha/GetBlocks',
-                { districtId: districtId },
-                function (data) {
-
-                    $.each(data, function (i, b) {
-                        $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
-                    });
-
-                    filterAshaTable();
-                });
-
-        });
-
-        $('#blockDropdown').change(function () {
-
-            let blockId = $(this).val();
-
-            resetBelow('block');
-
-            if (!blockId) {
-                filterAshaTable();
-                return;
-            }
-
-            $.getJSON('/Asha/GetFacilities',
-                { blockId: blockId },
-                function (data) {
-
-                    $.each(data, function (i, f) {
-                        $('#facilityDropdown').append(`<option value="${f.id}">${f.name}</option>`);
-                    });
-
-                    filterAshaTable();
-                });
-
-        });
-
-        $('#facilityDropdown').change(function () {
-
+        if (!stateId) {
             filterAshaTable();
+            return;
+        }
 
-        });
+        $.getJSON('/Asha/GetDistricts',
+            { stateId: stateId },
+            function (data) {
+
+                $.each(data, function (i, d) {
+                    $('#districtDropdown').append(`<option value="${d.id}">${d.name}</option>`);
+                });
+
+                filterAshaTable();   
+            });
+    });
+
+     
+
+       $('#districtDropdown').change(function () {
+
+        let districtId = $(this).val();
+
+        resetBelow('district');
+
+        if (!districtId) {
+            filterAshaTable();
+            return;
+        }
+
+        $.getJSON('/Asha/GetBlocks',
+            { districtId: districtId },
+            function (data) {
+
+                $.each(data, function (i, b) {
+                    $('#blockDropdown').append(`<option value="${b.id}">${b.name}</option>`);
+                });
+
+                filterAshaTable(); 
+            });
+    });
+
+    $('#blockDropdown').change(function () {
+
+        let blockId = $(this).val();
+
+        resetBelow('block');
+
+        if (!blockId) {
+            filterAshaTable();
+            return;
+        }
+
+        $.getJSON('/Asha/GetFacilities',
+            { blockId: blockId },
+            function (data) {
+
+                $.each(data, function (i, f) {
+                    $('#facilityDropdown').append(`<option value="${f.id}">${f.name}</option>`);
+                });
+
+                filterAshaTable();   
+            });
+    });
+
+    
+            $('#facilityDropdown').change(function () {
+
+        let facilityId = $(this).val();
+
+        $('#subCentreDropdown').html('<option value="">Select Sub Centre</option>');
+
+        if (!facilityId) {
+            filterAshaTable();
+            return;
+        }
+
+        $.getJSON('/Asha/GetSubCentres',
+            { facilityId: facilityId },
+            function (data) {
+
+                $.each(data, function (i, s) {
+                    $('#subCentreDropdown').append(`<option value="${s.id}">${s.name}</option>`);
+                });
+
+                filterAshaTable();
+            });
+    });
 
         function resetBelow(level) {
 
@@ -275,68 +296,68 @@
             }
         }
 
+  function filterAshaTable() {
 
-        // FILTER ASHA TABLE
-        function filterAshaTable() {
+        let stateId = $('#stateDropdown').val() || null;
+        let districtId = $('#districtDropdown').val() || null;
+        let blockId = $('#blockDropdown').val() || null;
+        let facilityId = $('#facilityDropdown').val() || null;
+        let subCentreId = $('#subCentreDropdown').val() || null;
 
-            let stateId = $('#stateDropdown').val();
-            let districtId = $('#districtDropdown').val();
-            let blockId = $('#blockDropdown').val();
-            let facilityId = $('#facilityDropdown').val();
+        $.ajax({
+            url: '/Asha/GetByFilter',
+            type: 'GET',
+            data: {
+                stateId: stateId,
+                districtId: districtId,
+                blockId: blockId,
+                facilityId: facilityId,
+                subCentreId: subCentreId
+            },
+            success: function (data) {
 
-            $.ajax({
-                url: '/Asha/GetByFilter',
-                type: 'GET',
-                data: {
-                    stateId: stateId,
-                    districtId: districtId,
-                    blockId: blockId,
-                    facilityId: facilityId
-                },
-                success: function (data) {
+                let tbody = $('.um-table tbody');
+                tbody.empty();
 
-                    let tbody = $('.um-table tbody');
-                    tbody.empty();
+                if (data.length > 0) {
 
-                    if (data.length > 0) {
+                    $.each(data, function (i, item) {
 
-                        $.each(data, function (i, item) {
+                        let row = `<tr>
+                            <td>${i + 1}</td>
+                            <td class="fw-semibold">${item.ashaName}</td>
+                            <td>${item.ashaMobile}</td>
+                            <td class="text-center">
+                                <span class="badge ${item.isActive ? 'bg-success':'bg-secondary'}">
+                                    ${item.isActive ? 'Active':'Inactive'}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge ${item.attendedVCAT ? 'bg-info':'bg-secondary'}">
+                                    ${item.attendedVCAT ? 'Yes':'No'}
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a href="/Asha/Edit/${item.ashaId}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>`;
 
-                            let row = `<tr>
-                                <td>${i + 1}</td>
-                                <td class="fw-semibold">${item.ashaName}</td>
-                                <td>${item.ashaMobile}</td>
-                                <td class="text-center">
-                                    <span class="badge ${item.isActive ? 'bg-success':'bg-secondary'}">
-                                        ${item.isActive ? 'Active':'Inactive'}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge ${item.attendedVCAT ? 'bg-info':'bg-secondary'}">
-                                        ${item.attendedVCAT ? 'Yes':'No'}
-                                    </span>
-                                </td>
-                                <td class="text-end">
-                                    <a href="/Asha/Edit/${item.ashaId}" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                </td>
-                            </tr>`;
+                        tbody.append(row);
+                    });
 
-                            tbody.append(row);
-                        });
+                } else {
 
-                    } else {
+                    tbody.append('<tr><td colspan="6" class="text-center">No record found</td></tr>');
 
-                        tbody.append('<tr><td colspan="6" class="text-center">No record found</td></tr>');
-
-                    }
                 }
-            });
-        }
-
+            }
+        });
+    }
+        $('#subCentreDropdown').change(function () {
+        filterAshaTable();
     });
-
 
     function deleteAsha(id) {
 
@@ -377,5 +398,6 @@
         });
     }
 
-
+    });   
 </script>
+

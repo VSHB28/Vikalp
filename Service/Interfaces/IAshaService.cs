@@ -8,7 +8,7 @@ public interface IAshaService
     Task Update(AshaDto model, int userId);  
    
     Task GetByBlockAsync(int blockId, int? facilityId);
-    Task<List<AshaDto>> GetByFilter(int? stateId, int? districtId, int? blockId, int? facilityId);
+    Task<List<AshaDto>> GetByFilter(int? stateId, int? districtId, int? blockId, int? facilityId, int? subCentreId);
     Task DeleteAsync(int id);
 
  

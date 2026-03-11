@@ -9,38 +9,111 @@
     <div class="card">
         <div class="card-body">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3>Edit Asha</h3>
-                <a href="/Asha/Index" class="btn btn-secondary">← Back to List</a>
-            </div>
+           <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center ">
+                    <h3>Edit Asha</h3>
+                    <a href="/Asha/Index" class="btn btn-secondary">← Back to List</a>
+                </div>
+           </div>
 
-            <form action="/Asha/Edit" method="post" class="row g-3">
+            <form action="/Asha/Edit" method="post" class="row g-3 mt-2">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="AshaId" value="@Model.AshaId" />
 
-                <div class="col-md-6">
-                    <label class="form-label">Name</label>
-                    <input type="text" name="AshaName" class="form-control" value="@Model.AshaName" required />
-                </div>
+                <div class="row">
 
-                <div class="col-md-6">
-                    <label class="form-label">Mobile</label>
-                    <input type="text" name="AshaMobile" class="form-control" value="@Model.AshaMobile" required />
-                </div>
+                    <div class="col-md-3">
+                        <label class="form-label">State</label>
+                        <select name="StateId" id="stateId" class="form-control">
+                            <option value="">Select State</option>
+                            @foreach (var s in ViewBag.States)
+                            {
+                                <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>
+                                    @s.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
 
-                <div class="col-md-6">
-                    <label class="form-label d-block">Active</label>
-                    <input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
-                </div>
+                    <div class="col-md-3">
+                        <label class="form-label">District</label>
+                        <select name="DistrictId" id="districtId" class="form-control">
+                            <option value="">Select District</option>
+                            @foreach (var d in ViewBag.Districts)
+                            {
+                                <option value="@d.Id" @(Model.DistrictId == d.Id ? "selected" : "")>
+                                    @d.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
 
-                <div class="col-md-6">
-                    <label class="form-label d-block">VCAT Attended</label>
-                    <input type="checkbox" name="AttendedVCAT" value="true" @(Model.AttendedVCAT ? "checked" : "") />
+                    <div class="col-md-3">
+                        <label class="form-label">Block</label>
+                        <select name="BlockId" id="blockId" class="form-control">
+                            <option value="">Select Block</option>
+                            @foreach (var b in ViewBag.Blocks)
+                            {
+                                <option value="@b.Id" @(Model.BlockId == b.Id ? "selected" : "")>
+                                    @b.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Facility</label>
+                        <select name="FacilityId" id="facilityId" class="form-control">
+                            <option value="">Select Facility</option>
+                            @foreach (var f in ViewBag.Facilities)
+                            {
+                                <option value="@f.Id" @(Model.FacilityId == f.Id ? "selected" : "")>
+                                    @f.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Sub Centre</label>
+                        <select name="SubCentreId" id="subCentreId" class="form-control">
+                            <option value="">Select Sub Centre</option>
+                            @foreach (var s in ViewBag.SubCentres)
+                            {
+                                <option value="@s.Id" @(Model.SubCentreId == s.Id ? "selected" : "")>
+                                    @s.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="AshaName" class="form-control" value="@Model.AshaName" required />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Mobile</label>
+                        <input type="text" name="AshaMobile" class="form-control" value="@Model.AshaMobile" required />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label d-block">Status</label>
+                        <div class="form-check">
+                            <input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
+                            <label class="form-check-label">Active</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="AttendedVCAT" value="true" @(Model.AttendedVCAT ? "checked" : "") />
+                            <label class="form-check-label">VCAT Attended</label>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <a href="/Asha/Index" class="btn btn-secondary ms-2">Cancel</a>
+                    <button type="submit" class="btn btn-save">Update</button>
+                    <a href="/Asha/Index" class="btn btn-back ms-2">Cancel</a>
                 </div>
             </form>
 
