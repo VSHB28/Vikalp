@@ -807,6 +807,106 @@ namespace Vikalp.Controllers.Api
             }
         }
 
+        [HttpPost("SaveUpdateChecklistVisit")]
+        public async Task<IActionResult> SaveUpdateChecklistVisit()
+        {
+            try
+            {
+                if (!(User?.Identity?.IsAuthenticated ?? false))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid or expired token"
+                    });
+                }
+
+                var userIdClaim = User.Claims.FirstOrDefault(c =>
+                    c.Type == "uid" ||
+                    c.Type == ClaimTypes.NameIdentifier ||
+                    c.Type == "sub");
+
+                if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Unauthorized(new
+                    {
+                        statusCode = 401,
+                        message = "Invalid user token"
+                    });
+                }
+
+                string rawJson;
+
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    rawJson = await reader.ReadToEndAsync();
+                }
+
+                if (string.IsNullOrWhiteSpace(rawJson))
+                {
+                    return BadRequest(new
+                    {
+                        statusCode = 400,
+                        message = "Request payload is required"
+                    });
+                }
+
+                Log(userId, rawJson, "SaveUpdateChecklistVisit");
+
+                var connStr = _config.GetConnectionString("DefaultConnection");
+                var results = new List<object>();
+
+                using (var conn = new SqlConnection(connStr))
+                using (var cmd = new SqlCommand("dbo.sp_InsertChecklistVisitSync", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                    cmd.Parameters.Add("@JsonData", SqlDbType.NVarChar).Value = rawJson;
+
+                    conn.Open();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            results.Add(new
+                            {
+                                ChecklistGuid = reader["ChecklistGuid"].ToString(),
+                                ActionTaken = reader["ActionTaken"].ToString(),
+                                StatusMsg = reader["StatusMsg"].ToString()
+                            });
+                        }
+                    }
+                }
+
+                return Ok(new
+                {
+                    statusCode = 200,
+                    message = "Checklist visit sync completed successfully",
+                    results
+                });
+            }
+            catch (SqlException ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Database error during checklist visit sync",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    statusCode = 500,
+                    message = "Internal server error",
+                    error = ex.Message
+                });
+            }
+        }
+
         //============================= = LOGGING METHOD =============================
         public void Log(int userId, string jsonPayload, string api)
         {
