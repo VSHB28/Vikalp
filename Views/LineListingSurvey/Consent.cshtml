@@ -364,9 +364,13 @@
         }
     }
     .form-check-label{
-            font-size: 13px;
-            font-weight:500;
+           font-size: 13px;
+    font-weight: 500;
+    color: #444;
     }
+    .small-checkbox{
+    transform: scale(0.8);   
+}
 </style>
 
 <div class="container-consent m-3">
@@ -497,20 +501,22 @@
                     <label>Date</label>
                     <input name="ConsentDate" type="date" max="@maxDate" class="form-control" />
                 </div>
-                <div class="col-md-6 ">
-                        <label class="form-check-label" for="IsCollectedHardCopy">
-                            Hard Copy Of Consent Form Collected
-                        </label>
-                    <div class="form-check">
+                <div class="col-md-6">
+                    <div class="form-check d-flex align-items-center mt-4">
+
                         <input type="hidden" name="IsCollectedHardCopy" value="0" />
-                        <input class="form-check-input"
+
+                       <input class="form-check-input me-2 small-checkbox"
                                type="checkbox"
                                id="IsCollectedHardCopy"
                                name="IsCollectedHardCopy"
                                value="1"
                                @(Model.IsCollectedHardCopy == 1 ? "checked" : "")>
 
-                        
+                        <label class="form-check-label mb-0" for="IsCollectedHardCopy">
+                            Hard Copy Of Consent Form Collected
+                        </label>
+
                     </div>
                 </div>
             </div>
