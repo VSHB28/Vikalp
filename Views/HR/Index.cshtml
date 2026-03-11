@@ -1,0 +1,865 @@
+﻿@using Vikalp.Models.DTO
+@{
+    ViewData["Title"] = "Facilities";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .um-card {
+        border-radius: 0.5rem;
+        box-shadow: 0 6px 18px rgba(12, 38, 63, 0.08);
+    }
+
+    .um-toolbar {
+        gap: .5rem;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .um-table thead th {
+        /* background: linear-gradient(90deg,#0d6efd, #6610f2);
+                color: #fff;
+                border: 0; */
+        color: #fff;
+        border: 1px dotted;
+        background: var(--ipas-sidebar);
+    }
+
+    .um-table tbody tr:hover {
+        background: rgba(13,110,253,0.03);
+    }
+
+    .um-action .btn {
+        min-width: 44px;
+    }
+
+    .um-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #6c757d;
+    }
+
+
+    /* modal-header */
+    .modal-header {
+        background: #f5a20c40;
+        color: #000000;
+    }
+
+    .modal-footer {
+        background: #f5a20c40;
+    }
+
+    .modal-body {
+        background: #e7dddd6b;
+    }
+
+    #facilityprofileModal .modal-body .form-label {
+        font-size: 12px;
+    }
+
+</style>
+
+@* new css *@
+<style>
+
+    <style >
+    /* ===== Facility Profile Modal Styles ===== */
+    #facilityprofileModal .modal-dialog {
+        max-width: 960px;
+    }
+
+    #facilityprofileModal .modal-content {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #facilityprofileModal .modal-header {
+        background-color: #FBD9A5;
+        border-bottom: none;
+        padding: 18px 24px;
+    }
+
+    #facilityprofileModal .modal-title.fh-modal-header {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2C2C2C;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    #facilityprofileModal .btn-close {
+        color: #b08968;
+        opacity: 1;
+    }
+
+    #facilityprofileModal .modal-body {
+        background-color: #F8F6F3;
+        padding: 20px 24px 24px;
+    }
+
+    #facilityprofileModal .modal-footer {
+        background-color: #FBD9A5;
+        border-top: none;
+        padding: 14px 24px 18px;
+    }
+
+    /* Section Cards */
+    .fp-section-card {
+        background: #FFFFFF;
+        border-radius: 8px;
+        border: 1px solid #F0E0D2;
+        padding: 14px 16px 16px;
+        margin-bottom: 18px;
+    }
+
+        .fp-section-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .fp-section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .fp-section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(241, 90, 41, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #F15A29;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .fp-section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2C2C2C;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        line-height: 1.2;
+    }
+
+    .fp-section-subtitle {
+        font-size: 11px;
+        color: #666666;
+        margin-top: 2px;
+    }
+
+    /* Override Bootstrap form-label inside modal */
+    #facilityprofileModal .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #2C2C2C;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        #facilityprofileModal .form-label .fp-label-icon {
+            color: #F15A29;
+            font-size: 14px;
+        }
+
+    /* Override Bootstrap form-control / form-select inside modal */
+    #facilityprofileModal .form-control,
+    #facilityprofileModal .form-select {
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid #F3D2B8;
+        font-size: 14px;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+    }
+
+        #facilityprofileModal .form-control:focus,
+        #facilityprofileModal .form-select:focus {
+            border-color: #F15A29;
+            box-shadow: 0 0 0 2px rgba(241, 90, 41, 0.18);
+        }
+
+    .fp-help-text {
+        font-size: 11px;
+        color: #666666;
+        margin-top: 3px;
+    }
+
+    /* Save Button */
+    #facilityprofileModal .btn.btn-save {
+        min-width: 120px;
+        padding: 10px 26px;
+        border-radius: 4px;
+        border: 1px solid #f1a259;
+        background-color: #FFD8A6;
+        color: #e46b29;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        #facilityprofileModal .btn.btn-save:hover {
+            background-color: #ffc37a;
+        }
+
+    @@media (max-width: 640px) {
+        #facilityprofileModal .modal-dialog {
+            max-width: 100%;
+            margin: 12px;
+        }
+    }
+
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        background: rgba(0,0,0,0.1);
+    }
+
+    .modal-shell {
+        background: transparent;
+        padding: 24px;
+        width: 100%;
+        max-width: 960px;
+    }
+
+    .modal-container {
+        background-color: var(--ipas-white);
+        border-radius: 10px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-header {
+        background-color: #FBD9A5;
+        color: var(--ipas-text-dark);
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+    .close-btn {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        color: #b08968;
+    }
+
+    .modal-body {
+        padding: 20px 24px 24px;
+        background-color: var(--ipas-light);
+    }
+
+    .section-wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .section-card {
+        background: var(--ipas-white);
+        border-radius: 8px;
+        border: 1px solid #F0E0D2;
+        padding: 14px 16px 16px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .section-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(241, 90, 41, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 15px;
+    }
+
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .section-subtitle {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+        margin-top: 2px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .form-grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-select {
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241,90,41,0.18);
+        }
+
+    .modal-footer {
+        padding: 14px 24px 18px;
+        background-color: #FBD9A5;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+
+
+    .btn-cancel {
+        background-color: #FFEFD4;
+        color: #7c6a55;
+    }
+
+    .btn:hover {
+        background-color: #ffc37a;
+    }
+
+    @@media (max-width: 900px) {
+        .form-grid,
+        .form-grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .modal-shell {
+            padding: 12px;
+        }
+
+        .form-grid,
+        .form-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+
+    .um-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+        .um-table th,
+        .um-table td {
+            text-align: left;
+            vertical-align: middle;
+        }
+        .um-table tbody tr td {
+            padding: .5rem .5rem !important;
+        }
+
+</style>
+
+
+<div class="container py-2">
+    <div class="card um-card">
+        <div class="card-body">
+            <input type="hidden" id="HrId" />
+            <input type="hidden" id="FacilityId" />
+
+            @Html.AntiForgeryToken()
+            <div class="umcard-header">
+                <div class="d-flex justify-content-between align-items-center ">
+                    <h3 class="mb-0">HR</h3>
+                    <div class="um-toolbar">
+                        <button class="btn btn-add addhrstatus" data-facility-id="0">
+                            <i class="fa fa-plus"></i> Add HR
+
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+
+            <div class="table-responsive">
+                <table class="table table-striped um-table align-middle">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-hash me-2"></i>S.No</th>
+                            <th><i class="bi bi-person-fill me-2"></i>Name</th>
+                            <th>Designation</th>
+                            <th><i class="bi bi-telephone me-2"></i>Mobile</th>
+                            
+                            <th>
+                                AttendentVCAT
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="hrTableBody">
+                    </tbody>
+
+                </table>
+            </div>
+
+    
+            <!-- FACILITY HR STATUS MODAL -->
+            <div class="modal fade" id="hrStatusModal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hrModalTitle">Add HR Profile</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="section-wrapper">
+
+                                    <!-- Basic Information -->
+                                    <div class="section-card">
+                                        <div class="section-header">
+                                            <div class="section-icon"><i class="bi bi-person-badge"></i></div>
+                                            <div>
+                                                <div class="section-title">Basic Information</div>
+                                                <div class="section-subtitle">Key HR profile details</div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-grid">
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
+                                                <select name="DesignationId" id="DesignationId" class="form-select">
+                                                    <option value=""> Select  </option>
+
+                                                    @foreach (var s in ViewBag.designation)
+                                                    {
+                                                        if (s.Value != "8")
+                                                        {
+                                                            <option value="@s.Value">@s.Text</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-check-circle label-icon"></i><span>Post Occupied</span></label>
+                                                <select name="Status" id="Status" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
+                                                <input name="Name"
+                                                       type="text"
+                                                       id="Name"
+                                                       class="form-control"
+                                                       maxlength="50"
+                                                       required
+                                                       onkeypress="return /[a-zA-Z\s]/.test(event.key)" />
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
+                                                <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
+                                            </div>
+
+
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-gender-ambiguous label-icon"></i><span>Gender</span></label>
+                                                <select name="GenderId" id="GenderId" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.gender)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Training Details -->
+                                    <div class="section-card" id="trainingSection">
+                                        <div class="section-header">
+                                            <div class="section-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                                            <div>
+                                                <div class="section-title">Training & Orientation</div>
+                                                <div class="section-subtitle">Antara, VCAT & FP trainings</div>
+                                            </div>
+                                        </div>
+                                        <div class="form-grid form-grid-2">
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-buildings-fill label-icon"></i><span>Trained Antara Govt</span></label>
+                                                <select name="TrainedAntaraGovt" id="TrainedAntaraGovt" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-building-check label-icon"></i><span>Trained Antara IDF</span></label>
+                                                <select name="TrainedAntaraIDF" id="TrainedAntaraIDF" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-clipboard-pulse label-icon"></i><span>Trained In FPLMIS</span></label>
+                                                <select name="TrainedInFPLMIS" id="TrainedInFPLMIS" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-capsule-pill label-icon"></i><span>Trained In IUCD</span></label>
+                                                <select name="TrainedInIUCD" id="TrainedInIUCD" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    <i class="bi bi-capsule-pill label-icon"></i>
+                                                    <span>Trained In CACS / MMA</span>
+                                                </label>
+                                                <select name="TrainedInCACS_MMA" id="TrainedInCACS_MMA" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="form-label"><i class="bi bi-clipboard-check label-icon"></i><span>Attended VCAT</span></label>
+                                                <select name="AttendentVCAT" id="AttendentVCAT" class="form-select">
+                                                    <option value="">-- Select --</option>
+                                                    @foreach (var s in ViewBag.yesNoNa)
+                                                    {
+                                                        <option value="@s.Value">@s.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-back" data-bs-dismiss="modal">Cancel</button>
+                            <button class="btn btn-save" id="btnSaveHr">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+
+<script>
+
+    // ---------------- GLOBAL VARIABLES ----------------
+
+    let selectedFacilityId = 0;
+    let selectedHrId = 0;
+
+
+    // ---------------- DOCUMENT READY ----------------
+
+    $(document).ready(function () {
+
+        $("#avgDeliveryDiv").hide();
+
+        loadHrList();
+
+    });
+
+
+    // ---------------- ADD HR BUTTON ----------------
+
+    $(document).on("click", ".addhrstatus", function () {
+
+        selectedFacilityId = $(this).data("facility-id");
+        selectedHrId = 0;
+
+        clearhrModal();
+
+        $("#hrModalTitle").text("Add HR Profile");
+        $("#HrId").val(0);
+        $("#FacilityId").val(selectedFacilityId);
+
+        $("#hrStatusModal").modal("show");
+
+    });
+
+
+    // ---------------- CLEAR MODAL ----------------
+
+    function clearhrModal() {
+
+        $("#hrStatusModal").find("input").val('');
+        $("#hrStatusModal").find("select").prop("selectedIndex", 0);
+
+    }
+
+
+    // ---------------- SAVE HR ----------------
+
+    $(document).on("click", "#btnSaveHr", function () {
+
+        let modelhr = {
+
+            HrId: 0,
+            FacilityId: selectedFacilityId,
+
+            Name: $("#Name").val(),
+            Mobile: $("#Mobile").val(),
+            DesignationId: $("#DesignationId").val(),
+            GenderId: $("#GenderId").val(),
+
+            TrainedAntaraGovt: $("#TrainedAntaraGovt").val(),
+            TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
+            AttendentVCAT: $("#AttendentVCAT").val(),
+            TrainedInIUCD: $("#TrainedInIUCD").val(),
+            TrainedInFPLMIS: $("#TrainedInFPLMIS").val(),
+            TrainedInCACS_MMA: $("#TrainedInCACS_MMA").val()
+
+        };
+
+        $.ajax({
+
+            url: '/HR/SaveHrStatus',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(modelhr),
+
+            success: function () {
+
+                Swal.fire('Success', 'HR added successfully!', 'success');
+
+                $("#hrStatusModal").modal('hide');
+
+                loadHrList();
+
+            }
+
+        });
+
+    });
+
+
+    // ---------------- LOAD HR LIST ----------------
+
+    function loadHrList() {
+
+        $.ajax({
+
+            url: '/HR/GetHrList',
+            type: 'GET',
+
+            success: function (data) {
+
+                let rows = "";
+
+                $.each(data, function (i, item) {
+
+                    rows += `<tr>
+
+                            <td>${i + 1}</td>
+                            <td>${item.name}</td>
+                            <td>${item.designationId}</td>
+                            <td>${item.mobile}</td>
+                         <td>${item.attendentVCAT == 1 ? 'Yes' : 'No'}</td>
+                          
+                        </tr>`;
+
+                });
+
+                $("#hrTableBody").html(rows);
+
+            }
+
+        });
+
+    }
+
+
+    $(document).on("change", "#IsDeliveryPoint", function () {
+
+        var val = $(this).val();
+
+        if (val == "1") {
+
+            $("#avgDeliveryDiv").show();
+
+        } else {
+
+            $("#avgDeliveryDiv").hide();
+            $("#AvgdeliveryperMonth").val("");
+
+        }
+
+    });
+
+
+    // ---------------- STATUS CHANGE ----------------
+
+    function handleStatusChange() {
+
+        var status = document.getElementById("Status").value;
+
+        var name = document.getElementById("Name");
+        var mobile = document.getElementById("Mobile");
+        var gender = document.getElementById("GenderId");
+
+        var trainingSection = document.getElementById("trainingSection");
+        var saveBtn = document.getElementById("btnSaveHr");
+
+        if (status == "1") {
+
+            name.disabled = true;
+            mobile.disabled = true;
+            gender.disabled = true;
+
+            trainingSection.style.display = "none";
+
+            if (saveBtn) {
+                saveBtn.style.display = "none";
+            }
+
+        }
+        else {
+
+            name.disabled = false;
+            mobile.disabled = false;
+            gender.disabled = false;
+
+            trainingSection.style.display = "block";
+
+            if (saveBtn) {
+                saveBtn.style.display = "inline-block";
+            }
+
+        }
+
+    }
+
+    $(document).on("change", "#Status", function () {
+
+        handleStatusChange();
+
+    });
+
+   
+
+</script>

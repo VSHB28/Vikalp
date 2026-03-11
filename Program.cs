@@ -89,7 +89,7 @@ builder.Services.AddScoped<IEventActivityService, EventActivityService>();
 builder.Services.AddScoped<ISubCentreService, SubCentreService>();
 builder.Services.AddScoped<IChecklistVisitService, ChecklistVisitService>();
 builder.Services.AddScoped<IAshaService, AshaService>();
-
+builder.Services.AddScoped<IHRService, HRService>();
 
 // Register DbContext
 //builder.Services.AddScoped<ApplicationDbContext>();
