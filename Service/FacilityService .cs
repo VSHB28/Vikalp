@@ -108,9 +108,7 @@ namespace Vikalp.Service.Implementations
             cmd.Parameters.Add("@Action", SqlDbType.NVarChar).Value = "Update";
             cmd.Parameters.Add("@FacilityId", SqlDbType.Int).Value = dto.FacilityId;
             cmd.Parameters.Add("@FacilityName", SqlDbType.NVarChar).Value = dto.FacilityName;
-            //cmd.Parameters.Add("@FacilityType", SqlDbType.NVarChar).Value = dto.FacilityType;
             cmd.Parameters.Add("@FacilityType", SqlDbType.Int).Value = dto.FacilityType;
-
             cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = dto.IsActive;
             cmd.Parameters.Add("@NinNumber", SqlDbType.NVarChar).Value = dto.NinNumber ?? (object)DBNull.Value;
             cmd.Parameters.Add("@BlockId", SqlDbType.Int).Value = dto.BlockId;
@@ -217,50 +215,6 @@ namespace Vikalp.Service.Implementations
             }
         }
 
-        public async Task SaveHrStatusAsync(HrStatusDto model)
-        {
-            try
-            {
-                using var con = new SqlConnection(_connectionString);
-
-                var parameters = new DynamicParameters();
-
-                parameters.Add("@HrId", model.HrId);
-                parameters.Add("@Name", model.Name);
-                parameters.Add("@DesignationId", model.DesignationId);
-                parameters.Add("@GenderId", model.GenderId);
-                parameters.Add("@Mobile", model.Mobile);
-                parameters.Add("@FacilityTypeId", model.FacilityTypeId);
-                parameters.Add("@FacilityId", model.FacilityId);
-                parameters.Add("@TrainedAntaraGovt", model.TrainedAntaraGovt);
-                parameters.Add("@TrainedAntaraIDF", model.TrainedAntaraIDF);
-                parameters.Add("@AttendentVCAT", model.AttendentVCAT);
-                parameters.Add("@TrainedInIUCD", model.TrainedInIUCD);
-                parameters.Add("@TrainedInFPLMIS", model.TrainedInFPLMIS);
-                parameters.Add("@TrainedInCACS_MMA", model.TrainedInCACS_MMA);
-                parameters.Add("@UserId", model.CreatedBy);
-
-                await con.ExecuteAsync(
-                    "usp_SaveHrStatus",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-            
-        }
-
-        public async Task<HrStatusDto> GetHrStatusAsync(int hrId)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                return await connection.QueryFirstOrDefaultAsync<HrStatusDto>(
-                    "usp_GetFacilityHrstatus",
-                    new { HrId = hrId },
-                    commandType: CommandType.StoredProcedure);
-            }
-        }
+     
     }
 }

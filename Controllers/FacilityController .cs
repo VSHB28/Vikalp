@@ -204,20 +204,7 @@ public class FacilityController : Controller
         return Json(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> SaveHrStatus([FromBody] HrStatusDto model)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        model.CreatedBy = userId;
-        await _facilityService.SaveHrStatusAsync(model);
-        return Ok();
-    }
 
-    [HttpGet]
-    public async Task<IActionResult> GetHrStatus(int hrId)
-    {
-        var result = await _facilityService.GetHrStatusAsync(hrId);
-        return Json(result);
-    }
+
 
 }

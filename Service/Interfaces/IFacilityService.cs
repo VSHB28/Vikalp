@@ -11,8 +11,8 @@ namespace Vikalp.Service.Interfaces
         Task DeleteAsync(int id);
         Task SaveFacilityProfileAsync(FacilityProfileDto model);
         Task<FacilityProfileDto> GetFacilityProfileAsync(int profileId);
-        Task SaveHrStatusAsync(HrStatusDto model);
-        Task<HrStatusDto> GetHrStatusAsync(int hrId);
+     
+       
 
     }
 }
