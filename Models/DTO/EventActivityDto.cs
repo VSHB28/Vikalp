@@ -19,6 +19,7 @@
         public int? Men_1Child { get; set; }
         public int? Women_2PlusChildren { get; set; }
         public int? Men_2PlusChildren { get; set; }
+        public int? MensLeafletCount {  get; set; } 
 
         public int? MotherInLawCount { get; set; }
         public int? IPCSessionHeld { get; set; }
@@ -26,6 +27,8 @@
 
         public int? WomenReferred_TemporaryMethods { get; set; }
         public int? MenReferred_TemporaryMethods { get; set; }
+        public int? WomenReferredCountForAntra { get; set; }
+
         public int? WomenAdopted_Parity0 { get; set; }
         public int? WomenAdopted_Parity1 { get; set; }
 
@@ -36,7 +39,6 @@
         public int? HelplineCalls { get; set; }
         public int? AntaraLeadsSent { get; set; }
 
-        public int? LeafletsDistributed { get; set; }
         public int? AntaraLeafletCount { get; set; }
         public int? NPKLeafletCount { get; set; }
 

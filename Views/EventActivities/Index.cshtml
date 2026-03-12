@@ -160,7 +160,7 @@
     <th><i class="bi bi-calendar-date"></i> Event Date</th>
     <th><i class="bi bi-hospital"></i> PHC</th>
     <th><i class="bi bi-house-heart"></i> SubCentre</th>
-    <th><i class="bi bi-file-earmark-text"></i> Leaflets Distributed</th>
+    <th><i class="bi bi-file-earmark-text"></i> HelpLine Leads</th>
     <th><i class="bi bi-gear"></i> Actions</th>
 </tr>
 
@@ -187,7 +187,7 @@
                     <td>@item.EventDate?.ToString("dd-MMM-yyyy")</td>
                     <td>@item.FacilityName</td>
                     <td>@item.SubCenter</td>
-                    <td>@item.LeafletsDistributed</td>
+                    <td>@item.AntaraLeadsSent</td>
                     <td class="text-end um-action">
                         <a class="btn btn-sm btn-outline-primary me-1"
                            asp-controller="EventActivities"

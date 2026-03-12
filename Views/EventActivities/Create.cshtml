@@ -522,8 +522,8 @@
                             <label class="form-label"><i class="bi bi-person-video3 label-icon"></i><span>Q16. IPC Session Conducted at RC (Temporary Devices)</span></label>
                             <select class="form-select" name="IPCSessionHeld">
                                 <option value="">-- Select --</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
+                                <option value="1">Yes</option>
+                                <option value="2">No</option>
                             </select>
                         </div>
                         <!-- Q18 -->
@@ -538,18 +538,19 @@
                         </div>
                         <!-- Q20 -->
                         <div class="form-group question-field" data-qid="Q20">
-                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q20. Number of Leaflets Distributed</span></label>
-                            <input type="number" min="0" class="form-input" name="LeafletsDistributed" placeholder="0" />
+                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q20. Number of Antara Leaflets Distributed</span></label>
+                            <input type="number" class="form-input" name="AntaraLeafletCount" placeholder="0" />
                         </div>
                         <!-- Q21 -->
                         <div class="form-group question-field" data-qid="Q21">
-                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q21. Number of Khushiyon Ki Potali Distributed</span></label>
-                            <input type="number" min="0" class="form-input" name="HappinessKitDistributed" placeholder="0" />
+                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q21. Number of NPK Leaflets Distributed</span></label>
+                            <input type="number" min="0" class="form-input" name="NPKLeafletCount" placeholder="0" />
                         </div>
                         <!-- Q22 -->
                         <div class="form-group question-field" data-qid="Q22">
-                            <label class="form-label"><i class="bi bi-file-text label-icon"></i><span>Q22. Antara leaflet, NPK leaflet (Describe)</span></label>
-                            <input type="number" class="form-input" name="NPKLeafletCount" placeholder="0"></input>
+
+                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q22. Number of Khushiyon Ki Potali Distributed</span></label>
+                            <input type="number" min="0" class="form-input" name="HappinessKitDistributed" placeholder="0" />
                         </div>
                     </div>
                 </div>
@@ -765,10 +766,9 @@
             HelplineCalls: getInt("HelplineCalls"),
             AntaraLeadsSent: getInt("AntaraLeadsSent"),
 
-            LeafletsDistributed: getInt("LeafletsDistributed"),
+            AntaraLeafletCount: getInt("AntaraLeafletCount"),
             HappinessKitDistributed : getInt("HappinessKitDistributed"),
 
-            AntaraLeafletCount: null,
             NPKLeafletCount: getInt("NPKLeafletCount"),
 
             CreatedBy: null,
