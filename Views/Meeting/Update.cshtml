@@ -1,0 +1,1000 @@
+﻿@model Vikalp.Models.DTO.MeetingDto
+@{
+    ViewData["Title"] = "Update Meeting";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+    :root {
+        --ipas-primary: #F15A29;
+        --ipas-primary-soft: rgba(241, 90, 41, 0.08);
+        --ipas-light: #F8F6F3;
+        --ipas-text-dark: #2C2C2C;
+        --ipas-text-muted: #666666;
+        --ipas-white: #FFFFFF;
+        --border-soft: #F3D2B8;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        background: rgba(0,0,0,0.05);
+    }
+
+    .shell {
+        width: 100%;
+        /* max-width: 1100px; */
+        padding: 10px;
+    }
+
+    .container {
+        background: var(--ipas-white);
+        border-radius: 12px;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+        overflow: hidden;
+    }
+
+    .left-panel {
+        padding: 22px 24px 20px;
+        background: var(--ipas-light);
+    }
+
+    .header-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: var(--ipas-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 18px;
+    }
+
+    .header-text-main {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ipas-text-dark);
+    }
+
+    .header-text-sub {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .badge-date {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #ffe3c4;
+        font-size: 11px;
+        color: var(--ipas-text-dark);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .section-switcher {
+        margin-bottom: 16px;
+    }
+
+    .section-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 6px;
+    }
+
+    .pill-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .pill {
+        border-radius: 999px;
+        border: 1px solid #f3d2b8;
+        padding: 6px 12px;
+        font-size: 11px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--ipas-white);
+        color: var(--ipas-text-muted);
+    }
+
+        .pill i {
+            font-size: 13px;
+        }
+
+        .pill.active {
+            background: #ffd7aa;
+            border-color: #f1a259;
+            color: var(--ipas-text-dark);
+            font-weight: 600;
+        }
+
+    .form-section {
+        background: var(--ipas-white);
+        border-radius: 8px;
+        border: 1px solid #f0e0d2;
+        padding: 14px 14px 16px;
+        margin-bottom: 10px;
+    }
+
+    .form-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ipas-text-dark);
+    }
+
+    .form-section-title-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: var(--ipas-primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ipas-primary);
+        font-size: 13px;
+    }
+
+    .form-section-subtitle {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 14px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ipas-text-dark);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .label-icon {
+        color: var(--ipas-primary);
+        font-size: 14px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        padding: 9px 11px;
+        border-radius: 6px;
+        border: 1px solid var(--border-soft);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--ipas-primary);
+            box-shadow: 0 0 0 2px rgba(241, 90, 41, 0.18);
+        }
+
+    .form-textarea {
+        min-height: 70px;
+        resize: vertical;
+    }
+
+    .form-footer {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .footer-note {
+        font-size: 11px;
+        color: var(--ipas-text-muted);
+    }
+
+    .btn-primary {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #f1a259;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #FFD8A6;
+        color: #e46b29;
+    }
+
+        .btn-primary:hover {
+            background-color: #ffc37a;
+        }
+
+    .btn-close {
+        min-width: 150px;
+        padding: 9px 24px;
+        border-radius: 999px;
+        border: 1px solid #444c53;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        background-color: #cacfd3;
+        color: #6c757d;
+    }
+
+    .btn-primary:hover {
+        background-color: #cacfd3;
+    }
+
+    .question-field[hidden] {
+        display: none !important;
+    }
+
+    @@media (max-width: 900px) {
+        .container {
+            border-radius: 0;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .shell {
+            padding: 14px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .multi-select {
+        position: relative;
+    }
+
+    .multi-select-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .multi-select-body {
+        display: none;
+        position: absolute;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        padding: 10px;
+        z-index: 10;
+    }
+
+    .checkbox-option {
+        display: block;
+        margin-bottom: 6px;
+    }
+
+        .checkbox-option input {
+            margin-right: 6px;
+        }
+</style>
+
+<div class="shell">
+    <div class="container">
+        <div class="left-panel">
+            <div class="header-bar">
+                <div class="header-title">
+                    <div class="header-icon"><i class="bi bi-clipboard2-check"></i></div>
+                    <div>
+                        <div class="header-text-main">Meeting</div>
+                        <div class="header-text-sub">Capture Meeting Details</div>
+                    </div>
+                </div>
+                <div class="badge-date">
+                    <i class="bi bi-calendar-event"></i>
+                    <span id="today-label">Today</span>
+                </div>
+            </div>
+
+            <!-- Set / Section Switcher -->
+            <div class="section-switcher">
+                <div class="section-label">Select Section / Meeting Type</div>
+
+                <div class="pill-group" id="setSwitcher">
+                    @foreach (var ev in ViewBag.MeetingList)
+                    {
+                        var isActive = Model != null && Model.MeetingType == ev.Id ? "active" : "";
+
+                        <button type="button"
+                                class="pill @isActive"
+                                data-set="@ev.Id">
+                            <i class="bi bi-@ev.Id-circle"></i>
+                            <span>@ev.Name</span>
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <form id="MeetingForm" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="MeetingId" value="@Model.MeetingId" />
+                <input type="hidden" name="MeetingGuid" value="@Model.MeetingGuid" />
+                <input type="hidden" id="hdStateId" value="@Model.StateId" />
+                <input type="hidden" id="hdnDistrictId" value="@Model.DistrictId" />
+                <input type="hidden" id="hdnBlockId" value="@Model.BlockId" />
+                <input type="hidden" id="hdnFacilityId" value="@Model.FacilityId" />
+                <input type="hidden" id="isEditMode" value="@(Model != null && Model.MeetingId != null ? "1" : "0")" />
+                <!-- Basic Details -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-info-circle"></i></div>
+                            <span>Basic Details</span>
+                        </div>
+                        <div class="form-section-subtitle">Meeting date and location</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q1 Meeting Date -->
+                        <div class="form-group question-field" data-qid="Q1">
+                            <label class="form-label"><i class="bi bi-calendar-date label-icon"></i><span>Date of meeting</span></label>
+                            <input type="date" class="form-input" name="MeetingDate" value="@(Model.MeetingDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <!-- Q2 Name of State -->
+                        <div class="form-group question-field" data-qid="Q2">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Name of State</span></label>
+                            <select name="StateId" class="form-input" id="StateId">
+                                <option value="">-- Select State --</option>
+                                @foreach (var s in ViewBag.States)
+                                {
+                                    <option value="@s.Id" @(Model.StateId == s.Id ? "selected" : "")>@s.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q2 Name of District -->
+                        <div class="form-group question-field" data-qid="Q3">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Name of District</span></label>
+                            <select name="DistrictId" class="form-input" id="DistrictId">
+                                <option value="">-- Select District --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of Block -->
+                        <div class="form-group question-field" data-qid="Q4">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Name of Block</span></label>
+                            <select name="BlockId" class="form-input" id="BlockId">
+                                <option value="">-- Select Block --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of PHC -->
+                        <div class="form-group question-field" data-qid="Q5">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Name of PHC</span></label>
+                            <select name="FacilityId" class="form-input" id="FacilityId">
+                                <option value="">-- Select Facility --</option>
+                            </select>
+                        </div>
+                        <!-- Q2 Name of Platform -->
+                        <div class="form-group question-field" data-qid="Q6">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Meeting Platform</span></label>
+                            <select name="MeetingPlatform" class="form-input" id="MeetingPlatform">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.meetinplatform)
+                                {
+                                    <option value="@s.Value" @(Model.MeetingPlatform.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q2 Name of Village -->
+                        <div class="form-group question-field" data-qid="Q7">
+                            <label class="form-label"><i class="bi bi-geo-alt-fill label-icon"></i><span>Name of Meeting Venue</span></label>
+                            <input type="text" class="form-input" name="MeetingVenue" value="@Model.MeetingVenue" placeholder="Enter name of Village" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participant and Review -->
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <div class="form-section-title">
+                            <div class="form-section-title-icon"><i class="bi bi-gender-female"></i></div>
+                            <span>Participant and Review</span>
+                        </div>
+                        <div class="form-section-subtitle">Participant and Review</div>
+                    </div>
+                    <div class="form-grid">
+                        <!-- Q8 -->
+                        <div class="form-group question-field" data-qid="Q8">
+
+                            <label class="form-label">
+                                <i class="bi bi-people label-icon"></i>
+                                <span>Select Participants</span>
+                            </label>
+
+                            <div class="multi-select" id="participantDropdown">
+
+                                <div class="form-input multi-select-header"
+                                     onclick="toggleParticipantDropdown()">
+
+                                    <span id="participantText">-- Select --</span>
+                                    <i class="bi bi-chevron-down"></i>
+
+                                </div>
+
+                                <div class="multi-select-body" id="participantOptions">
+
+                                    @foreach (var p in ViewBag.blockParticipant)
+                                    {
+                                        <label class="checkbox-option">
+                                            <input type="checkbox"
+                                                   value="@p.Value"
+                                                   name="ParticipantsChk"
+                                                   class="participant-checkbox"
+                                                   onchange="updateParticipantText(); toggleOtherParticipant()" />
+
+                                            <span>@p.Text</span>
+                                        </label>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <!-- Q8.1 -->
+                        <div class="form-group question-field" data-qid="Q8.1" style="display:none;">
+                            <label class="form-label"><i class="bi bi-person-vcard label-icon"></i><span>Other Participant Name?</span></label>
+                            <input type="text" class="form-control" maxlength="50" name="ParticipantOther" value="@Model.ParticipantOther" placeholder="Name of IDF Staff" />
+                        </div>
+                        <!-- Q9 -->
+                        <div class="form-group question-field" data-qid="Q9">
+                            <label class="form-label"><i class="bi bi-arrow-repeat label-icon"></i></i><span>Whether review of reversible methods done?</span></label>
+                            <select name="ReversibleMethodsReview" class="form-input" id="ReversibleMethodsReview">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.ReversibleMethodsReview.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q10 -->
+                        <div class="form-group question-field" data-qid="Q10">
+                            <label class="form-label"><i class="bi bi-cash-coin label-icon"></i><span>Whether review of ASHA incentives done?</span></label>
+                            <select name="AshaIncentivesReview" class="form-input" id="AshaIncentivesReview">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.AshaIncentivesReview.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q11 -->
+                        <div class="form-group question-field" data-qid="Q11">
+                            <label class="form-label"><i class="bi bi-box-seam label-icon"></i><span>Whether review of FPLMIS & stock status done?</span></label>
+                            <select name="FplmisAndStockStatusReview" class="form-input" id="FplmisAndStockStatusReview">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.FplmisAndStockStatusReview.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q12 -->
+                        <div class="form-group question-field" data-qid="Q12">
+                            <label class="form-label"><i class="bi bi-person-check label-icon"></i><span>If any ASHA/Staff falicitated for reversible contraceptive performance?</span></label>
+                            <select name="StaffFacilitateReversibleContraceptives" class="form-input" id="StaffFacilitateReversibleContraceptives">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.StaffFacilitateReversibleContraceptives.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q13 -->
+                        <div class="form-group question-field" data-qid="Q13">
+                            <label class="form-label"><i class="bi bi-building label-icon"></i><span>Joint Visit with any government officials?</span></label>
+                            <select name="GovernmentOfficialJointVisit" class="form-input" id="GovernmentOfficialJointVisit">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.GovernmentOfficialJointVisit.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q14 -->
+                        <div class="form-group question-field" data-qid="Q14">
+                            <label class="form-label"><i class="bi bi-person-badge label-icon"></i><span>Whether IDF staff present?</span></label>
+                            <select name="IsIDFstaffPresent" class="form-input" id="IsIDFstaffPresent">
+                                <option value="">-- Select --</option>
+                                @foreach (var s in ViewBag.yesNo)
+                                {
+                                    <option value="@s.Value" @(Model.IsIDFstaffPresent.ToString() == s.Value ? "selected" : "")>@s.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <!-- Q15 -->
+                        <div class="form-group question-field" data-qid="Q15">
+                            <label class="form-label"><i class="bi bi-person-vcard label-icon"></i><span>If yes, name of IDF Staff Name?</span></label>
+                            <input type="text" class="form-input" maxlength="50" name="IdfStaffName" value="@Model.IdfStaffName" placeholder="Name of IDF Staff" />
+                        </div>
+                        <!-- Q16 -->
+                        <div class="form-group question-field" data-qid="Q16">
+                            <label class="form-label"><i class="bi bi-chat-left-text label-icon"></i><span>Remarks</span></label>
+                            <textarea maxlength="200" class="form-input" name="Remarks" placeholder="Remark" rows="2">@Model.Remarks</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form footer -->
+                <div class="form-footer">
+                    <button type="submit" class="btn-save">Save</button>
+                    <a href="@Url.Action("Index", "Meeting")" class="btn-back">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+            // Auto set today's date label
+            (function () {
+                var todayLabel = document.getElementById('today-label');
+                if (todayLabel) {
+                    var today = new Date();
+                    var options = { day: '2-digit', month: 'short', year: 'numeric' };
+                    todayLabel.textContent = today.toLocaleDateString('en-GB', options);
+                }
+            })();
+
+           // Question sets mapping based on your specification
+        var questionSets = {
+             1: ['Q1','Q2','Q3','Q4','Q7','Q8','Q8.1','Q9','Q10','Q11','Q12','Q13','Q14','Q15','Q16'],
+             2: ['Q1','Q2','Q3','Q4','Q5','Q7','Q8','Q8.1','Q9','Q10','Q11','Q12','Q13','Q14','Q15','Q16'],
+             3: ['Q1','Q2','Q3','Q6','Q7','Q9','Q10','Q11','Q12','Q14','Q15','Q16']
+        };
+
+            function applySetVisibility(activeSetKey) {
+                var allowed = questionSets[activeSetKey] || [];
+                var allFields = document.querySelectorAll('.question-field');
+                allFields.forEach(function (field) {
+                    var qid = field.getAttribute('data-qid');
+                    if (!qid) return;
+                    if (allowed.indexOf(qid) !== -1) {
+                        field.hidden = false;
+                    } else {
+                        field.hidden = true;
+                    }
+                });
+            }
+
+             //======================= Participant toggle ==========================
+
+                function toggleParticipantDropdown() {
+
+        var body = document.getElementById("participantOptions");
+
+        if (body.style.display === "block") {
+            body.style.display = "none";
+        } else {
+            body.style.display = "block";
+        }
+    }
+
+
+    // Close when clicking outside
+    document.addEventListener("click", function (event) {
+
+        var dropdown = document.getElementById("participantDropdown");
+
+        if (!dropdown.contains(event.target)) {
+
+            document.getElementById("participantOptions").style.display = "none";
+
+        }
+
+    });
+
+    function updateParticipantText() {
+
+        var selected = [];
+
+        document.querySelectorAll("input[name='ParticipantsChk']:checked")
+            .forEach(x => selected.push(x.nextElementSibling.innerText));
+
+        var text = "-- Select --";
+
+        if (selected.length > 0)
+            text = selected.join(", ");
+
+        document.getElementById("participantText").innerText = text;
+    }
+        var saved = "@Model.Participants";
+
+    if (saved) {
+
+        saved.split(',').forEach(function(val){
+
+            document.querySelector(
+                "input[name='ParticipantsChk'][value='"+val+"']"
+            ).checked = true;
+
+        });
+
+        updateParticipantText();
+        toggleOtherParticipant();
+    }
+
+    //================= toggle other participant ================
+
+            function toggleOtherParticipant() {
+
+        let otherCheckbox = null;
+
+        document.querySelectorAll(".participant-checkbox").forEach(cb => {
+
+            const labelText = cb.nextElementSibling.innerText.trim().toLowerCase();
+
+            if (labelText === "others") {
+                otherCheckbox = cb;
+            }
+
+        });
+
+        const otherField = document.querySelector("[data-qid='Q8.1']");
+
+        if (!otherCheckbox || !otherField) return;
+
+        if (otherCheckbox.checked) {
+
+            otherField.style.display = "block";
+
+        } else {
+
+            otherField.style.display = "none";
+
+            document.querySelector("[name='ParticipantOther']").value = "";
+
+        }
+    }
+
+            // Handle set switcher pill clicks
+                var switcher = document.getElementById('setSwitcher');
+
+            if (switcher) {
+
+                switcher.addEventListener('click', function (e) {
+
+                    var target = e.target;
+
+                    while (target && target !== switcher && !target.dataset.set) {
+                        target = target.parentElement;
+                    }
+
+                    if (!target || !target.dataset.set) return;
+
+                    var setKey = target.dataset.set;
+
+                    // toggle active class
+                    var pills = switcher.querySelectorAll('.pill');
+
+                    pills.forEach(function (pill) {
+                        pill.classList.toggle('active', pill === target);
+                    });
+
+                    applySetVisibility(setKey);
+
+                });
+
+                // ✅ FIX: load default active set
+                var defaultActive = switcher.querySelector('.pill.active');
+
+                if (defaultActive) {
+                    applySetVisibility(defaultActive.dataset.set);
+                }
+
+            }
+
+
+            //======================= Autofill Dropdown ===================================
+                 document.addEventListener("DOMContentLoaded", async function () {
+
+            const stateId = document.getElementById("hdStateId").value;
+            const districtId = document.getElementById("hdnDistrictId").value;
+            const blockId = document.getElementById("hdnBlockId").value;
+            const facilityId = document.getElementById("hdnFacilityId").value;
+            toggleOtherParticipant();
+            // Autofill sequence
+            if (stateId) {
+                document.getElementById("StateId").value = stateId;
+                await loadDistricts(stateId, districtId);
+            }
+
+            if (districtId) {
+                await loadBlocks(districtId, blockId);
+            }
+
+            if (blockId) {
+                await loadFacilities(blockId, facilityId);
+            }
+
+            // Cascading change events
+            document.getElementById("StateId").addEventListener("change", async function () {
+                await loadDistricts(this.value);
+                resetDropdown("BlockId", "-- Select Block --");
+                resetDropdown("FacilityId", "-- Select Facility --");
+            });
+
+            document.getElementById("DistrictId").addEventListener("change", async function () {
+                await loadBlocks(this.value);
+                resetDropdown("FacilityId", "-- Select Facility --");
+            });
+
+            document.getElementById("BlockId").addEventListener("change", async function () {
+                await loadFacilities(this.value);
+            });
+
+        });
+
+
+        // ================= LOAD FUNCTIONS =================
+
+        async function loadDistricts(stateId, selectedVal = null) {
+
+            if (!stateId) return;
+
+            const data = await fetch(`/Meeting/GetDistricts?stateId=${stateId}`)
+                .then(r => r.json());
+
+            fillDropdown("DistrictId", data, "id", "name");
+
+            if (selectedVal)
+                document.getElementById("DistrictId").value = selectedVal;
+        }
+
+
+        async function loadBlocks(districtId, selectedVal = null) {
+
+            if (!districtId) return;
+
+            const data = await fetch(`/Meeting/GetBlocks?districtId=${districtId}`)
+                .then(r => r.json());
+
+            fillDropdown("BlockId", data, "id", "name");
+
+            if (selectedVal)
+                document.getElementById("BlockId").value = selectedVal;
+        }
+
+
+        async function loadFacilities(blockId, selectedVal = null) {
+
+            if (!blockId) return;
+
+            const data = await fetch(`/Meeting/GetFacilities?blockId=${blockId}`)
+                .then(r => r.json());
+
+            fillDropdown("FacilityId", data, "id", "name");
+
+            if (selectedVal)
+                document.getElementById("FacilityId").value = selectedVal;
+        }
+
+
+        // ================= HELPERS =================
+
+        function resetDropdown(id, placeholder) {
+
+            const ddl = document.getElementById(id);
+
+            ddl.innerHTML = `<option value="">${placeholder}</option>`;
+        }
+
+
+        function fillDropdown(id, data, valueField, textField) {
+
+            const ddl = document.getElementById(id);
+
+            ddl.innerHTML = `<option value="">-- Select --</option>`;
+
+            data.forEach(item => {
+
+                const option = document.createElement("option");
+
+                option.value = item[valueField];
+
+                option.textContent = item[textField];
+
+                ddl.appendChild(option);
+            });
+        }
+
+        //======================== update data ===============================
+
+        document.getElementById("MeetingForm")
+    .addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        // 🔴 Validate Meeting Date
+    const meetingDate = getDate("MeetingDate");
+
+    if (!meetingDate) {
+        alert("Please select Meeting Date");
+        document.querySelector("[name='MeetingDate']").focus();
+        return;
+    }
+
+        const activeSet = document.querySelector(".pill.active");
+
+        const dto = {
+
+            MeetingId: getInt("MeetingId"),
+            MeetingGuid: getString("MeetingGuid"),
+
+            MeetingType: activeSet ? parseInt(activeSet.dataset.set) : null,
+
+            MeetingDate: getDate("MeetingDate"),
+
+            StateId: getInt("StateId"),
+            DistrictId: getInt("DistrictId"),
+            BlockId: getInt("BlockId"),
+            FacilityId: getInt("FacilityId"),
+
+            MeetingPlatform: getInt("MeetingPlatform"),
+
+            MeetingVenue: getString("MeetingVenue"),
+
+            Participants: getParticipants(),
+            ParticipantOther: getString("ParticipantOther"),
+
+            ReversibleMethodsReview: getInt("ReversibleMethodsReview"),
+            AshaIncentivesReview: getInt("AshaIncentivesReview"),
+            FplmisAndStockStatusReview: getInt("FplmisAndStockStatusReview"),
+
+            StaffFacilitateReversibleContraceptives:
+                getInt("StaffFacilitateReversibleContraceptives"),
+
+            GovernmentOfficialJointVisit:
+                getInt("GovernmentOfficialJointVisit"),
+
+            IsIDFstaffPresent:
+                getInt("IsIDFstaffPresent"),
+
+            IdfStaffName:
+                getString("IdfStaffName"),
+
+            Remarks:
+                getString("Remarks")
+        };
+
+        console.log("Updating DTO:", dto);
+
+        try {
+
+            const token =
+            document.querySelector("input[name='__RequestVerificationToken']").value;
+
+            const response = await fetch("/Meeting/UpdateJson", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "RequestVerificationToken": token
+                },
+                body: JSON.stringify(dto)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                alert("Updated Successfully ✅");
+
+                window.location.href = "/Meeting/Index";
+
+            }
+            else {
+
+                alert(result.message || "Update Failed ❌");
+
+            }
+
+        }
+        catch (err) {
+
+            console.error(err);
+            alert("Server error");
+
+        }
+
+    });
+
+        function getParticipants() {
+
+        var values = [];
+
+        document.querySelectorAll("input[name='ParticipantsChk']:checked")
+            .forEach(cb => values.push(cb.value));
+
+        return values.join(",");
+    }
+
+
+            // ---------------------
+            // Helper Functions
+            // ---------------------
+
+            function getInt(name) {
+                const el = document.querySelector(`[name='${name}']`);
+                if (!el || el.value === "") return null;
+                return parseInt(el.value);
+            }
+
+            function getString(name) {
+                const el = document.querySelector(`[name='${name}']`);
+                if (!el || el.value === "") return null;
+                return el.value.trim();
+            }
+
+            function getDate(name) {
+                const el = document.querySelector(`[name='${name}']`);
+                if (!el || el.value === "") return null;
+                return el.value;
+            }
+
+            function getBool(name) {
+                const el = document.querySelector(`[name='${name}']`);
+                if (!el || el.value === "") return null;
+
+                if (el.value === "Yes") return true;
+                if (el.value === "No") return false;
+
+                return null;
+            }
+
+</script>

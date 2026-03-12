@@ -13,6 +13,7 @@ public interface IDropdownService
     List<DropdownDto> GetFacilities(int blockId);
     List<DropdownDto> GetEventActivities();
     List<DropdownDto> GetChecklistvisit();
+    List<DropdownDto> GetMeetings();
     List<DropdownDto> GetSubCentre(int blockId, int UserId);
     List<DropdownDto> GetFacilityTypes();
     List<DropdownDto> GetAshas();
@@ -22,6 +23,6 @@ public interface IDropdownService
     List<DropdownDto> GetTopicsCovered(int userId, int flagId);
 
     Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsAsync(int userId, int languageId);
-
     Task<Dictionary<string, List<SelectListItem>>> GetCommonDropdownsfamilyplanningAsync(int userId, int languageId);
+    Task<Dictionary<string, List<SelectListItem>>> GetMeetingCommonDropdownsAsync(int userId, int languageId);
 }

@@ -514,6 +514,11 @@
                             <label class="form-label"><i class="bi bi-arrow-repeat label-icon"></i><span>Q13. Number of Women Referred for Temporary Devices</span></label>
                             <input type="number" min="0" class="form-input" name="WomenReferred_TemporaryMethods" value="@Model.WomenReferred_TemporaryMethods" placeholder="0" />
                         </div>
+                        <!-- Q13.1 -->
+                        <div class="form-group question-field" data-qid="Q13.1">
+                            <label class="form-label"><i class="bi bi-arrow-repeat label-icon"></i><span>Q13.1. Number of Women Referred for Antara</span></label>
+                            <input type="number" min="0" class="form-input" name="WomenReferredCountForAntra" value="@Model.WomenReferredCountForAntra" placeholder="0" />
+                        </div>
                         <!-- Q14 -->
                         <div class="form-group question-field" data-qid="Q14">
                             <label class="form-label"><i class="bi bi-droplet label-icon"></i><span>Q14. Number of Antara Doses Given on That Day</span></label>
@@ -554,6 +559,11 @@
                             <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q22. Number of Khushiyon Ki Potali Distributed</span></label>
                             <input type="number" min="0" class="form-input" name="HappinessKitDistributed" value="@Model.HappinessKitDistributed" placeholder="0" />
                         </div>
+                        <!-- Q23 -->
+                        <div class="form-group question-field" data-qid="Q23">
+                            <label class="form-label"><i class="bi bi-file-earmark-text-fill label-icon"></i><span>Q23. Number of Men Leaflets Distributed</span></label>
+                            <input type="number" class="form-input" name="MensLeafletCount" value="@Model.MensLeafletCount" placeholder="0" />
+                        </div>
                     </div>
                 </div>
 
@@ -583,10 +593,10 @@
 
         // Question sets mapping based on your specification
         var questionSets = {
-        1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q14','Q18','Q19','Q20','Q21','Q22'],
-        2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q22'],
-        3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q18','Q19','Q20','Q21','Q22'],
-        4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q18','Q19','Q20','Q22']
+             1: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q5','Q6','Q10','Q11','Q12','Q13','Q13.1','Q14','Q18','Q19','Q20','Q21','Q22','Q23'],
+             2: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q10','Q11','Q15','Q16','Q17','Q18','Q19','Q20','Q22','Q23'],
+             3: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q10','Q13','Q13.1','Q18','Q19','Q20','Q21','Q22','Q23'],
+             4: ['Q1','Q2.1','Q2.2','Q2.3','Q2.4','Q2.5','Q2.6','Q3','Q4','Q7','Q8','Q9','Q10','Q11','Q12','Q13','Q13.1','Q18','Q19','Q20','Q22','Q23']
         };
 
         function applySetVisibility(activeSetKey) {
@@ -832,7 +842,9 @@
         HappinessKitDistributed : getInt("HappinessKitDistributed"),
 
         AntaraLeafletCount: getInt("AntaraLeafletCount"),
-        NPKLeafletCount: getInt("NPKLeafletCount")
+        NPKLeafletCount: getInt("NPKLeafletCount"),
+        MensLeafletCount: getInt("MensLeafletCount"),
+        WomenReferredCountForAntra: getInt("WomenReferredCountForAntra"),
     };
 
     console.log("Updating DTO:", dto);
