@@ -105,7 +105,6 @@ public class EventActivityService : IEventActivityService
                 AntaraLeadsSent = GetNullableInt(reader, "AntaraLeadsSent"),
 
                 // IEC
-                LeafletsDistributed = GetNullableInt(reader, "LeafletsDistributed"),
                 HappinessKitDistributed = GetNullableInt(reader, "HappinessKitDistributed"),
                 AntaraLeafletCount = GetNullableInt(reader, "AntaraLeafletCount"),
                 NPKLeafletCount = GetNullableInt(reader, "NPKLeafletCount"),
@@ -208,7 +207,6 @@ public class EventActivityService : IEventActivityService
                 AntaraLeadsSent = GetNullableInt(reader, "AntaraLeadsSent"),
 
                 // IEC
-                LeafletsDistributed = GetNullableInt(reader, "LeafletsDistributed"),
                 HappinessKitDistributed = GetNullableInt(reader, "HappinessKitDistributed"),
                 AntaraLeafletCount = GetNullableInt(reader, "AntaraLeafletCount"),
                 NPKLeafletCount = GetNullableInt(reader, "NPKLeafletCount"),
@@ -297,9 +295,6 @@ public class EventActivityService : IEventActivityService
             cmd.Parameters.AddWithValue("@AntaraLeadsSent",
                 (object?)dto.AntaraLeadsSent ?? DBNull.Value);
 
-            cmd.Parameters.AddWithValue("@LeafletsDistributed",
-                (object?)dto.LeafletsDistributed ?? DBNull.Value);
-
             cmd.Parameters.AddWithValue("@AntaraLeafletCount",
                 (object?)dto.AntaraLeafletCount ?? DBNull.Value);
 
@@ -367,7 +362,6 @@ public class EventActivityService : IEventActivityService
             cmd.Parameters.AddWithValue("@HelplineCalls", dto.HelplineCalls);
             cmd.Parameters.AddWithValue("@AntaraLeadsSent", dto.AntaraLeadsSent);
 
-            cmd.Parameters.AddWithValue("@LeafletsDistributed", dto.LeafletsDistributed);
             cmd.Parameters.AddWithValue("@HappinessKitDistributed", dto.HappinessKitDistributed);
             cmd.Parameters.AddWithValue("@AntaraLeafletCount", dto.AntaraLeafletCount);
             cmd.Parameters.AddWithValue("@NPKLeafletCount", dto.NPKLeafletCount);
