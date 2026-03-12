@@ -187,12 +187,14 @@ public class EventActivityService : IEventActivityService
 
                 WomenReferred_TemporaryMethods =
                     GetNullableInt(reader, "WomenReferred_TemporaryMethods"),
+                WomenReferredCountForAntra =
+                    GetNullableInt(reader, "WomenReferredCountForAntra"),
 
                 // Men
                 Men_0Children = GetNullableInt(reader, "Men_0Children"),
                 Men_1Child = GetNullableInt(reader, "Men_1Child"),
                 Men_2PlusChildren = GetNullableInt(reader, "Men_2PlusChildren"),
-
+                MensLeafletCount = GetNullableInt(reader, "MensLeafletCount"),
                 MenReferred_TemporaryMethods =
                     GetNullableInt(reader, "MenReferred_TemporaryMethods"),
 
@@ -301,6 +303,12 @@ public class EventActivityService : IEventActivityService
             cmd.Parameters.AddWithValue("@NPKLeafletCount",
                 (object?)dto.NPKLeafletCount ?? DBNull.Value);
 
+            cmd.Parameters.AddWithValue("@WomenReferredCountForAntra",
+                (object?)dto.WomenReferredCountForAntra ?? DBNull.Value);
+
+            cmd.Parameters.AddWithValue("@MensLeafletCount",
+                (object?)dto.MensLeafletCount ?? DBNull.Value);
+
             cmd.Parameters.AddWithValue("@CreatedBy", userId);
 
             await cmd.ExecuteNonQueryAsync();
@@ -365,6 +373,8 @@ public class EventActivityService : IEventActivityService
             cmd.Parameters.AddWithValue("@HappinessKitDistributed", dto.HappinessKitDistributed);
             cmd.Parameters.AddWithValue("@AntaraLeafletCount", dto.AntaraLeafletCount);
             cmd.Parameters.AddWithValue("@NPKLeafletCount", dto.NPKLeafletCount);
+            cmd.Parameters.AddWithValue("@WomenReferredCountForAntra", dto.WomenReferredCountForAntra);
+            cmd.Parameters.AddWithValue("@MensLeafletCount", dto.MensLeafletCount);
 
             cmd.Parameters.AddWithValue("@UpdatedBy", userId);
 

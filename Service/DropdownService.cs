@@ -146,6 +146,21 @@ public class DropdownService : IDropdownService
             Name = r.Field<string>("Value")
         }).ToList();
     }
+
+    public List<DropdownDto> GetMeetings()
+    {
+        var param = new SqlParameter[]
+        {
+        new SqlParameter("@UserID", 1)
+        };
+        var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetMeetingType", param);
+
+        return dt.AsEnumerable().Select(r => new DropdownDto
+        {
+            Id = r.Field<int>("Id"),
+            Name = r.Field<string>("Value")
+        }).ToList();
+    }
     public List<DropdownDto> GetSubCentre(int blockId, int UserId)
     {
         var param = new SqlParameter[]
@@ -491,6 +506,73 @@ public class DropdownService : IDropdownService
                     });
                 }
                 result["YesNoNa"] = yesNoNa;
+            }
+        }
+
+        return result;
+    }
+
+    public async Task<Dictionary<string, List<SelectListItem>>> GetMeetingCommonDropdownsAsync(int userId, int languageId)
+    {
+        var result = new Dictionary<string, List<SelectListItem>>();
+
+        using (var conn = new SqlConnection(Conn()))
+        using (var cmd = new SqlCommand("dbo.sp_getCommonDataforMeetingdropdown", conn))
+        {
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            cmd.Parameters.AddWithValue("@LanguageId", languageId);
+
+            await conn.OpenAsync();
+            using (var reader = await cmd.ExecuteReaderAsync())
+            {
+                // YesNo
+                var yesNo = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    yesNo.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["YesNo"] = yesNo;
+                await reader.NextResultAsync();
+
+                var blockparticipant = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    blockparticipant.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["BlockParticipant"] = blockparticipant;
+                await reader.NextResultAsync();
+
+                var meetingplatform = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    meetingplatform.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["MeetingPlatform"] = meetingplatform;
+                await reader.NextResultAsync();
+
+                var sectorparticipant = new List<SelectListItem>();
+                while (await reader.ReadAsync())
+                {
+                    sectorparticipant.Add(new SelectListItem
+                    {
+                        Value = reader["Id"].ToString(),
+                        Text = reader["Value"].ToString()
+                    });
+                }
+                result["SectorParticipant"] = sectorparticipant;
             }
         }
 
