@@ -25,12 +25,17 @@ namespace Vikalp.Controllers
             _dropdownService = dropdownService;
         }
 
-
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
             ViewBag.States = _dropdownService.GetStates();
-            var data = _ashaService.GetAllAsha().Result;
-            return View(data);
+
+            var result = await _ashaService.GetAllAsha(page, pageSize);
+
+            ViewBag.PageNumber = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalCount = result.TotalCount;
+
+            return View(result.Data);
         }
 
         [HttpGet]

@@ -84,5 +84,29 @@ namespace Vikalp.Service
             return result.ToList();
         }
 
+
+
+
+        public async Task<(List<HrStatusDto> HrList, int TotalCount)> GetHrListPagedAsync(int pageNumber, int pageSize)
+        {
+            using var con = Conn();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Offset", (pageNumber - 1) * pageSize);
+            parameters.Add("@Fetch", pageSize);
+
+            // Stored procedure approach (recommended)
+            var hrList = await con.QueryAsync<HrStatusDto>(
+                "usp_GetHrListPaged", // create this in SQL
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            // Total count
+            var totalCount = await con.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM tblHRstatus");
+
+            return (hrList.ToList(), totalCount);
+        }
+
     }
 }

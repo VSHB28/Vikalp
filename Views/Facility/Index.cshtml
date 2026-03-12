@@ -471,7 +471,7 @@
                             <th>Type</th>
                             <th>NIN</th>
                             <th>+ Info</th>
-                            <th>+ Profile</th>
+                           
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -681,185 +681,7 @@
                 </div>
             </div>
 
-            <!-- FACILITY HR STATUS MODAL -->
-            <div class="modal fade" id="hrStatusModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="hrModalTitle">Add HR</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form>
-                                <div class="section-wrapper">
-
-                                    <!-- Basic Information -->
-                                    <div class="section-card">
-                                        <div class="section-header">
-                                            <div class="section-icon"><i class="bi bi-person-badge"></i></div>
-                                            <div>
-                                                <div class="section-title">Basic Information</div>
-                                                <div class="section-subtitle">Key HR profile details</div>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="form-grid">
-
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-briefcase label-icon"></i><span>Designation</span></label>
-                                                <select name="DesignationId" id="DesignationId" class="form-select">
-                                                    <option value=""> Select  </option>
-
-                                                    @foreach (var s in ViewBag.designation)
-                                                    {
-                                                        if (s.Value != "8")
-                                                        {
-                                                            <option value="@s.Value">@s.Text</option>
-                                                        }
-                                                    }
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-check-circle label-icon"></i><span>Post Occupied</span></label>
-                                                <select name="Status" id="Status" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-person label-icon"></i><span>Name</span></label>
-                                                <input name="Name"
-                                                       type="text"
-                                                       id="Name"
-                                                       class="form-control"
-                                                       maxlength="50"
-                                                       required
-                                                       onkeypress="return /[a-zA-Z\s]/.test(event.key)" />
-                                            </div>
-
-
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-telephone label-icon"></i><span>Mobile</span></label>
-                                                <input name="Mobile" id="Mobile" class="form-control" maxlength="10" required pattern="\d{10}" placeholder="Enter Mobile Number" />
-                                            </div>
-
-                                          
-
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-gender-ambiguous label-icon"></i><span>Gender</span></label>
-                                                <select name="GenderId" id="GenderId" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.gender)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Training Details -->
-                                    <div class="section-card" id="trainingSection">
-                                        <div class="section-header">
-                                            <div class="section-icon"><i class="bi bi-mortarboard-fill"></i></div>
-                                            <div>
-                                                <div class="section-title">Training & Orientation</div>
-                                                <div class="section-subtitle">Antara, VCAT & FP trainings</div>
-                                            </div>
-                                        </div>
-                                        <div class="form-grid form-grid-2">
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-buildings-fill label-icon"></i><span>Trained Antara Govt</span></label>
-                                                <select name="TrainedAntaraGovt" id="TrainedAntaraGovt" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-building-check label-icon"></i><span>Trained Antara IDF</span></label>
-                                                <select name="TrainedAntaraIDF" id="TrainedAntaraIDF" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-clipboard-pulse label-icon"></i><span>Trained In FPLMIS</span></label>
-                                                 <select name="TrainedInFPLMIS" id="TrainedInFPLMIS" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                 </select>
-                                            </div>
-                                           
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-capsule-pill label-icon"></i><span>Trained In IUCD</span></label>
-                                                <select name="TrainedInIUCD" id="TrainedInIUCD" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-
-
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    <i class="bi bi-capsule-pill label-icon"></i>
-                                                    <span>Trained In CACS / MMA</span>
-                                                </label>
-                                                <select name="TrainedInCACS_MMA" id="TrainedInCACS_MMA" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-
-
-
-
-
-                                            <div class="form-group">
-                                                <label class="form-label"><i class="bi bi-clipboard-check label-icon"></i><span>Attended VCAT</span></label>
-                                                <select name="AttendentVCAT" id="AttendentVCAT" class="form-select">
-                                                    <option value="">-- Select --</option>
-                                                    @foreach (var s in ViewBag.yesNoNa)
-                                                    {
-                                                        <option value="@s.Value">@s.Text</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button class="btn btn-back" data-bs-dismiss="modal">Cancel</button>
-                            <button class="btn btn-save" id="btnSaveHr">Save</button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+           
         </div>
     </div>
 </div>
@@ -929,15 +751,7 @@
                                 <i class="bi bi-plus-circle"></i>
                             </button>
                             </td>
-                                <td>
-                            <button class="btn btn-sm btn-outline-primary addhrstatus"
-                                    data-facility-id="${f.facilityId}"
-                                    data-hr-id="${f.hrId ?? 0}">
-                                <i class="bi bi-person-plus"></i>
-                            </button>
-
-
-                                </td>
+                               
 
                                 <td class="text-end um-action">
                                 <a href="/Facility/Edit/${f.facilityId}" class="btn btn-sm btn-outline-primary" title="Edit">
@@ -1039,35 +853,6 @@
         $("#hrStatusModal").find("select").prop('selectedIndex', 0);
     }
 
-    $(document).on("click", "#btnSaveHr", function () {
-        let modelhr = {
-            HrId: 0, 
-            FacilityId: selectedFacilityId,
-            Name: $("#Name").val(),
-            Mobile: $("#Mobile").val(),
-            DesignationId: $("#DesignationId").val(),
-            GenderId: $("#GenderId").val(),
-            TrainedAntaraGovt: $("#TrainedAntaraGovt").val(),
-            TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
-            AttendentVCAT: $("#AttendentVCAT").val(),
-            TrainedInIUCD: $("#TrainedInIUCD").val(),
-            TrainedInFPLMIS: $("#TrainedInFPLMIS").val(),
-            TrainedInCACS_MMA: $("#TrainedInCACS_MMA").val()
-        };
-
-        $.ajax({
-            url: '/Facility/SaveHrStatus',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(modelhr),
-            success: function () {
-                Swal.fire('Success', 'New HR added successfully!', 'success');
-                $("#hrStatusModal").modal('hide');
-                $('#blockDropdown').change();
-            }
-        });
-    });
-
 
     function showInfo(item){
         $("#hdnSubCenterId").val(item);
@@ -1098,48 +883,7 @@
     });
 
 
-      function handleStatusChange() {
-
-        var status = document.getElementById("Status").value;
-        console.log("Selected Status:", status);
-
-        var name = document.getElementById("Name");
-        var mobile = document.getElementById("Mobile");
-        var gender = document.getElementById("GenderId");
-
-        var trainingSection = document.getElementById("trainingSection");
-        var saveBtn = document.getElementById("btnSaveHr");
-
-        if (status == "1") {   // Yes
-
-            name.disabled = true;
-            mobile.disabled = true;
-            gender.disabled = true;
-
-            trainingSection.style.display = "none";
-
-            if (saveBtn) {
-                saveBtn.style.display = "none";
-            }
-
-        } else {
-
-            name.disabled = false;
-            mobile.disabled = false;
-            gender.disabled = false;
-
-            trainingSection.style.display = "block";
-
-            if (saveBtn) {
-                saveBtn.style.display = "inline-block";
-            }
-        }
-    }
-
-
-        $(document).on("change", "#Status", function () {
-        handleStatusChange();
-    });
+   
 
 
       document.addEventListener("DOMContentLoaded", function () {

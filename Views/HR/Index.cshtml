@@ -2,6 +2,11 @@
 @{
     ViewData["Title"] = "Facilities";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    // ViewData["Title"] = "HR List";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var pageSize = ViewBag.PageSize ?? 10;
+    var totalCount = ViewBag.TotalCount ?? 0;
+    var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 }
 
 <style>
@@ -440,46 +445,82 @@
 <div class="container py-2">
     <div class="card um-card">
         <div class="card-body">
-            <input type="hidden" id="HrId" />
-            <input type="hidden" id="FacilityId" />
-
-            @Html.AntiForgeryToken()
             <div class="umcard-header">
-                <div class="d-flex justify-content-between align-items-center ">
-                    <h3 class="mb-0">HR</h3>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">HR </h3>
                     <div class="um-toolbar">
-                        <button class="btn btn-add addhrstatus" data-facility-id="0">
+                        <button type="button" class="btn btn-add addhrstatus" data-facility-id="0">
                             <i class="fa fa-plus"></i> Add HR
-
                         </button>
-
+                        </a>
                     </div>
                 </div>
             </div>
-            <hr />
 
-
-            <div class="table-responsive">
-                <table class="table table-striped um-table align-middle">
-                    <thead>
+            <table class="table table-striped um-table mt-3">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Name</th>
+                        <th>Designation</th>
+                        <th>Mobile</th>
+                        <th>Attended VCAT</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="hrTableBody">
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        for (int i = 0; i < Model.Count; i++)
+                        {
+                            var item = Model[i];
+                            <tr>
+                                <td>@(((currentPage - 1) * pageSize) + i + 1)</td>
+                                <td>@item.Name</td>
+                                <td>@item.DesignationId</td>
+                                <td>@item.Mobile</td>
+                                <td>@(item.AttendentVCAT == 1 ? "Yes" : "No")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary editHr" data-id="@item.HrId">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
                         <tr>
-                            <th><i class="bi bi-hash me-2"></i>S.No</th>
-                            <th><i class="bi bi-person-fill me-2"></i>Name</th>
-                            <th>Designation</th>
-                            <th><i class="bi bi-telephone me-2"></i>Mobile</th>
-                            
-                            <th>
-                                AttendentVCAT
-                            </th>
+                            <td colspan="6" class="text-center">No HR records found.</td>
                         </tr>
-                    </thead>
+                    }
+                </tbody>
+            </table>
 
-                    <tbody id="hrTableBody">
-                    </tbody>
+            @if (totalPages > 1)
+            {
+                <nav>
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1, pageSize = pageSize })">Previous</a>
+                        </li>
 
-                </table>
-            </div>
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = pageSize })">@i</a>
+                            </li>
+                        }
 
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1, pageSize = pageSize })">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
     
             <!-- FACILITY HR STATUS MODAL -->
             <div class="modal fade" id="hrStatusModal" tabindex="-1">
@@ -664,202 +705,148 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- 
 
 <script>
-
-    // ---------------- GLOBAL VARIABLES ----------------
-
     let selectedFacilityId = 0;
     let selectedHrId = 0;
-
-
-    // ---------------- DOCUMENT READY ----------------
+    let currentPage = 1;
+    const pageSize = 10;
 
     $(document).ready(function () {
-
-        $("#avgDeliveryDiv").hide();
-
-        loadHrList();
-
+        loadHrList(currentPage);
     });
 
-
-    // ---------------- ADD HR BUTTON ----------------
-
+    // Add HR
     $(document).on("click", ".addhrstatus", function () {
-
         selectedFacilityId = $(this).data("facility-id");
         selectedHrId = 0;
 
-        clearhrModal();
-
-        $("#hrModalTitle").text("Add HR Profile");
+        clearHrModal();
         $("#HrId").val(0);
         $("#FacilityId").val(selectedFacilityId);
-
         $("#hrStatusModal").modal("show");
-
     });
 
+    // Edit HR
+    $(document).on("click", ".editHr", function () {
+        selectedHrId = $(this).data("id");
 
-    // ---------------- CLEAR MODAL ----------------
+        $.get('/HR/GetHrStatus', { hrId: selectedHrId }, function (data) {
+            clearHrModal();
 
-    function clearhrModal() {
+            $("#HrId").val(data.hrId || 0);
+            $("#FacilityId").val(data.facilityId || 0);
+            $("#Name").val(data.name || "");
+            $("#Mobile").val(data.mobile || "");
+            $("#DesignationId").val(data.designationId ?? "");
+            $("#GenderId").val(data.genderId ?? "");
+            $("#Status").val(data.status ?? "");
+            $("#TrainedAntaraGovt").val(data.trainedAntaraGovt ?? "");
+            $("#TrainedAntaraIDF").val(data.trainedAntaraIDF ?? "");
+            $("#AttendentVCAT").val(data.attendentVCAT ?? "");
+            $("#TrainedInIUCD").val(data.trainedInIUCD ?? "");
+            $("#TrainedInFPLMIS").val(data.trainedInFPLMIS ?? "");
+            $("#TrainedInCACS_MMA").val(data.trainedInCACS_MMA ?? "");
+    $("#hrModalTitle").text("Edit HR Profile");
+              $("#btnSaveHr").text("Update");
+              handleStatusChange();
+              $("#hrStatusModal").modal("show");
 
-        $("#hrStatusModal").find("input").val('');
-        $("#hrStatusModal").find("select").prop("selectedIndex", 0);
+        }).fail(function () {
+            Swal.fire('Error', 'Unable to fetch HR details', 'error');
+        });
+    });
 
-    }
-
-
-    // ---------------- SAVE HR ----------------
-
+    // Save / Update HR
     $(document).on("click", "#btnSaveHr", function () {
-
         let modelhr = {
-
-            HrId: 0,
-            FacilityId: selectedFacilityId,
-
+            HrId: parseInt($("#HrId").val() || "0"),
+            FacilityId: parseInt($("#FacilityId").val() || "0"),
             Name: $("#Name").val(),
             Mobile: $("#Mobile").val(),
-            DesignationId: $("#DesignationId").val(),
-            GenderId: $("#GenderId").val(),
-
-            TrainedAntaraGovt: $("#TrainedAntaraGovt").val(),
-            TrainedAntaraIDF: $("#TrainedAntaraIDF").val(),
-            AttendentVCAT: $("#AttendentVCAT").val(),
-            TrainedInIUCD: $("#TrainedInIUCD").val(),
-            TrainedInFPLMIS: $("#TrainedInFPLMIS").val(),
-            TrainedInCACS_MMA: $("#TrainedInCACS_MMA").val()
-
+            DesignationId: parseInt($("#DesignationId").val() || "0"),
+            GenderId: parseInt($("#GenderId").val() || "0"),
+            Status: $("#Status").val(),
+            TrainedAntaraGovt: $("#TrainedAntaraGovt").val() || null,
+            TrainedAntaraIDF: $("#TrainedAntaraIDF").val() || null,
+            AttendentVCAT: $("#AttendentVCAT").val() || null,
+            TrainedInIUCD: $("#TrainedInIUCD").val() || null,
+            TrainedInFPLMIS: $("#TrainedInFPLMIS").val() || null,
+            TrainedInCACS_MMA: parseInt($("#TrainedInCACS_MMA").val() || "0") || null
         };
 
-        $.ajax({
+        let token = $('input[name="__RequestVerificationToken"]').val();
 
+        $.ajax({
             url: '/HR/SaveHrStatus',
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(modelhr),
-
+            headers: { 'RequestVerificationToken': token },
+            data: JSON.stringify(modelhr),         
+      
             success: function () {
-
-                Swal.fire('Success', 'HR added successfully!', 'success');
-
-                $("#hrStatusModal").modal('hide');
-
-                loadHrList();
-
+            if (modelhr.HrId === 0) {
+                Swal.fire('Success', 'HR saved successfully!', 'success');
+            } else {
+                Swal.fire('Success', 'HR updated successfully!', 'success');
             }
-
+            $("#hrStatusModal").modal('hide');
+            loadHrList(currentPage);
+        },
+            error: function () {
+                Swal.fire('Error', 'Something went wrong!', 'error');
+            }
         });
-
     });
 
-
-    // ---------------- LOAD HR LIST ----------------
-
-    function loadHrList() {
-
-        $.ajax({
-
-            url: '/HR/GetHrList',
-            type: 'GET',
-
-            success: function (data) {
-
-                let rows = "";
-
-                $.each(data, function (i, item) {
-
-                    rows += `<tr>
-
-                            <td>${i + 1}</td>
+    // Load HR List
+    function loadHrList(page = 1) {
+        currentPage = page;
+        $.get('/HR/GetHrListPaged', { pageNumber: page, pageSize: pageSize }, function (res) {
+            let rows = "";
+            $.each(res.data, function (i, item) {
+                rows += `<tr>
+                            <td>${((page - 1) * pageSize) + i + 1}</td>
                             <td>${item.name}</td>
-                            <td>${item.designationId}</td>
+                            <td>${item.designationName ?? item.designationId}</td>
                             <td>${item.mobile}</td>
-                         <td>${item.attendentVCAT == 1 ? 'Yes' : 'No'}</td>
-                          
-                        </tr>`;
-
-                });
-
-                $("#hrTableBody").html(rows);
-
-            }
-
+                            <td>${item.attendentVCAT == 1 ? 'Yes' : 'No'}</td>
+                            <td>
+                                   <button class="btn btn-sm btn-outline-primary editHr" data-id="${item.hrId}">
+        <i class="bi bi-pencil"></i> 
+    </button>
+                            </td>
+                         </tr>`;
+            });
+            $("#hrTableBody").html(rows);
+            renderPagination(res.totalCount, page, pageSize);
         });
-
     }
 
 
-    $(document).on("change", "#IsDeliveryPoint", function () {
-
-        var val = $(this).val();
-
-        if (val == "1") {
-
-            $("#avgDeliveryDiv").show();
-
-        } else {
-
-            $("#avgDeliveryDiv").hide();
-            $("#AvgdeliveryperMonth").val("");
-
-        }
-
-    });
-
-
-    // ---------------- STATUS CHANGE ----------------
-
+    // Status Change
     function handleStatusChange() {
-
-        var status = document.getElementById("Status").value;
-
-        var name = document.getElementById("Name");
-        var mobile = document.getElementById("Mobile");
-        var gender = document.getElementById("GenderId");
-
-        var trainingSection = document.getElementById("trainingSection");
-        var saveBtn = document.getElementById("btnSaveHr");
-
-        if (status == "1") {
-
-            name.disabled = true;
-            mobile.disabled = true;
-            gender.disabled = true;
-
-            trainingSection.style.display = "none";
-
-            if (saveBtn) {
-                saveBtn.style.display = "none";
-            }
-
+        let status = $("#Status").val();
+        if (status == "No") { 
+            $("#Name, #Mobile, #GenderId").prop("disabled", true);
+            $("#trainingSection").hide();
+            $("#btnSaveHr").hide();
+        } else {
+            $("#Name, #Mobile, #GenderId").prop("disabled", false);
+            $("#trainingSection").show();
+            $("#btnSaveHr").show();
         }
-        else {
-
-            name.disabled = false;
-            mobile.disabled = false;
-            gender.disabled = false;
-
-            trainingSection.style.display = "block";
-
-            if (saveBtn) {
-                saveBtn.style.display = "inline-block";
-            }
-
-        }
-
     }
+    $(document).on("change", "#Status", handleStatusChange);
 
-    $(document).on("change", "#Status", function () {
+    // Clear modal
+    function clearHrModal() {
+        $("#hrStatusModal").find("input[type=text], input[type=hidden]").val('');
+        $("#hrStatusModal").find("select").val('');
+        $("#hrModalTitle").text("Add HR Profile");
+        $("#btnSaveHr").text("Save");
+        $("#trainingSection").show();
+        $("#btnSaveHr").show();
+    }</script>
 
-        handleStatusChange();
 
-    });
-
-   
-
-</script>

@@ -10,7 +10,6 @@ using Vikalp.Service.Interfaces;
     public class AshaService : IAshaService
     {
    
-
     private readonly string _connectionString;
 
     public AshaService(IConfiguration config)
@@ -152,6 +151,25 @@ using Vikalp.Service.Interfaces;
         }
 
         return list;
+    }
+
+
+
+
+    public async Task<(List<AshaDto> Data, int TotalCount)> GetAllAsha(int page, int pageSize)
+    {
+        using var conn = Conn();
+
+        var result = await conn.QueryMultipleAsync(
+            "USP_Asha_Pagination",
+            new { PageNumber = page, PageSize = pageSize },
+            commandType: CommandType.StoredProcedure
+        );
+
+        var list = result.Read<AshaDto>().ToList();
+        int totalCount = result.Read<int>().FirstOrDefault();
+
+        return (list, totalCount);
     }
 }
 

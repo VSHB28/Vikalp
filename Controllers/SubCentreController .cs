@@ -42,7 +42,7 @@ public class SubCentreController : Controller
             ? dropdowns["Gender"]
             : new List<SelectListItem>();
 
-        ViewBag.yesNoNa = dropdowns.ContainsKey("YesNoNa")
+        ViewBag.yesNo = dropdowns.ContainsKey("YesNoNa")
             ? dropdowns["YesNoNa"]
             : new List<SelectListItem>();
 
@@ -192,39 +192,5 @@ public class SubCentreController : Controller
         await _service.DeleteAsync(id);
         return Json(new { success = true });
     }
-
-
-
-    [HttpPost]
-    public async Task<IActionResult> SaveFacilityProfile([FromBody] FacilityProfileDto model)
-    {
-        if (model == null)
-            return BadRequest("Model is null");
-
-        await _service.SaveFacilityProfileAsync(model);
-        return Ok();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetFacilityProfile(int profileId)
-    {
-        var result = await _service.GetFacilityProfileAsync(profileId);
-
-        if (result == null)
-            return NotFound();
-
-        return Json(result);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> SaveHrStatus([FromBody] HrStatusDto model)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        model.CreatedBy = userId;
-        await _service.SaveHrStatusAsync(model);
-        return Ok();
-    }
-
-
 
 }

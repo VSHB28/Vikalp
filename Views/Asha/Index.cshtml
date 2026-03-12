@@ -167,6 +167,39 @@
                     </tbody>
 
                 </table>
+
+                @{
+                    int page = ViewBag.PageNumber ?? 1;
+                    int pageSize = ViewBag.PageSize ?? 10;
+                    int totalCount = ViewBag.TotalCount ?? Model.Count;
+
+                    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                }
+
+                <ul class="pagination justify-content-end mt-3">
+
+                    <li class="page-item @(page <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="/Asha/Index?page=@(page - 1)&pageSize=@pageSize">
+                            Previous
+                        </a>
+                    </li>
+
+                    @for (int p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == page ? "active" : "")">
+                            <a class="page-link" href="/Asha/Index?page=@p&pageSize=@pageSize">
+                                @p
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(page >= totalPages ? "disabled" : "")">
+                        <a class="page-link" href="/Asha/Index?page=@(page + 1)&pageSize=@pageSize">
+                            Next
+                        </a>
+                    </li>
+
+                </ul>
             </div>
 
         </div>
@@ -203,8 +236,7 @@
             });
     });
 
-     
-
+    
        $('#districtDropdown').change(function () {
 
         let districtId = $(this).val();

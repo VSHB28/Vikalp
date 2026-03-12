@@ -8,5 +8,6 @@ namespace Vikalp.Service.Interfaces
         Task<HrStatusDto> GetHrStatusAsync(int hrId);
         Task<List<HrStatusDto>> GetHrListAsync();
         Task SaveHrStatusAsync(HrStatusDto model);
+        Task<(List<HrStatusDto> HrList, int TotalCount)> GetHrListPagedAsync(int pageNumber, int pageSize);
     }
 }
