@@ -187,7 +187,7 @@
                            title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <form asp-controller="EventActivities"
+                      @*   <form asp-controller="EventActivities"
                               asp-action="Delete"
                               asp-route-id="@item.MeetingId"
                               method="post"
@@ -197,8 +197,19 @@
                             <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </button>
+                        </form> *@
+
+                        <form action="@Url.Action("Delete", "Meeting")"
+                         method="post"
+                         class="d-inline"
+                         onsubmit="return confirm('Are you sure you want to delete this activity?');">
+                         @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.MeetingId" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                        <i class="bi bi-trash"></i>
+                        </button>
                         </form>
-                    </td>
+           </td>         
                 </tr>
             }
         }

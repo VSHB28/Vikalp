@@ -6,7 +6,6 @@ namespace Vikalp.Service.Interfaces
     {
         //Task<List<HealthSystemActivityDto>> GetAllAsync();
         Task<(List<HealthSystemActivityDto> Data, int TotalCount)> GetPagedAsync(int userId, int pageNumber, int pageSize, int? stateId, int? districtId, int? ActivityNameId);
-
         Task<HealthSystemActivityDto> GetByIdAsync(int userId, int ActivityId);
         Task<List<DropdownDto>> SearchFacilitiesAsync(string term);
         Task<bool> SaveHealthSystemActivityJsonAsync(HealthSystemActivityDto model, int userId);
@@ -15,7 +14,14 @@ namespace Vikalp.Service.Interfaces
         Task<(List<HealthSystemParticipantDto> Data, int TotalCount)> GetAllParticipantAsync(int userId, int page, int pageSize, int? stateId, int? districtId, int? blockId, int? facilityId);
         Task<List<ParticipantListDto>> GetparticipantByFacilityAsync(int facilityId);
         Task<MstFacilityDto?> GetFacilityByIdAsync(int facilityId);
-
         Task<bool> SaveParticipantsAsync(DateTime dateOfActivity, int stateId, int? districtId, int? facilityTypeId, string? facilityTypeOther, List<HealthSystemParticipantDto> participants, int createdBy);
+
+
+        //added on 13-03-2026
+        Task<bool> UpdateParticipantsAsync(DateTime dateofActivity, int stateId, int? districtId, int? facilityTypeId, int? activityTypeId, string? facilityTypeOther, int? activityNameId, int? providerTypeId, string? remarks, List<HealthSystemParticipantDto> participants, int userId);
+        Task<HealthSystemParticipantSaveDto?> GetParticipantsByIdAsync(int id);
+
+
+
     }
 }

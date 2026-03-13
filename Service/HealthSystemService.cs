@@ -405,5 +405,147 @@ namespace Vikalp.Service
 
             return true;
         }
+
+
+
+        //added on 13-03-2026
+        public HealthSystemParticipantSaveDto? GetParticipantsById(int id)
+        {
+            var param = new[]
+            {
+        new SqlParameter("@ParticipantId", id)
+    };
+
+            var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetParticipantsById", param);
+
+            if (dt.Rows.Count == 0)
+                return null;
+
+            var header = new HealthSystemParticipantSaveDto
+            {
+
+                ActivityDate = dt.Rows[0].Field<DateTime>("ActivityDate"),
+                StateId = dt.Rows[0].Field<int>("StateId"),
+                DistrictId = dt.Rows[0].Field<int?>("DistrictId"),
+                FacilityId = dt.Rows[0].Field<int?>("FacilityId"),
+
+                ActivityTypeId = dt.Rows[0].Field<int?>("ActivityTypeId"),
+
+                ActivityNameId = dt.Rows[0].Field<int>("ActivityNameId"),
+
+
+                FacilityTypeId = dt.Rows[0].Field<int?>("FacilityTypeId"),
+                FacilityTypeOther = dt.Rows[0].Field<string?>("FacilityTypeOther"),
+                Participants = dt.AsEnumerable().Select(r => new HealthSystemParticipantDto
+                {
+                    ParticipantId = r.Field<int>("ParticipantId"),
+                    FullName = r.Field<string>("FullName"),
+                    FacilityId = r.Field<int?>("FacilityId"),
+                    FacilityName = r.Field<string?>("FacilityName"),
+                    //InterventionFacility = dt.Rows[0].Field<int?>("InterventionFacility"),
+                    InterventionFacility = r.Field<int?>("InterventionFacility"),
+                    Mobile = r.Field<string?>("Mobile"),
+                    VCATScorePreTest = r.Field<int?>("VCATScorePreTest"),
+                    VCATScorePostTest = r.Field<int?>("VCATScorePostTest"),
+                    RefresherTraining = r.Field<int?>("RefresherTraining")
+                }).ToList()
+            };
+
+            return header;
+        }
+
+        public async Task<bool> UpdateParticipantsAsync(DateTime dateofActivity, int stateId, int? districtId, int? facilityTypeId, int? activityTypeId, string? facilityTypeOther, int? activityNameId, int? providerTypeId, string? remarks, List<HealthSystemParticipantDto> participants, int userId)
+
+        {
+            using SqlConnection con = new SqlConnection(Conn());
+            await con.OpenAsync();
+
+            bool isUpdated = false;
+
+            foreach (var p in participants)
+            {
+                using SqlCommand cmd = new SqlCommand("sp_UpdateHealthSystemParticipant", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@ParticipantId", p.ParticipantId);
+                //added this
+                Console.WriteLine("ActivityTypeId: " + activityTypeId);
+
+                cmd.Parameters.AddWithValue("@ActivityTypeId", (object?)activityTypeId ?? DBNull.Value);
+
+                cmd.Parameters.AddWithValue("@ActivityNameId", (object?)activityNameId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FullName", (object?)p.FullName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ProviderTypeId", (object?)providerTypeId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@StateId", stateId);
+                cmd.Parameters.AddWithValue("@DistrictId", (object?)districtId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@BlockId", (object?)p.BlockId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityTypeId", (object?)facilityTypeId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityId", (object?)p.FacilityId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityName", (object?)p.FacilityName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FacilityTypeOther", (object?)facilityTypeOther ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@InterventionFacility", (object?)p.InterventionFacility ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@ActivityDate", dateofActivity);
+                cmd.Parameters.AddWithValue("@GenderId", (object?)p.GenderId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Mobile", (object?)p.Mobile ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@VCATScorePreTest", (object?)p.VCATScorePreTest ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@VCATScorePostTest", (object?)p.VCATScorePostTest ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@RefresherTraining", (object?)p.RefresherTraining ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Remarks", (object?)remarks ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@UpdatedBy", userId);
+
+
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                if (rowsAffected > 0)
+                    isUpdated = true;
+            }
+
+            return isUpdated;
+        }
+
+        public async Task<HealthSystemParticipantSaveDto?> GetParticipantsByIdAsync(int id)
+        {
+            var param = new[]
+            {
+        new SqlParameter("@ParticipantId", id)
+    };
+
+            var dt = SqlUtils.ExecuteSP(Conn(), "sp_GetParticipantsById", param);
+
+            if (dt == null || dt.Rows.Count == 0)
+                return null;
+
+            var header = new HealthSystemParticipantSaveDto
+            {
+                ParticipantId = id,
+                ActivityTypeId = dt.Rows[0].Field<int?>("ActivityTypeId"),
+                ActivityDate = dt.Rows[0].Field<DateTime?>("ActivityDate"),
+                StateId = dt.Rows[0].Field<int>("StateId"),
+                DistrictId = dt.Rows[0].Field<int?>("DistrictId"),
+                BlockId = dt.Rows[0].Field<int?>("BlockId"),
+                FacilityId = dt.Rows[0].Field<int?>("FacilityId"),
+                ProviderTypeId = dt.Rows[0].Field<int?>("ProviderTypeId"),
+                ActivityNameId = (int)dt.Rows[0].Field<int?>("ActivityNameId"),
+                Remarks = dt.Rows[0].Field<string?>("Remarks"),
+                FacilityTypeId = dt.Rows[0].Field<int?>("FacilityTypeId"),
+                FacilityTypeOther = dt.Rows[0].Field<string?>("FacilityTypeOther"),
+                Participants = dt.AsEnumerable().Select(r => new HealthSystemParticipantDto
+                {
+                    ParticipantId = r.Field<int>("ParticipantId"),
+                    FullName = r.Field<string>("FullName"),
+                    FacilityId = r.Field<int?>("FacilityId"),
+                    FacilityName = r.Field<string?>("FacilityName"),
+                    Mobile = r.Field<string?>("Mobile"),
+                    VCATScorePreTest = r.Field<int?>("VCATScorePreTest"),
+                    VCATScorePostTest = r.Field<int?>("VCATScorePostTest"),
+                    RefresherTraining = r.Field<int?>("RefresherTraining")
+                }).ToList()
+            };
+
+            return header;
+        }
+
     }
+
 }
+
