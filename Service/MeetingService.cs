@@ -346,4 +346,5 @@ public class MeetingService : IMeetingService
         await conn.OpenAsync();
         return await cmd.ExecuteNonQueryAsync() > 0;
     }
+
 }

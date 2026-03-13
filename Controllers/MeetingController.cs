@@ -143,15 +143,32 @@ namespace Vikalp.Controllers
             return Json(new { success = result });
         }
 
-        [HttpDelete("{id}")]
+        //[HttpPost]
+
+        //[HttpDelete("{id}")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        //    var success = await _service.DeleteAsync(id, userId);
+        //    if (!success) return NotFound();
+        //    return NoContent();
+        //}
+
+        [HttpPost]
+       [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var success = await _service.DeleteAsync(id, userId);
-            if (!success) return NotFound();
-            return NoContent();
-        }
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
 
+            int userId = int.Parse(userIdClaim);
+            var success = await _service.DeleteAsync(id, userId);
+
+            if (!success) return NotFound();
+
+            return RedirectToAction(nameof(Index));
+        }
         // ===================== AJAX APIs =====================
 
         public IActionResult GetDistricts(int stateId)
