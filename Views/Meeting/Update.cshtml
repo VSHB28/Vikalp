@@ -550,7 +550,7 @@
                         <!-- Q14 -->
                         <div class="form-group question-field" data-qid="Q14">
                             <label class="form-label"><i class="bi bi-person-badge label-icon"></i><span>Whether IDF staff present?</span></label>
-                            <select name="IsIDFstaffPresent" class="form-input" id="IsIDFstaffPresent">
+                            <select name="IsIDFstaffPresent" class="form-input" id="IsIDFstaffPresent" onchange="toggleIdfStaffName()">
                                 <option value="">-- Select --</option>
                                 @foreach (var s in ViewBag.yesNo)
                                 {
@@ -559,9 +559,9 @@
                             </select>
                         </div>
                         <!-- Q15 -->
-                        <div class="form-group question-field" data-qid="Q15">
+                        <div class="form-group question-field" data-qid="Q15" id="idfStaffField" style="display:none;">
                             <label class="form-label"><i class="bi bi-person-vcard label-icon"></i><span>If yes, name of IDF Staff Name?</span></label>
-                            <input type="text" class="form-input" maxlength="50" name="IdfStaffName" value="@Model.IdfStaffName" placeholder="Name of IDF Staff" />
+                            <input type="text" class="form-control" maxlength="50" name="IdfStaffName" value="@Model.IdfStaffName" placeholder="Name of IDF Staff" />
                         </div>
                         <!-- Q16 -->
                         <div class="form-group question-field" data-qid="Q16">
@@ -703,6 +703,21 @@
         }
     }
 
+    //=============== toggle staff name field ===============
+        function toggleIdfStaffName() {
+
+        const staffPresent = document.getElementById("IsIDFstaffPresent").value;
+        const staffField = document.getElementById("idfStaffField");
+
+        if (staffPresent === "1") {
+            staffField.style.display = "block";
+        } else {
+            staffField.style.display = "none";
+            document.querySelector("[name='IdfStaffName']").value = "";
+        }
+
+    }
+
             // Handle set switcher pill clicks
                 var switcher = document.getElementById('setSwitcher');
 
@@ -749,6 +764,7 @@
             const blockId = document.getElementById("hdnBlockId").value;
             const facilityId = document.getElementById("hdnFacilityId").value;
             toggleOtherParticipant();
+            toggleIdfStaffName();
             // Autofill sequence
             if (stateId) {
                 document.getElementById("StateId").value = stateId;
