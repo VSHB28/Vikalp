@@ -340,7 +340,7 @@ public class MeetingService : IMeetingService
         using var cmd = new SqlCommand("sp_DeleteMeeting", conn);
         cmd.CommandType = CommandType.StoredProcedure;
 
-        cmd.Parameters.AddWithValue("@EventId", id);
+        cmd.Parameters.AddWithValue("@MeetingId", id);
         cmd.Parameters.AddWithValue("@DeletedBy", userId);
 
         await conn.OpenAsync();

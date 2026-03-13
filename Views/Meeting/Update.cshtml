@@ -468,7 +468,7 @@
                                 </div>
 
                                 <div class="multi-select-body" id="participantOptions">
-
+                                    <div id="blockParticipants">
                                     @foreach (var p in ViewBag.blockParticipant)
                                     {
                                         <label class="checkbox-option">
@@ -481,6 +481,21 @@
                                             <span>@p.Text</span>
                                         </label>
                                     }
+                                    </div>
+                                    <div id="sectorParticipants" style="display:none;">
+                                        @foreach (var p in ViewBag.sectorparticipant)
+                                        {
+                                            <label class="checkbox-option">
+                                                <input type="checkbox"
+                                                       value="@p.Value"
+                                                       name="ParticipantsChk"
+                                                       class="participant-checkbox"
+                                                       onchange="updateParticipantText(); toggleOtherParticipant()" />
+
+                                                <span>@p.Text</span>
+                                            </label>
+                                        }
+                                    </div>
 
                                 </div>
 
@@ -626,6 +641,25 @@
         }
     }
 
+     //============== toggle Participant based on meetingDate type ================
+
+        function toggleParticipantList(type) {
+
+        const block = document.getElementById("blockParticipants");
+        const sector = document.getElementById("sectorParticipants");
+
+        if (type == "1") {
+            block.style.display = "block";
+            sector.style.display = "none";
+        }
+        else if (type == "2") {
+            block.style.display = "none";
+            sector.style.display = "block";
+        }
+
+        updateParticipantText();
+    }
+
 
     // Close when clicking outside
     document.addEventListener("click", function (event) {
@@ -743,6 +777,7 @@
                     });
 
                     applySetVisibility(setKey);
+                toggleParticipantList(setKey);
 
                 });
 
@@ -751,6 +786,7 @@
 
                 if (defaultActive) {
                     applySetVisibility(defaultActive.dataset.set);
+                //toggleParticipantList(defaultActive.dataset.set);
                 }
 
             }
@@ -765,6 +801,11 @@
             const facilityId = document.getElementById("hdnFacilityId").value;
             toggleOtherParticipant();
             toggleIdfStaffName();
+            const active = document.querySelector(".pill.active");
+
+    if (active) {
+        toggleParticipantList(active.dataset.set);
+    }
             // Autofill sequence
             if (stateId) {
                 document.getElementById("StateId").value = stateId;
